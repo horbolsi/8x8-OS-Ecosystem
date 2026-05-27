@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#020818">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>8×8 Ecosystem OS</title>
+<link rel="manifest" href="/manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--deep:#020818;--navy:#060e2a;--mid:#0a1a4a;
+  --gold:#FFD700;--gold2:#B8860B;--gold3:#FFE44D;
+  --red:#FF2222;--red2:#FF4444;
+  --green:#00FF88;--cyan:#00FFFF;--purple:#AA44FF;
+  --white:#FFF;--dim:#8899BB;--text:#AABBDD;
+  --border:rgba(255,215,0,0.18);
+  --gg:0 0 20px rgba(255,215,0,0.5),0 0 40px rgba(255,215,0,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Rajdhani',sans-serif;background:var(--deep);color:var(--white)}
+
+/* INTRO */
+#intro{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+#intro.gone{display:none}
+.stars{position:absolute;inset:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twk var(--d,3s) var(--dl,0s) infinite ease-in-out}
+@keyframes twk{0%,100%{opacity:.1;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}}
+.gate{position:absolute;top:0;width:50%;height:100%;background:linear-gradient(180deg,#000,#040d24);z-index:2;overflow:hidden;transition:transform 1.4s cubic-bezier(.77,0,.18,1)}
+.gate-l{left:0;border-right:2px solid rgba(255,215,0,.5)}
+.gate-r{right:0;border-left:2px solid rgba(255,215,0,.5)}
+.gate-l.open{transform:translateX(-100%)}
+.gate-r.open{transform:translateX(100%)}
+.gate-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,215,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,215,0,.05) 1px,transparent 1px);background-size:44px 44px}
+.gate-scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(255,215,0,1),transparent);animation:sc 1.6s linear infinite}
+@keyframes sc{0%{top:0}100%{top:100%}}
+.intro-logo{position:relative;z-index:3;text-align:center}
+.intro-logo .x8{font-family:'Orbitron',sans-serif;font-size:clamp(70px,18vw,160px);font-weight:900;color:var(--red);line-height:1;animation:rp .9s ease-in-out infinite alternate}
+@keyframes rp{0%{text-shadow:0 0 40px #f22,0 0 80px #f228,0 0 120px #f224}100%{text-shadow:0 0 60px #f22,0 0 120px #f22a,0 0 180px #f226}}
+.intro-logo .sub{font-size:clamp(10px,2.5vw,16px);letter-spacing:.5em;color:var(--gold);margin-top:8px;opacity:0;animation:fi .5s .8s forwards}
+@keyframes fi{to{opacity:1}}
+.intro-prog{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);text-align:center;z-index:3;width:280px}
+.prog-bar{height:2px;background:rgba(255,215,0,.15);border-radius:2px;overflow:hidden;margin:8px 0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:0;transition:width .08s linear}
+.prog-txt{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold2);letter-spacing:.2em}
+
+/* APP SHELL */
+#app{display:none;flex-direction:column;height:100vh;overflow:hidden}
+#app.on{display:flex}
+.hdr{background:rgba(6,14,42,.97);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:200;backdrop-filter:blur(20px)}
+.hdr-logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--gold);text-shadow:0 0 14px rgba(255,215,0,.5);cursor:pointer;letter-spacing:.05em}
+.hdr-logo span{color:var(--red)}
+.hdr-right{display:flex;align-items:center;gap:7px}
+.hdr-pill{background:rgba(255,215,0,.08);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--gold);display:flex;align-items:center;gap:5px;cursor:pointer;transition:.2s}
+.hdr-pill:hover{background:rgba(255,215,0,.15)}
+.dot-live{width:6px;height:6px;background:var(--green);border-radius:50%;animation:bl 1s infinite;flex-shrink:0}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+.icon-btn{width:34px;height:34px;background:rgba(255,215,0,.07);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.icon-btn:hover{background:rgba(255,215,0,.18);box-shadow:var(--gg)}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--gold2);border-radius:2px}
+
+/* TICKER */
+.ticker-wrap{background:rgba(0,0,0,.6);border-bottom:1px solid var(--border);overflow:hidden;height:26px;display:flex;align-items:center;flex-shrink:0}
+.ticker{display:flex;animation:tick 40s linear infinite;white-space:nowrap}
+.ticker:hover{animation-play-state:paused}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:6px;padding:0 16px;font-family:'Share Tech Mono',monospace;font-size:10px;border-right:1px solid rgba(255,215,0,.08)}
+.tick-sym{color:var(--gold);font-weight:700}
+.tick-up{color:var(--green)}
+.tick-dn{color:var(--red)}
+
+/* SCREENS */
+.screen{display:none;padding:14px;min-height:100%;animation:si .25s ease}
+.screen.on{display:block}
+@keyframes si{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* BOTTOM NAV */
+.bnav{background:rgba(6,14,42,.98);border-top:1px solid var(--border);display:flex;flex-shrink:0;position:relative;z-index:200}
+.nav-i{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 2px;cursor:pointer;gap:2px;font-size:8px;color:var(--dim);letter-spacing:.04em;border-top:2px solid transparent;transition:.2s;position:relative}
+.nav-i.on{color:var(--gold);border-top-color:var(--gold)}
+.nav-i:hover{color:var(--gold)}
+.nav-icon{font-size:19px;line-height:1}
+.nav-badge{position:absolute;top:4px;right:calc(50% - 16px);background:var(--red);color:#fff;font-size:7px;font-family:'Orbitron',sans-serif;border-radius:6px;padding:1px 4px;line-height:1.2}
+.more-panel{position:absolute;bottom:100%;left:0;right:0;background:rgba(4,10,32,.98);border-top:1px solid var(--border);display:none;grid-template-columns:repeat(4,1fr);padding:10px;gap:6px;backdrop-filter:blur(20px)}
+.more-panel.on{display:grid;animation:si .2s ease}
+.more-i{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;cursor:pointer;border-radius:10px;transition:.2s;font-size:9px;color:var(--dim)}
+.more-i:hover{background:rgba(255,215,0,.07);color:var(--gold)}
+.more-i .mi{font-size:22px}
+
+/* CARDS */
+.card{background:linear-gradient(135deg,rgba(10,26,74,.75),rgba(6,14,42,.85));border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,.25),transparent)}
+.card-title{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--gold);letter-spacing:.28em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+
+/* STAT BOXES */
+.sbox{background:rgba(6,14,42,.7);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;transition:.2s;cursor:default}
+.sbox:hover{border-color:rgba(255,215,0,.4)}
+.sval{font-family:'Orbitron',sans-serif;font-size:15px;color:var(--gold);font-weight:700}
+.slbl{font-size:9px;color:var(--dim);letter-spacing:.1em;margin-top:3px}
+
+/* TAGS */
+.tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:9px;letter-spacing:.1em;font-family:'Orbitron',sans-serif}
+.tg{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.35);color:var(--gold)}
+.tr{background:rgba(255,34,34,.1);border:1px solid rgba(255,34,34,.35);color:var(--red2)}
+.tgn{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.3);color:var(--green)}
+.tc{background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.3);color:var(--cyan)}
+.tp{background:rgba(170,68,225,.1);border:1px solid rgba(170,68,255,.35);color:var(--purple)}
+
+/* BUTTONS */
+.btn{border:none;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;transition:.25s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.bp{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000}
+.bp:hover{transform:translateY(-1px);box-shadow:var(--gg)}
+.bg{background:linear-gradient(135deg,#004422,#00aa55);color:#fff}
+.bd{background:linear-gradient(135deg,#440000,#aa0000);color:#fff}
+.bo{background:transparent;border:1px solid var(--border);color:var(--text)}
+.bo:hover{border-color:var(--gold);color:var(--gold)}
+.bc{background:linear-gradient(135deg,#004444,#00aaaa);color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* ROWS */
+.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,215,0,.07)}
+.row:last-child{border-bottom:none}
+.row-l{font-size:13px;color:var(--text)}
+.row-r{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--gold)}
+
+/* PROGRESS */
+.pbar{width:100%;height:5px;background:rgba(255,215,0,.1);border-radius:3px;overflow:hidden;margin-top:6px}
+.pfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold2),var(--gold));transition:width 1.2s ease}
+
+/* TOGGLE */
+.tog{position:relative;width:42px;height:22px;flex-shrink:0}
+.tog input{display:none}
+.tog-tr{position:absolute;inset:0;background:rgba(255,215,0,.1);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:.3s}
+.tog input:checked+.tog-tr{background:rgba(255,215,0,.25);border-color:var(--gold)}
+.tog-tr::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--dim);border-radius:50%;transition:.3s}
+.tog input:checked+.tog-tr::after{transform:translateX(20px);background:var(--gold)}
+
+/* INPUT */
+.inp{background:rgba(6,14,42,.8);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;width:100%;transition:.2s}
+.inp:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,215,0,.08)}
+.inp::placeholder{color:var(--dim)}
+
+/* AI CHAT */
+.chat-wrap{border-radius:14px;overflow:hidden;background:linear-gradient(135deg,rgba(10,26,74,.75),rgba(6,14,42,.85));border:1px solid var(--border)}
+.chat-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.ai-av{width:38px;height:38px;background:radial-gradient(circle,#200a40,#0a0520);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;animation:halo 3s ease-in-out infinite alternate}
+@keyframes halo{0%{box-shadow:0 0 20px rgba(255,215,0,.4)}100%{box-shadow:0 0 40px rgba(255,215,0,.8),0 0 80px rgba(255,215,0,.3)}}
+.chat-name{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--gold)}
+.chat-sub{font-size:10px;color:var(--dim);margin-top:1px}
+.chat-body{height:300px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.chat-body::-webkit-scrollbar{width:2px}
+.chat-body::-webkit-scrollbar-thumb{background:var(--gold2)}
+.mw{display:flex;flex-direction:column;gap:3px}
+.mw.user{align-items:flex-end}
+.mw.ai{align-items:flex-start}
+.mn{font-size:9px;color:var(--dim);letter-spacing:.1em;padding:0 4px}
+.mb{max-width:88%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.55}
+.mb.user{background:rgba(255,215,0,.13);border:1px solid rgba(255,215,0,.25);color:var(--white);border-bottom-right-radius:3px}
+.mb.ai{background:rgba(10,26,74,.9);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:3px}
+.mb.thinking{opacity:.6;animation:pulse .8s ease-in-out infinite alternate}
+@keyframes pulse{0%{opacity:.5}100%{opacity:.8}}
+.chat-ft{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.chat-inp{flex:1;background:rgba(6,14,42,.8);border:1px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:13px;outline:none;transition:.2s}
+.chat-inp:focus{border-color:var(--gold)}
+.chat-inp::placeholder{color:var(--dim)}
+.send-btn{width:40px;height:40px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;border-radius:8px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.send-btn:hover{transform:scale(1.06);box-shadow:var(--gg)}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.qbtns{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 12px;border-top:1px solid var(--border)}
+.qbtn{padding:8px;background:rgba(6,14,42,.7);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:11px;color:var(--text);text-align:center;transition:.2s;display:flex;align-items:center;gap:5px}
+.qbtn:hover{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.05)}
+
+/* TOAST */
+#toast{position:fixed;top:60px;right:14px;z-index:9000;display:flex;flex-direction:column;gap:6px;pointer-events:none;max-width:270px}
+.toast-item{background:rgba(6,14,42,.97);border:1px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--white);display:flex;align-items:center;gap:8px;box-shadow:0 4px 24px rgba(0,0,0,.5);animation:tsl .3s ease;pointer-events:auto}
+.toast-item.err{border-color:var(--red)}
+.toast-item.suc{border-color:var(--green)}
+@keyframes tsl{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:7000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal-bg.on{display:flex}
+.modal{background:linear-gradient(135deg,#060e2a,#0d1f50);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:440px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);border:none;color:var(--white);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.modal-title{font-family:'Orbitron',sans-serif;font-size:15px;color:var(--gold);margin-bottom:16px}
+
+/* SLIDER */
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:rgba(255,215,0,.15);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold));cursor:pointer;box-shadow:0 0 8px rgba(255,215,0,.4)}
+.slider-hdr{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
+.slider-val{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--gold)}
+
+/* FREE MINUTES INDICATOR */
+.free-bar{background:rgba(255,215,0,.08);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.free-text{font-size:11px;color:var(--text)}
+.free-val{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--gold)}
+
+@media(max-width:360px){.grid3{grid-template-columns:1fr 1fr}.sval{font-size:13px}.grid4{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="stars" id="starField"></div>
+  <div class="gate gate-l" id="gL"><div class="gate-grid"></div><div class="gate-scan"></div></div>
+  <div class="gate gate-r" id="gR"><div class="gate-grid"></div><div class="gate-scan"></div></div>
+  <div class="intro-logo"><div class="x8">8×8</div><div class="sub">ECOSYSTEM OS · BY FLASHTM8</div></div>
+  <div class="intro-prog">
+    <div class="prog-txt" id="loadMsg">INITIALIZING...</div>
+    <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+    <div class="prog-txt" id="pPct">0%</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modalSubscribe">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modalSubscribe')">✕</button>
+    <div class="modal-title">💳 Subscribe to 8×8 Pro</div>
+    <div style="margin-bottom:10px"><div style="font-size:11px;color:var(--dim);margin-bottom:4px">SELECT CURRENCY</div>
+    <select class="inp" id="payCurrency"><option value="USDT">USDT — $8.88</option><option value="BTC">BTC — ≈$8.88</option><option value="XMR">XMR — ≈$8.88</option><option value="SOL">SOL — ≈$8.88</option><option value="ETH">ETH — ≈$8.88</option><option value="BNB">BNB — ≈$8.88</option><option value="TON">TON — ≈$8.88</option><option value="PI">PI — ≈$8.88</option></select></div>
+    <div id="walletDisplay" style="background:rgba(0,0,0,.3);border-radius:8px;padding:12px;margin-bottom:12px;font-family:'Share Tech Mono',monospace;font-size:11px;word-break:break-all;color:var(--gold)"></div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:12px">Send exact amount, then enter TX hash:</div>
+    <input class="inp" id="txHash" placeholder="Transaction hash..." style="margin-bottom:12px;font-family:'Share Tech Mono',monospace;font-size:11px">
+    <button class="btn bp" style="width:100%" onclick="submitPayment()">✅ SUBMIT PAYMENT</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-logo" onclick="nav('home')">8<span>×</span>8</div>
+    <div class="hdr-right">
+      <div class="hdr-pill" id="freePill"><span class="dot-live"></span><span id="freeMin">88 min free</span></div>
+      <div class="icon-btn" onclick="nav('ai')" title="AI Chat">⚡</div>
+      <div class="icon-btn" onclick="openModal('modalSubscribe')" title="Subscribe">💎</div>
+    </div>
+  </div>
+  <div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
+  <div class="content" id="mainContent">
+
+    <!-- HOME -->
+    <div class="screen on" id="s-home">
+      <div class="free-bar">
+        <span class="free-text">🆓 Free minutes remaining today</span>
+        <span class="free-val" id="homeFreeMin">88/88</span>
+      </div>
+      <div class="card">
+        <div class="card-title">Portfolio Overview</div>
+        <div class="grid3">
+          <div class="sbox"><div class="sval" id="portValue">$0.00</div><div class="slbl">Total Value</div></div>
+          <div class="sbox"><div class="sval" id="portVaults">0</div><div class="slbl">NFT Vaults</div></div>
+          <div class="sbox"><div class="sval" style="color:var(--green)" id="portChange">+0%</div><div class="slbl">24h P&L</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Live Market</div>
+        <div id="marketPrices"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Access</div>
+        <div class="grid2">
+          <button class="btn bp" onclick="nav('ai')">⚡ AI Chat</button>
+          <button class="btn bc" onclick="nav('wallet')">💎 Wallet</button>
+          <button class="btn bo" onclick="nav('mining')">⛏ Mining</button>
+          <button class="btn bo" onclick="nav('staking')">🔒 Staking</button>
+          <button class="btn bo" onclick="nav('referral')">🌐 Referral</button>
+          <button class="btn bo" onclick="openModal('modalSubscribe')">💳 Subscribe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI CHAT -->
+    <div class="screen" id="s-ai">
+      <div class="chat-wrap">
+        <div class="chat-hdr">
+          <div class="ai-av">⚡</div>
+          <div><div class="chat-name">FlashTM8 AI</div><div class="chat-sub" id="aiStatus">🟢 Online · 8×8 Ecosystem Intelligence</div></div>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="qbtns">
+          <div class="qbtn" onclick="qPrompt('Give me a full 8x8 ecosystem analysis — market, NFT vaults, and outlook.')">📊 Market Analysis</div>
+          <div class="qbtn" onclick="qPrompt('Explain the NFT vault system and how to maximize returns.')">🏛 NFT Strategy</div>
+          <div class="qbtn" onclick="qPrompt('Break down the complete 8x8 tokenomics: 8x8, TM8, 0x8, fees, burn, governance.')">💰 Tokenomics</div>
+          <div class="qbtn" onclick="qPrompt('How does mining and staking work? How to maximize daily rewards?')">⛏ Mining Guide</div>
+        </div>
+        <div class="chat-ft">
+          <input class="chat-inp" id="chatInp" placeholder="Ask FlashTM8 anything..." onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="send-btn" id="sendBtn" onclick="sendMsg()">⚡</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div class="screen" id="s-wallet">
+      <div class="card">
+        <div class="card-title">8×8 Multi-Chain Wallet</div>
+        <div style="text-align:center;padding:14px 0">
+          <div style="font-family:Orbitron,sans-serif;font-size:28px;color:var(--gold)" id="walletTotal">$0.00</div>
+          <div style="font-size:11px;color:var(--dim);margin-top:4px">Total Portfolio Value</div>
+        </div>
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn bp" onclick="showToast('Send feature coming soon','info')">↑ Send</button>
+          <button class="btn bo" onclick="showToast('Show QR to receive','info')">↓ Receive</button>
+          <button class="btn bc" onclick="showToast('Swap on mainnet','info')">⇄ Swap</button>
+        </div>
+      </div>
+      <div class="card"><div class="card-title">Token Balances</div><div id="walletTokens"></div></div>
+      <div class="card">
+        <div class="card-title">💳 Subscribe for Unlimited Access</div>
+        <div style="font-size:13px;color:var(--text);margin-bottom:12px">Get unlimited AI chat, premium features, and priority support.</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="color:var(--dim)">Price</span><span style="font-family:Orbitron,sans-serif;color:var(--gold)">$8.88 / 30 days</span></div>
+        <button class="btn bp" style="width:100%" onclick="openModal('modalSubscribe')">💳 SUBSCRIBE NOW</button>
+      </div>
+    </div>
+
+    <!-- MINING -->
+    <div class="screen" id="s-mining">
+      <div class="card">
+        <div class="card-title">⛏ Mining System</div>
+        <div class="row"><div><div style="font-size:13px;color:var(--text)">Mining Status</div></div><label class="tog"><input type="checkbox" id="miningTog" onchange="toggleMining()"><div class="tog-tr"></div></label></div>
+        <div class="row"><span class="row-l">Power Allocation</span><span class="row-r" id="miningPower">25%</span></div>
+        <div style="margin-top:12px"><input type="range" min="10" max="75" value="25" id="miningSlider" oninput="updateMiningPower()"></div>
+        <div style="font-size:11px;color:var(--dim);margin-top:6px">Idle mode: 25% · Max mode: 75%</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Mining Rewards</div>
+        <div class="grid3">
+          <div class="sbox"><div class="sval" id="miningEarned">0.00</div><div class="slbl">USDT Earned</div></div>
+          <div class="sbox"><div class="sval" id="miningHashes">0</div><div class="slbl">Hashes Today</div></div>
+          <div class="sbox"><div class="sval" id="miningHours">0h</div><div class="slbl">Active Time</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAKING -->
+    <div class="screen" id="s-staking">
+      <div class="card">
+        <div class="card-title">🔒 Staking Allocation</div>
+        <div style="margin-bottom:16px"><div class="slider-hdr"><span>⛏ PoW</span><span class="slider-val" id="powVal">35%</span></div><input type="range" min="0" max="100" value="35" id="powSlider" oninput="syncStaking()"></div>
+        <div style="margin-bottom:16px"><div class="slider-hdr"><span>🔒 PoS</span><span class="slider-val" id="posVal">40%</span></div><input type="range" min="0" max="100" value="40" id="posSlider" oninput="syncStaking()"></div>
+        <div style="margin-bottom:16px"><div class="slider-hdr"><span>💾 PoStorage</span><span class="slider-val" id="pstVal">25%</span></div><input type="range" min="0" max="100" value="25" id="pstSlider" oninput="syncStaking()"></div>
+        <div style="display:flex;justify-content:space-between;padding:10px;background:rgba(0,0,0,.3);border-radius:8px"><span style="font-size:12px;color:var(--dim)">Total</span><span style="font-family:Orbitron,sans-serif;font-size:14px;color:var(--green)" id="stakeTotal">100%</span></div>
+        <div class="btn-row"><button class="btn bp" onclick="saveStaking()">💾 Save</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Daily Rewards Estimate</div>
+        <div class="grid3">
+          <div class="sbox"><div class="sval" id="rewPow">0.42</div><div class="slbl">TM8 (PoW)</div></div>
+          <div class="sbox"><div class="sval" id="rewPos">0.61</div><div class="slbl">8x8 (PoS)</div></div>
+          <div class="sbox"><div class="sval" id="rewPst">0.28</div><div class="slbl">0x8 (PoSt)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERRAL -->
+    <div class="screen" id="s-referral">
+      <div class="card">
+        <div class="card-title">🌐 Referral Program</div>
+        <div style="text-align:center;padding:12px 0">
+          <div style="font-size:11px;color:var(--dim);margin-bottom:6px">YOUR REFERRAL CODE</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--gold);background:rgba(0,0,0,.3);border-radius:8px;padding:12px;letter-spacing:.15em" id="refCode">LOADING...</div>
+          <button class="btn bp" style="margin-top:10px" onclick="copyRef()">📋 Copy Code</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Commission Structure</div>
+        <div class="row"><span class="row-l">Tier 1 (Direct)</span><span class="row-r" style="color:var(--green)">5% of fees</span></div>
+        <div class="row"><span class="row-l">Tier 2 (Indirect)</span><span class="row-r" style="color:var(--cyan)">2% of fees</span></div>
+        <div class="row"><span class="row-l">Tier 3 (Network)</span><span class="row-r">1% of fees</span></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <div class="more-panel" id="morePanel">
+      <div class="more-i" onclick="nav('wallet');closeMore()"><span class="mi">💎</span>Wallet</div>
+      <div class="more-i" onclick="nav('mining');closeMore()"><span class="mi">⛏</span>Mine</div>
+      <div class="more-i" onclick="nav('staking');closeMore()"><span class="mi">🔒</span>Stake</div>
+      <div class="more-i" onclick="nav('referral');closeMore()"><span class="mi">🌐</span>Refer</div>
+      <div class="more-i" onclick="openModal('modalSubscribe');closeMore()"><span class="mi">💳</span>Pro</div>
+    </div>
+    <div class="nav-i on" id="ni-home" onclick="nav('home')"><span class="nav-icon">🏠</span>HOME</div>
+    <div class="nav-i" id="ni-ai" onclick="nav('ai')"><span class="nav-icon">⚡</span>AI</div>
+    <div class="nav-i" id="ni-wallet" onclick="nav('wallet')"><span class="nav-icon">💎</span>WALLET</div>
+    <div class="nav-i" id="ni-more" onclick="toggleMore()"><span class="nav-icon">⊞</span>MORE</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+const API_BASE = window.location.origin;
+const FREE_MINUTES = 88;
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let state = {
+  userId: localStorage.getItem('8x8_userId') || null,
+  freeMinutesUsed: parseInt(localStorage.getItem('8x8_freeUsed') || '0'),
+  isSubscribed: localStorage.getItem('8x8_subscribed') === 'true',
+  miningEnabled: false,
+  miningPower: 25,
+  staking: {pow:35, pos:40, pst:25},
+  chatHistory: [],
+  prices: {},
+};
+
+// ═══════════════════════════════════════
+// INTRO
+// ═══════════════════════════════════════
+(function(){
+  const f=document.getElementById('starField');
+  for(let i=0;i<120;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()>.85?3:2;s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--d:${2+Math.random()*5}s;--dl:${Math.random()*5}s;opacity:${Math.random()}`;f.appendChild(s)}
+})();
+
+const MSGS=['INITIALIZING SECURE CHANNEL...','LOADING 8×8 ECOSYSTEM...','CONNECTING TO NETWORK...','ACTIVATING FLASHTM8 AI...','READY ⚡'];
+let pct=0,mi=0;
+const pf=document.getElementById('pFill'),lm=document.getElementById('loadMsg'),pp=document.getElementById('pPct');
+const pi=setInterval(()=>{
+  pct+=Math.random()*4+1;if(pct>100)pct=100;
+  pf.style.width=pct+'%';pp.textContent=Math.floor(pct)+'%';
+  if(pct>(mi+1)*(100/MSGS.length)&&mi<MSGS.length-1){lm.textContent=MSGS[++mi]}
+  if(pct>=100){
+    clearInterval(pi);
+    setTimeout(()=>{
+      document.getElementById('gL').classList.add('open');
+      document.getElementById('gR').classList.add('open');
+      setTimeout(()=>{
+        document.getElementById('intro').classList.add('gone');
+        document.getElementById('app').classList.add('on');
+        initApp();
+      },1500);
+    },300);
+  }
+},60);
+
+// ═══════════════════════════════════════
+// APP INIT
+// ═══════════════════════════════════════
+async function initApp(){
+  // Register if new user
+  if(!state.userId){
+    try{
+      const r=await fetch(`${API_BASE}/api/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_info:{platform:'web',userAgent:navigator.userAgent}})});
+      const d=await r.json();
+      state.userId=d.user_id;
+      localStorage.setItem('8x8_userId',d.user_id);
+    }catch(e){console.error('Register failed:',e)}
+  }
+  
+  buildTicker();
+  loadPrices();
+  updateFreeDisplay();
+  syncStaking();
+  
+  // Welcome message
+  setTimeout(()=>{
+    addAIMsg('⚡ FlashTM8 AI online. I am your 8×8 Ecosystem intelligence. Ask me anything about trading, NFTs, mining, staking, or the 8×8 tokenomics. What shall we build today?');
+  },500);
+  
+  // Refresh prices every 30s
+  setInterval(loadPrices,30000);
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function nav(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-i').forEach(n=>n.classList.remove('on'));
+  const sc=document.getElementById('s-'+id);if(sc)sc.classList.add('on');
+  const ni=document.getElementById('ni-'+id);if(ni)ni.classList.add('on');
+  document.getElementById('mainContent').scrollTop=0;
+  closeMore();
+}
+function toggleMore(){const p=document.getElementById('morePanel');p.classList.toggle('on');document.getElementById('ni-more').classList.toggle('on',p.classList.contains('on'))}
+function closeMore(){document.getElementById('morePanel').classList.remove('on')}
+document.addEventListener('click',e=>{if(!e.target.closest('.bnav'))closeMore()});
+
+// ═══════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════
+function buildTicker(){
+  const data=[
+    {sym:'BTC',p:97500,c:2.1},{sym:'ETH',p:3420,c:1.4},{sym:'SOL',p:188,c:4.2},
+    {sym:'8x8',p:0.001,c:1.8},{sym:'TM8',p:0.042,c:3.2},{sym:'0x8',p:0.018,c:-0.5},
+  ];
+  const t=document.getElementById('ticker');
+  const make=()=>data.map(d=>`<div class="tick-item"><span class="tick-sym">${d.sym}</span><span>${d.p<1?d.p:d.p.toLocaleString()}</span><span class="${d.chg>=0?'tick-up':'tick-dn'}">${d.chg>=0?'+':''}${d.chg}%</span></div>`).join('');
+  t.innerHTML=make()+make();
+}
+
+// ═══════════════════════════════════════
+// PRICES
+// ═══════════════════════════════════════
+async function loadPrices(){
+  try{
+    const r=await fetch(`${API_BASE}/api/market/prices`);
+    const d=await r.json();
+    state.prices=d;
+    const el=document.getElementById('marketPrices');
+    if(el){
+      el.innerHTML=Object.entries(d).filter(([_,v])=>typeof v==='object').map(([k,v])=>{
+        const chg=v.change_24h||0;
+        return `<div class="row"><div><div style="font-family:Orbitron,sans-serif;font-size:13px;color:var(--gold)">${k}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700">$${(v.price||0).toLocaleString()}</div><div style="font-size:11px;color:${chg>=0?'var(--green)':'var(--red)'}">${chg>=0?'+':''}${chg.toFixed(1)}%</div></div></div>`;
+      }).join('');
+    }
+  }catch(e){console.error('Prices failed:',e)}
+}
+
+// ═══════════════════════════════════════
+// FREE MINUTES
+// ═══════════════════════════════════════
+function updateFreeDisplay(){
+  const remaining=Math.max(0,FREE_MINUTES-state.freeMinutesUsed);
+  document.getElementById('freeMin').textContent=`${remaining} min free`;
+  document.getElementById('homeFreeMin').textContent=`${remaining}/${FREE_MINUTES}`;
+}
+
+// ═══════════════════════════════════════
+// AI CHAT
+// ═══════════════════════════════════════
+function addAIMsg(text,isUser=false){
+  const body=document.getElementById('chatBody');if(!body)return;
+  const wrap=document.createElement('div');wrap.className='mw '+(isUser?'user':'ai');
+  const name=document.createElement('div');name.className='mn';name.textContent=isUser?'You':'⚡ FlashTM8';
+  const bub=document.createElement('div');bub.className='mb '+(isUser?'user':'ai');
+  bub.innerHTML=isUser?text.replace(/&/g,'&amp;').replace(/</g,'&lt;'):text.replace(/\n/g,'<br>');
+  wrap.appendChild(name);wrap.appendChild(bub);body.appendChild(wrap);body.scrollTop=body.scrollHeight;
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('chatInp'),btn=document.getElementById('sendBtn');
+  const txt=inp.value.trim();if(!txt||btn.disabled)return;
+  inp.value='';addAIMsg(txt,true);btn.disabled=true;
+  
+  // Check free minutes
+  if(!state.isSubscribed && state.freeMinutesUsed>=FREE_MINUTES){
+    addAIMsg('⏰ You\'ve used all 88 free minutes today. Subscribe for $8.88/month for unlimited access! 💎');
+    btn.disabled=false;
+    return;
+  }
+  
+  const thinking=document.createElement('div');
+  thinking.className='mw ai';
+  thinking.innerHTML='<div class="mn">⚡ FlashTM8</div><div class="mb ai thinking">⚡ Thinking...</div>';
+  document.getElementById('chatBody').appendChild(thinking);
+  
+  try{
+    const r=await fetch(`${API_BASE}/api/chat?user_id=${state.userId||'anonymous'}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:txt})
+    });
+    const d=await r.json();
+    thinking.remove();
+    
+    if(d.error==='NO_ACCESS'){
+      addAIMsg('⏰ '+d.message);
+    } else {
+      addAIMsg(d.response||'Processing...');
+      state.freeMinutesUsed++;
+      localStorage.setItem('8x8_freeUsed',state.freeMinutesUsed);
+      updateFreeDisplay();
+    }
+  }catch(e){
+    thinking.remove();
+    addAIMsg('⚡ Connection issue. Please check your internet and try again.');
+  }
+  btn.disabled=false;inp.focus();
+}
+
+function qPrompt(txt){document.getElementById('chatInp').value=txt;sendMsg();nav('ai')}
+
+// ═══════════════════════════════════════
+// MINING
+// ═══════════════════════════════════════
+function toggleMining(){
+  state.miningEnabled=document.getElementById('miningTog').checked;
+  showToast(state.miningEnabled?'⛏ Mining enabled!':'⛏ Mining disabled',state.miningEnabled?'success':'info');
+}
+function updateMiningPower(){
+  state.miningPower=parseInt(document.getElementById('miningSlider').value);
+  document.getElementById('miningPower').textContent=state.miningPower+'%';
+}
+
+// ═══════════════════════════════════════
+// STAKING
+// ═══════════════════════════════════════
+function syncStaking(){
+  const p=parseInt(document.getElementById('powSlider').value);
+  const s=parseInt(document.getElementById('posSlider').value);
+  const t=parseInt(document.getElementById('pstSlider').value);
+  const total=p+s+t;
+  document.getElementById('powVal').textContent=p+'%';
+  document.getElementById('posVal').textContent=s+'%';
+  document.getElementById('pstVal').textContent=t+'%';
+  const el=document.getElementById('stakeTotal');
+  el.textContent=total+'%';
+  el.style.color=total===100?'var(--green)':'var(--red)';
+  document.getElementById('rewPow').textContent=(p*0.012).toFixed(2);
+  document.getElementById('rewPos').textContent=(s*0.0153).toFixed(2);
+  document.getElementById('rewPst').textContent=(t*0.011).toFixed(2);
+  state.staking={pow:p,pos:s,pst:t};
+}
+function saveStaking(){
+  const total=state.staking.pow+state.staking.pos+state.staking.pst;
+  if(total!==100){showToast('Must total 100%','error');return;}
+  showToast('✅ Staking saved!','success');
+}
+
+// ═══════════════════════════════════════
+// REFERRAL
+// ═══════════════════════════════════════
+function copyRef(){
+  const code=document.getElementById('refCode').textContent;
+  navigator.clipboard?.writeText(code).catch(()=>{});
+  showToast('✅ Code copied!','success');
+}
+
+// ═══════════════════════════════════════
+// PAYMENTS
+// ═══════════════════════════════════════
+const WALLETS={};
+// Wallets loaded from backend API — never hardcoded
+async function loadWallets(){
+  try{
+    const r=await fetch(`${API_BASE}/api/payment/wallets`);
+    const d=await r.json();
+    Object.assign(WALLETS,d.wallets||{});
+  }catch(e){console.error('Failed to load wallets:',e)}
+}
+
+function openModal(id){document.getElementById(id).classList.add('on');updateWalletDisplay()}
+function closeModal(id){document.getElementById(id).classList.remove('on')}
+document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on')}));
+
+function updateWalletDisplay(){
+  const cur=document.getElementById('payCurrency').value;
+  document.getElementById('walletDisplay').textContent=WALLETS[cur]||'N/A';
+}
+document.getElementById('payCurrency')?.addEventListener('change',updateWalletDisplay);
+
+async function submitPayment(){
+  const cur=document.getElementById('payCurrency').value;
+  const tx=document.getElementById('txHash').value.trim();
+  if(!tx){showToast('Enter transaction hash','error');return;}
+  try{
+    await fetch(`${API_BASE}/api/payment/submit?user_id=${state.userId||'anonymous'}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({currency:cur,amount:8.88,tx_hash:tx})
+    });
+    closeModal('modalSubscribe');
+    showToast('✅ Payment submitted! Admin will verify.','success');
+  }catch(e){showToast('Error submitting payment','error')}
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');const item=document.createElement('div');
+  item.className='toast-item'+(type==='error'?' err':type==='success'?' suc':'');
+  item.innerHTML=`<span>${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;
+  t.appendChild(item);setTimeout(()=>item.remove(),3500);
+}
+
+// ═══════════════════════════════════════
+// PWA INSTALL
+// ═══════════════════════════════════════
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
