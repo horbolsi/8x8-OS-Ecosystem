@@ -1,2 +1,2 @@
-python-telegram-bot==20.7
-httpx==0.28.1
+# Bot uses only Python stdlib (urllib, json, logging)
+# No external dependencies needed
