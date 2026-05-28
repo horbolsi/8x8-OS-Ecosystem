@@ -1,5 +1,4 @@
 # Render Blueprint for 8x8 Ecosystem OS
-# https://render.com/docs/blueprint-spec
 services:
   - type: web
     name: 8x8-ecosystem-api
@@ -10,38 +9,22 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: 8x8-ecosystem-db
-          property: connectionString
       - key: TELEGRAM_BOT_TOKEN
-        sync: false  # Set manually in Render dashboard
+        sync: false
       - key: ADMIN_KEY
-        sync: false  # Set manually in Render dashboard — NEVER hardcode
+        sync: false
       - key: BACKEND_URL
         value: "https://8x8-ecosystem-api.onrender.com"
-      - key: PAY_WALLET_USDT
-        sync: false  # Set manually — your USDT wallet
       - key: PAY_WALLET_BTC
-        sync: false  # Set manually — your BTC wallet
-      - key: PAY_WALLET_ETH
         sync: false
       - key: PAY_WALLET_XMR
-        sync: false
-      - key: PAY_WALLET_SOL
-        sync: false
-      - key: PAY_WALLET_BNB
-        sync: false
-      - key: PAY_WALLET_TON
-        sync: false
-      - key: PAY_WALLET_PI
         sync: false
 
   - type: worker
     name: 8x8-ecosystem-bot
     runtime: python
     plan: free
-    buildCommand: "pip install -r backend/requirements.txt"
+    buildCommand: "pip install -r bot/requirements.txt"
     startCommand: "cd bot && python telegram_bot.py"
     autoDeploy: true
     envVars:
@@ -52,8 +35,6 @@ services:
           name: 8x8-ecosystem-api
           type: web
           property: url
-      - key: ADMIN_KEY
-        sync: false  # Set manually in Render dashboard
 
 databases:
   - name: 8x8-ecosystem-db
