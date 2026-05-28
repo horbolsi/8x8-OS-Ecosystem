@@ -1,0 +1,2 @@
+# Pin Python version for Render
+python-3.12
