@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>⚡ BTC Realtime Unlimited — Multi Exchange + Technical Analysis</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #121212;
+    color: #eee;
+  }
+  h1 {
+    margin-bottom: 10px;
+  }
+  label {
+    display: block;
+    margin: 10px 0 4px;
+  }
+  textarea, input[type=text], select {
+    width: 100%;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 8px;
+    background: #222;
+    color: #eee;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #0d6efd;
+    color: white;
+  }
+  button:disabled {
+    background: #555;
+    cursor: not-allowed;
+  }
+  #status {
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  #stats, #aggStats {
+    margin-top: 15px;
+    font-family: monospace;
+    white-space: pre-line;
+  }
+  #tradesTable, #aggTable {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    max-height: 350px;
+    overflow-y: auto;
+    display: block;
+  }
+  #tradesTable thead, #aggTable thead {
+    background: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  #tradesTable th, #tradesTable td, #aggTable th, #aggTable td {
+    border: 1px solid #444;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 13px;
+  }
+  #tradesTable tbody tr:nth-child(even), #aggTable tbody tr:nth-child(even) {
+    background: #1e1e1e;
+  }
+  #tradesTable tbody tr:hover, #aggTable tbody tr:hover {
+    background: #333;
+  }
+  #chart {
+    margin-top: 25px;
+    width: 100%;
+    height: 300px;
+    background: #000;
+    border: 1px solid #444;
+    position: relative;
+  }
+  #chartControls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    background: rgba(0,0,0,0.8);
+    padding: 5px;
+    border-radius: 4px;
+  }
+  #chartTimeDisplay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background: rgba(0,0,0,0.8);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+  }
+  #exportBtn {
+    margin-left: 10px;
+    background: #198754;
+  }
+  #clearBtn {
+    margin-left: 10px;
+    background: #dc3545;
+  }
+  #logicSection {
+    margin-top: 40px;
+  }
+  #logicInput {
+    height: 150px;
+  }
+  #logicOutput {
+    margin-top: 10px;
+    background: #222;
+    padding: 10px;
+    min-height: 60px;
+    white-space: pre-wrap;
+    font-family: monospace;
+  }
+  .connection-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .connected { background: #0f0; }
+  .disconnected { background: #f00; }
+  .connecting { background: #ff0; }
+  .virtual-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .alert-panel {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  .alert-panel.minimized {
+    height: 40px;
+    overflow: hidden;
+  }
+  .alert-panel.minimized #alertContainer {
+    display: none;
+  }
+  .alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .alert {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    border-left: 4px solid;
+  }
+  .alert-info { background: #002b64; border-color: #007bff; }
+  .alert-warning { background: #664d03; border-color: #ffc107; }
+  .alert-danger { background: #5c0a15; border-color: #dc3545; }
+  .alert-success { background: #0f5132; border-color: #198754; }
+  .alert-buy { background: #0f5132; border-color: #198754; color: #0f0; }
+  .alert-sell { background: #5c0a15; border-color: #dc3545; color: #f00; }
+  .alert-hold { background: #343a40; border-color: #6c757d; color: #fff; }
+  
+  /* Current Signal Display */
+  .current-signal {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    min-width: 300px;
+    border: 3px solid;
+    background: #1a1a1a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+  .current-signal-buy { border-color: #198754; background: #0f5132; color: #0f0; }
+  .current-signal-sell { border-color: #dc3545; background: #5c0a15; color: #f00; }
+  .current-signal-hold { border-color: #6c757d; background: #343a40; color: #fff; }
+  
+  .exchange-preset {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+  .indicator-value {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  .indicator-buy { color: #0f0; }
+  .indicator-sell { color: #f00; }
+  .indicator-neutral { color: #888; }
+  
+  /* Sovereign Analysis Styles */
+  .sovereign-section {
+    margin-top: 30px;
+    padding: 15px;
+    background: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid #333;
+  }
+  .sovereign-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #ff6b35;
+  }
+  .sovereign-bar {
+    font-family: monospace;
+    font-size: 14px;
+    margin: 10px 0;
+    padding: 5px;
+    background: #000;
+    border-radius: 4px;
+  }
+  .sovereign-prediction {
+    margin: 8px 0;
+    padding: 8px;
+    background: #252525;
+    border-radius: 4px;
+    border-left: 3px solid #444;
+  }
+  .sovereign-signal {
+    font-weight: bold;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .signal-buy { background: #0f5132; border: 2px solid #198754; }
+  .signal-sell { background: #5c0a15; border: 2px solid #dc3545; }
+  .signal-hold { background: #343a40; border: 2px solid #6c757d; }
+  .sovereign-metric {
+    display: inline-block;
+    margin: 2px 8px 2px 0;
+    padding: 2px 6px;
+    background: #333;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+  
+  /* Enhanced Aggregated Analysis */
+  .agg-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+  }
+  .agg-metric-card {
+    background: #252525;
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 4px solid #444;
+  }
+  .agg-metric-value {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 5px 0;
+  }
+  .agg-metric-label {
+    font-size: 12px;
+    color: #888;
+  }
+  .metric-positive { color: #0f0; }
+  .metric-negative { color: #f00; }
+  .metric-neutral { color: #888; }
+  
+  /* Loading Overlay */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+    color: white;
+  }
+  .loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin-bottom: 15px;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @media (max-width: 768px) {
+    body { margin: 10px; }
+    #tradesTable { font-size: 11px; }
+    .alert-panel, .current-signal { 
+      width: 95%; 
+      right: 2.5%; 
+      left: 2.5%;
+    }
+    .current-signal {
+      position: relative;
+      transform: none;
+      margin: 10px 0;
+    }
+    button { padding: 8px 16px; font-size: 14px; }
+    .sovereign-bar { font-size: 12px; }
+    .agg-metrics-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div id="loadingMessage" class="loading-message">Processing...</div>
+</div>
+
+<!-- Current Signal Display - Always Visible -->
+<div id="currentSignal" class="current-signal current-signal-hold">
+  <div id="currentSignalText">🔄 System Initializing...</div>
+  <div id="currentSignalTime" style="font-size: 12px; opacity: 0.8;"></div>
+</div>
+
+<h1>⚡ BTC Realtime Unlimited — Multi Exchange + Technical Analysis</h1>
+
+<!-- Instrument Selector -->
+<div class="exchange-preset">
+  <label for="instrumentSelect">Instrument/Symbol:</label>
+  <input type="text" id="instrumentSelect" value="BTC-USDT" placeholder="Enter symbol (e.g., BTC-USDT, ETH-USDT, etc.)" />
+  <small style="color: #888;">Supports any trading pair across all exchanges</small>
+</div>
+
+<!-- Exchange Preset Selector -->
+<div class="exchange-preset">
+  <label for="exchangeSelect">Exchange Preset:</label>
+  <select id="exchangeSelect">
+    <option value="custom">Custom Configuration</option>
+    <option value="okx">OKX (BTC-USDT)</option>
+    <option value="binance">Binance (BTCUSDT)</option>
+    <option value="kraken">Kraken (XBT/USD)</option>
+    <option value="bybit">Bybit (BTCUSDT)</option>
+    <option value="coinbase">Coinbase (BTC-USD)</option>
+    <option value="custom_api">Custom API</option>
+  </select>
+  <button id="loadPresetBtn">Load Preset</button>
+</div>
+
+<label for="wsUrl">WebSocket URL (editable)</label>
+<input type="text" id="wsUrl" value="wss://ws.okx.com:8443/ws/v5/public" />
+
+<label for="subscribeMsg">Subscribe message (JSON or raw string)</label>
+<textarea id="subscribeMsg" rows="3">{"op":"subscribe","args":[{"channel":"trades","instId":"BTC-USDT"}]}</textarea>
+
+<label for="parserFunc">Parser (editable) — must return array of trades: [{ts,price,size,side,id,inst,raw},...]</label>
+<textarea id="parserFunc" rows="16">
+// Universal Parser for All Coins
+function parseTrades(raw) {
+  if (!raw) return [];
+  
+  // Handle different message types
+  if (raw.event === "subscribe" || raw.event === "error") {
+    console.log('Exchange System Message:', raw);
+    return [];
+  }
+  
+  // Handle trade data from various exchanges
+  if (raw.arg && raw.arg.channel === "trades" && raw.data) {
+    const out = [];
+    raw.data.forEach(trade => {
+      if (!trade.px && !trade.p) return;
+      
+      // Convert timestamp properly
+      let timestamp;
+      if (trade.ts) {
+        timestamp = parseInt(trade.ts);
+      } else {
+        timestamp = Date.now();
+      }
+      
+      // Universal price detection
+      const price = trade.px || trade.p || trade.price;
+      const size = trade.sz || trade.q || trade.v || trade.size || 0;
+      const side = (trade.side || trade.S || 'unknown').toLowerCase();
+      const id = trade.tradeId || trade.t || trade.i || (timestamp + '_' + Math.random().toString(36).substr(2, 9));
+      const inst = trade.instId || trade.s || trade.symbol || 'UNKNOWN';
+      
+      out.push({
+        ts: timestamp,
+        price: parseFloat(price),
+        size: parseFloat(size),
+        side: side,
+        id: id,
+        inst: inst,
+        raw: trade,
+        exchange: 'Multi-Exchange'
+      });
+    });
+    return out;
+  }
+  
+  return [];
+}
+</textarea>
+
+<button id="applyParserBtn">Apply Parser</button>
+
+<div id="controls" style="margin-top:15px;">
+  <button id="startBtn">Start</button>
+  <button id="stopBtn" disabled>Stop</button>
+  <button id="exportBtn" disabled>Export CSV</button>
+  <button id="clearBtn" disabled>Clear</button>
+</div>
+
+<div id="status">Status: Idle</div>
+<div id="stats">
+  Latest Price: <span id="latestPrice">—</span><br/>
+  Trades Stored: <span id="tradesStored">0</span><br/>
+  Last Timestamp (ms): <span id="lastTs">—</span><br/>
+  Connection: <span class="connection-dot disconnected"></span><span id="connStatus">Disconnected</span>
+</div>
+
+<!-- Sovereign Trading Analysis Section -->
+<div id="sovereignAnalysis" class="sovereign-section">
+  <div class="sovereign-header">🎯 ULTRA-TIGHT FUSION COMMAND CENTER</div>
+  <div id="sovereignOutput">Loading sovereign analysis engine...</div>
+</div>
+
+<div class="virtual-scroll">
+  <table id="tradesTable" aria-label="Trades Table">
+    <thead>
+      <tr>
+        <th>ts (ms)</th>
+        <th>Time</th>
+        <th>Price</th>
+        <th>Size</th>
+        <th>Side</th>
+        <th>Inst</th>
+        <th>ID</th>
+        <th>Exchange</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Enhanced Chart with Millisecond Precision -->
+<div id="chart">
+  <div id="chartTimeDisplay"></div>
+  <div id="chartControls">
+    <button id="zoomInBtn" style="padding: 2px 6px; font-size: 12px;">+</button>
+    <button id="zoomOutBtn" style="padding: 2px 6px; font-size: 12px;">-</button>
+    <button id="resetZoomBtn" style="padding: 2px 6px; font-size: 12px;">Reset</button>
+  </div>
+  <canvas id="chartCanvas"></canvas>
+</div>
+
+<!-- Technical Indicators Section -->
+<h2 style="margin-top: 40px;">Technical Indicators</h2>
+<div id="indicators">
+  RSI (14): <span id="rsiValue" class="indicator-value">—</span><br/>
+  SMA (20): <span id="smaValue" class="indicator-value">—</span><br/>
+  EMA (20): <span id="emaValue" class="indicator-value">—</span><br/>
+  VWAP: <span id="vwapValue" class="indicator-value">—</span><br/>
+  MACD: <span id="macdValue" class="indicator-value">—</span>
+</div>
+
+<!-- Enhanced Aggregated Stats Table -->
+<h2 style="margin-top: 40px;">Enhanced Aggregated Trades Analysis</h2>
+<div id="aggStats">Loading enhanced aggregated stats...</div>
+<div id="aggMetricsGrid" class="agg-metrics-grid"></div>
+<table id="aggTable" aria-label="Aggregated Trades Stats Table">
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Value</th>
+      <th>Trend</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- Logic Section -->
+<div id="logicSection">
+  <h2>Custom Logic & Suggestions</h2>
+  <label for="logicInput">Insert your JavaScript logic here. Use <code>trades</code> (array) and <code>aggStatsData</code> (object) to analyze data and return a string with your suggestions.</label>
+  <textarea id="logicInput" placeholder="function analyze(trades, aggStatsData) {&#10;  // Your code here&#10;  return 'Suggestions...';&#10;}">function analyze(trades, aggStatsData) {
+  if (!trades.length) return '🔄 Collecting market data...\nNo trades to analyze yet.';
+
+  const recentTrades = trades.slice(0, 50);
+  const prices = recentTrades.map(t => t.price);
+  const currentPrice = prices[0] || 0;
+  
+  const buyTrades = recentTrades.filter(t => t.side === 'buy');
+  const sellTrades = recentTrades.filter(t => t.side === 'sell');
+  
+  // Get exact counts from enhanced stats
+  const buyCount = aggStatsData?.buyCount || buyTrades.length;
+  const sellCount = aggStatsData?.sellCount || sellTrades.length;
+  const holdCount = aggStatsData?.holdsCount || 0;
+  
+  // Simple analysis
+  const buyPressure = buyCount / recentTrades.length;
+  const volumeRatio = aggStatsData?.buySize / (aggStatsData?.sellSize || 1);
+  
+  let signal = 'HOLD';
+  let confidence = 'LOW';
+  
+  if (buyPressure > 0.7 && volumeRatio > 1.5) {
+    signal = 'BUY';
+    confidence = 'HIGH';
+  } else if (buyPressure < 0.3 && volumeRatio < 0.7) {
+    signal = 'SELL';
+    confidence = 'MEDIUM';
+  }
+  
+  return `🎯 ${signal} [${confidence} CONFIDENCE]
+
+📊 EXACT COUNTS:
+Buy Trades: ${buyCount}
+Sell Trades: ${sellCount}
+Hold Events: ${holdCount}
+Total Trades: ${recentTrades.length}
+
+📈 MARKET DATA:
+Current Price: $${currentPrice.toFixed(2)}
+Buy Pressure: ${(buyPressure * 100).toFixed(1)}%
+Volume Ratio: ${volumeRatio.toFixed(2)}x
+
+💡 SUGGESTION:
+${signal === 'BUY' ? 'Consider long position with tight stop loss' :
+ signal === 'SELL' ? 'Consider short position or wait for better entry' :
+ 'Wait for clearer market direction'}
+
+⏰ Last Update: ${new Date().toLocaleTimeString()}`;
+}</textarea>
+  <button id="runLogicBtn">Run Logic</button>
+  <div id="logicOutput">Output will appear here.</div>
+</div>
+
+<script>
+// ============================================================================
+// ENHANCED EXCHANGE CONFIGURATIONS WITH WORKING WEBSOCKETS
+// ============================================================================
+
+const EXCHANGE_CONFIGS = {
+  okx: {
+    name: "OKX",
+    wsUrl: "wss://ws.okx.com:8443/ws/v5/public",
+    subscribeMsg: '{"op":"subscribe","args":[{"channel":"trades","instId":"BTC-USDT"}]}',
+    parser: `function parseTrades(raw) {
+  if (!raw) return [];
+  if (raw.event === "subscribe" || raw.event === "error") return [];
+  
+  if (raw.arg && raw.arg.channel === "trades" && raw.data) {
+    const out = [];
+    raw.data.forEach(trade => {
+      if (!trade.px) return;
+      let timestamp = trade.ts ? parseInt(trade.ts) : Date.now();
+      out.push({
+        ts: timestamp,
+        price: parseFloat(trade.px),
+        size: parseFloat(trade.sz || 0),
+        side: (trade.side || 'unknown').toLowerCase(),
+        id: trade.tradeId || (timestamp + '_' + Math.random().toString(36).substr(2, 9)),
+        inst: trade.instId || 'BTC-USDT',
+        raw: trade,
+        exchange: 'OKX'
+      });
+    });
+    return out;
+  }
+  return [];
+}`
+  },
+  binance: {
+    name: "Binance",
+    wsUrl: "wss://stream.binance.com:9443/ws/btcusdt@trade",
+    subscribeMsg: '{"method":"SUBSCRIBE","params":["btcusdt@trade"],"id":1}',
+    parser: `function parseTrades(raw) {
+  if (!raw) return [];
+  try {
+    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    if (data.e === "trade") {
+      return [{
+        ts: data.T,
+        price: parseFloat(data.p),
+        size: parseFloat(data.q),
+        side: data.m ? 'sell' : 'buy',
+        id: data.t.toString(),
+        inst: 'BTCUSDT',
+        raw: data,
+        exchange: 'Binance'
+      }];
+    }
+  } catch(e) {
+    console.log('Binance parse error:', e);
+  }
+  return [];
+}`
+  },
+  kraken: {
+    name: "Kraken",
+    wsUrl: "wss://ws.kraken.com",
+    subscribeMsg: '{"event":"subscribe","pair":["XBT/USD"],"subscription":{"name":"trade"}}',
+    parser: `function parseTrades(raw) {
+  if (!raw) return [];
+  try {
+    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    
+    // Kraken sends array format
+    if (Array.isArray(data) && data.length >= 2 && data[1] === 'trade') {
+      const trades = data[1];
+      if (Array.isArray(trades)) {
+        return trades.map(trade => ({
+          ts: Math.floor(parseFloat(trade[2]) * 1000),
+          price: parseFloat(trade[0]),
+          size: parseFloat(trade[1]),
+          side: trade[3] === 'b' ? 'buy' : (trade[3] === 's' ? 'sell' : 'unknown'),
+          id: trade[2] + '_' + trade[0] + '_' + trade[1],
+          inst: 'XBT/USD',
+          raw: trade,
+          exchange: 'Kraken'
+        }));
+      }
+    }
+  } catch(e) {
+    console.log('Kraken parse error:', e);
+  }
+  return [];
+}`
+  },
+  bybit: {
+    name: "Bybit",
+    wsUrl: "wss://stream.bybit.com/v5/public/spot",
+    subscribeMsg: '{"op":"subscribe","args":["publicTrade.BTCUSDT"]}',
+    parser: `function parseTrades(raw) {
+  if (!raw) return [];
+  try {
+    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    if (data.topic === "publicTrade.BTCUSDT" && Array.isArray(data.data)) {
+      return data.data.map(trade => ({
+        ts: parseInt(trade.T),
+        price: parseFloat(trade.p),
+        size: parseFloat(trade.v),
+        side: trade.S === 'Buy' ? 'buy' : (trade.S === 'Sell' ? 'sell' : 'unknown'),
+        id: trade.i || (trade.T + '_' + trade.p + '_' + trade.v),
+        inst: 'BTCUSDT',
+        raw: trade,
+        exchange: 'Bybit'
+      }));
+    }
+  } catch(e) {
+    console.log('Bybit parse error:', e);
+  }
+  return [];
+}`
+  },
+  coinbase: {
+    name: "Coinbase",
+    wsUrl: "wss://ws-feed.exchange.coinbase.com",
+    subscribeMsg: '{"type":"subscribe","product_ids":["BTC-USD"],"channels":["matches"]}',
+    parser: `function parseTrades(raw) {
+  if (!raw) return [];
+  try {
+    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    if (data.type === "match") {
+      return [{
+        ts: Date.parse(data.time) || Date.now(),
+        price: parseFloat(data.price),
+        size: parseFloat(data.size),
+        side: data.side === 'buy' ? 'buy' : (data.side === 'sell' ? 'sell' : 'unknown'),
+        id: data.trade_id.toString(),
+        inst: 'BTC-USD',
+        raw: data,
+        exchange: 'Coinbase'
+      }];
+    }
+  } catch(e) {
+    console.log('Coinbase parse error:', e);
+  }
+  return [];
+}`
+  },
+  custom_api: {
+    name: "Custom API",
+    wsUrl: "wss://your-custom-api.com/ws",
+    subscribeMsg: '{"action":"subscribe","symbol":"BTCUSDT","channel":"trades"}',
+    parser: `function parseTrades(raw) {
+  // CUSTOM PARSER - MODIFY FOR YOUR API
+  if (!raw) return [];
+  
+  try {
+    const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    
+    // Example custom format - adapt to your API
+    if (data.type === "trade" && data.symbol) {
+      return [{
+        ts: data.timestamp || Date.now(),
+        price: parseFloat(data.price),
+        size: parseFloat(data.quantity || data.volume || 0),
+        side: (data.side || 'unknown').toLowerCase(),
+        id: data.tradeId || data.id || (Date.now() + '_' + Math.random().toString(36).substr(2, 9)),
+        inst: data.symbol,
+        raw: data,
+        exchange: 'Custom API'
+      }];
+    }
+  } catch(e) {
+    console.error('Custom parser error:', e);
+  }
+  return [];
+}`
+  }
+};
+
+// ============================================================================
+// ENHANCED ALERT SYSTEM WITH MINIMIZE/RESTORE
+// ============================================================================
+
+class EnhancedAlertSystem {
+  constructor() {
+    this.alerts = [];
+    this.maxAlerts = 50;
+    this.panel = null;
+    this.isMinimized = false;
+    this.currentSignal = null;
+    this.createAlertPanel();
+  }
+  
+  createAlertPanel() {
+    this.panel = document.createElement('div');
+    this.panel.className = 'alert-panel';
+    this.panel.innerHTML = `
+      <div class="alert-header">
+        <h4 style="margin:0;">🚨 Active Alerts</h4>
+        <div>
+          <button id="minimizeAlertBtn" style="background: #6c757d; padding: 2px 8px; font-size: 12px; margin-right: 5px;">−</button>
+          <button id="clearAlertsBtn" style="background: #dc3545; padding: 2px 8px; font-size: 12px;">Clear</button>
+        </div>
+      </div>
+      <div id="alertContainer"></div>
+    `;
+    document.body.appendChild(this.panel);
+    
+    const minimizeBtn = this.panel.querySelector('#minimizeAlertBtn');
+    const clearBtn = this.panel.querySelector('#clearAlertsBtn');
+    
+    minimizeBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.toggleMinimize();
+    };
+    
+    clearBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.clearAlerts();
+    };
+    
+    // Click header to toggle minimize
+    this.panel.querySelector('.alert-header').onclick = (e) => {
+      if (e.target === minimizeBtn || e.target === clearBtn) return;
+      this.toggleMinimize();
+    };
+    
+    this.updateUI();
+  }
+  
+  toggleMinimize() {
+    this.isMinimized = !this.isMinimized;
+    const btn = this.panel.querySelector('#minimizeAlertBtn');
+    
+    if (this.isMinimized) {
+      this.panel.classList.add('minimized');
+      btn.textContent = '+';
+      btn.title = 'Restore Alerts';
+    } else {
+      this.panel.classList.remove('minimized');
+      btn.textContent = '−';
+      btn.title = 'Minimize Alerts';
+    }
+  }
+  
+  addAlert(type, message, severity = 'info', signalType = null) {
+    let alertClass = `alert-${severity}`;
+    if (signalType === 'BUY') alertClass = 'alert-buy';
+    else if (signalType === 'SELL') alertClass = 'alert-sell';
+    else if (signalType === 'HOLD') alertClass = 'alert-hold';
+    
+    this.alerts.unshift({
+      timestamp: Date.now(),
+      type,
+      message,
+      severity,
+      signalType,
+      alertClass
+    });
+    
+    if (this.alerts.length > this.maxAlerts) {
+      this.alerts = this.alerts.slice(0, this.maxAlerts);
+    }
+    
+    this.updateUI();
+    
+    // Auto-minimize if too many alerts
+    if (this.alerts.length > 10 && !this.isMinimized) {
+      setTimeout(() => this.toggleMinimize(), 3000);
+    }
+  }
+  
+  updateCurrentSignal(signal, confidence, message) {
+    this.currentSignal = { signal, confidence, message, timestamp: Date.now() };
+    
+    const signalElement = document.getElementById('currentSignal');
+    const textElement = document.getElementById('currentSignalText');
+    const timeElement = document.getElementById('currentSignalTime');
+    
+    if (signalElement && textElement && timeElement) {
+      signalElement.className = 'current-signal';
+      if (signal === 'BUY') signalElement.classList.add('current-signal-buy');
+      else if (signal === 'SELL') signalElement.classList.add('current-signal-sell');
+      else signalElement.classList.add('current-signal-hold');
+      
+      const signalEmoji = signal === 'BUY' ? '🟢' : signal === 'SELL' ? '🔴' : '🟡';
+      textElement.textContent = `${signalEmoji} ${signal} | ${confidence} CONFIDENCE`;
+      timeElement.textContent = `🕒 ${new Date().toLocaleTimeString()}`;
+      signalElement.title = message;
+    }
+  }
+  
+  updateUI() {
+    if (!this.panel) return;
+    const container = this.panel.querySelector('#alertContainer');
+    if (!container) return;
+    
+    container.innerHTML = this.alerts.map(alert => `
+      <div class="alert ${alert.alertClass}">
+        <strong>${new Date(alert.timestamp).toLocaleTimeString()}</strong><br>
+        ${alert.message}
+      </div>
+    `).join('');
+  }
+  
+  clearAlerts() {
+    this.alerts = [];
+    this.updateUI();
+  }
+}
+
+// ============================================================================
+// ENHANCED MILLISECOND-PRECISION CHART SYSTEM
+// ============================================================================
+
+class MillisecondPrecisionChart {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    this.ctx = this.canvas.getContext('2d');
+    this.data = [];
+    this.maxPoints = 2000; // Circular buffer for performance
+    this.currentIndex = 0;
+    this.zoomLevel = 1.0;
+    this.panOffset = 0;
+    this.isPanning = false;
+    this.lastPanX = 0;
+    
+    this.setupEventListeners();
+    this.fitCanvas();
+  }
+  
+  setupEventListeners() {
+    window.addEventListener('resize', () => {
+      this.fitCanvas();
+      this.draw();
+    });
+    
+    // Zoom controls
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+      this.zoomLevel *= 1.2;
+      this.draw();
+    });
+    
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+      this.zoomLevel /= 1.2;
+      this.draw();
+    });
+    
+    document.getElementById('resetZoomBtn').addEventListener('click', () => {
+      this.zoomLevel = 1.0;
+      this.panOffset = 0;
+      this.draw();
+    });
+    
+    // Mouse interactions
+    this.canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      this.zoomLevel *= zoomFactor;
+      this.draw();
+    });
+    
+    this.canvas.addEventListener('mousedown', (e) => {
+      this.isPanning = true;
+      this.lastPanX = e.clientX;
+    });
+    
+    this.canvas.addEventListener('mousemove', (e) => {
+      if (this.isPanning) {
+        const deltaX = e.clientX - this.lastPanX;
+        this.panOffset += deltaX * 2;
+        this.lastPanX = e.clientX;
+        this.draw();
+      }
+    });
+    
+    this.canvas.addEventListener('mouseup', () => {
+      this.isPanning = false;
+    });
+    
+    this.canvas.addEventListener('mouseleave', () => {
+      this.isPanning = false;
+    });
+  }
+  
+  fitCanvas() {
+    const container = this.canvas.parentElement;
+    this.canvas.width = container.clientWidth;
+    this.canvas.height = container.clientHeight;
+    this.draw();
+  }
+  
+  addDataPoint(trade) {
+    // Use circular buffer for unlimited data with fixed memory
+    if (this.data.length < this.maxPoints) {
+      this.data.push(trade);
+    } else {
+      this.data[this.currentIndex] = trade;
+      this.currentIndex = (this.currentIndex + 1) % this.maxPoints;
+    }
+    this.draw();
+  }
+  
+  setData(trades) {
+    this.data = trades.slice(-this.maxPoints); // Keep only recent points for display
+    this.currentIndex = 0;
+    this.draw();
+  }
+  
+  draw() {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    
+    if (this.data.length < 2) {
+      // Draw empty state
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#666';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Waiting for trade data...', w / 2, h / 2);
+      return;
+    }
+    
+    // Clear with black background
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Get visible time range with zoom and pan
+    const sortedData = [...this.data].sort((a, b) => a.ts - b.ts);
+    const firstTs = sortedData[0].ts;
+    const lastTs = sortedData[sortedData.length - 1].ts;
+    const totalTimeSpan = lastTs - firstTs;
+    
+    const visibleTimeSpan = totalTimeSpan / this.zoomLevel;
+    const visibleStart = firstTs + (this.panOffset / w) * totalTimeSpan;
+    const visibleEnd = visibleStart + visibleTimeSpan;
+    
+    // Update time display
+    const timeDisplay = document.getElementById('chartTimeDisplay');
+    if (timeDisplay) {
+      const startTime = new Date(visibleStart).toISOString().substr(11, 12);
+      const endTime = new Date(visibleEnd).toISOString().substr(11, 12);
+      timeDisplay.textContent = `${startTime} - ${endTime} | Zoom: ${this.zoomLevel.toFixed(1)}x`;
+    }
+    
+    // Filter data to visible range
+    const visibleData = sortedData.filter(t => t.ts >= visibleStart && t.ts <= visibleEnd);
+    
+    if (visibleData.length < 2) return;
+    
+    // Calculate price range
+    let minPrice = Infinity, maxPrice = -Infinity;
+    for (let pt of visibleData) {
+      if (pt.price < minPrice) minPrice = pt.price;
+      if (pt.price > maxPrice) maxPrice = pt.price;
+    }
+    
+    if (minPrice === maxPrice) {
+      minPrice -= 1;
+      maxPrice += 1;
+    }
+    
+    const priceRange = maxPrice - minPrice;
+    const padding = priceRange * 0.05; // 5% padding
+    
+    function priceToY(p) {
+      return Math.max(2, Math.min(h - 2, h - ((p - (minPrice - padding)) / (priceRange + padding * 2)) * h));
+    }
+    
+    function timeToX(ts) {
+      return ((ts - visibleStart) / visibleTimeSpan) * w;
+    }
+    
+    // Draw grid lines
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 0.5;
+    
+    // Horizontal grid lines (price levels)
+    const priceSteps = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+    const step = priceSteps.find(s => priceRange / s <= 10) || 100;
+    
+    for (let p = Math.ceil((minPrice - padding) / step) * step; p <= maxPrice + padding; p += step) {
+      const y = priceToY(p);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+      
+      // Price labels
+      ctx.fillStyle = '#666';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(p.toFixed(2), 5, y - 2);
+    }
+    
+    // Draw price line
+    ctx.strokeStyle = '#0f0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    
+    for (let i = 0; i < visibleData.length; i++) {
+      const pt = visibleData[i];
+      const x = timeToX(pt.ts);
+      const y = priceToY(pt.price);
+      
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    // Draw trade points with millisecond precision
+    for (let pt of visibleData) {
+      const x = timeToX(pt.ts);
+      const y = priceToY(pt.price);
+      
+      ctx.fillStyle = pt.side === 'buy' ? '#0f0' : (pt.side === 'sell' ? '#f00' : '#888');
+      ctx.beginPath();
+      ctx.arc(x, y, 2, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Draw millisecond markers for recent trades
+      if (Date.now() - pt.ts < 5000) { // Last 5 seconds
+        ctx.fillStyle = pt.side === 'buy' ? '#0f0' : (pt.side === 'sell' ? '#f00' : '#888');
+        ctx.font = '9px Arial';
+        ctx.textAlign = 'center';
+        const ms = new Date(pt.ts).getMilliseconds();
+        ctx.fillText(ms.toString().padStart(3, '0'), x, y - 8);
+      }
+    }
+    
+    // Draw current price line
+    if (visibleData.length > 0) {
+      const current = visibleData[visibleData.length - 1];
+      const currentY = priceToY(current.price);
+      
+      ctx.strokeStyle = '#ff0';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(0, currentY);
+      ctx.lineTo(w, currentY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Current price label
+      ctx.fillStyle = '#ff0';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText(current.price.toFixed(6), w - 5, currentY - 5);
+    }
+  }
+}
+
+// ============================================================================
+// PERFORMANCE OPTIMIZATION CLASSES
+// ============================================================================
+
+class CircularBuffer {
+  constructor(maxSize) {
+    this.maxSize = maxSize;
+    this.buffer = new Array(maxSize);
+    this.head = 0;
+    this.size = 0;
+  }
+  
+  push(item) {
+    this.buffer[this.head] = item;
+    this.head = (this.head + 1) % this.maxSize;
+    if (this.size < this.maxSize) this.size++;
+  }
+  
+  toArray() {
+    const result = [];
+    for (let i = 0; i < this.size; i++) {
+      const index = (this.head - this.size + i + this.maxSize) % this.maxSize;
+      if (this.buffer[index]) result.push(this.buffer[index]);
+    }
+    return result;
+  }
+  
+  get length() {
+    return this.size;
+  }
+  
+  clear() {
+    this.buffer = new Array(this.maxSize);
+    this.head = 0;
+    this.size = 0;
+  }
+}
+
+class VirtualScrollTable {
+  constructor(container, rowHeight = 30) {
+    this.container = container;
+    this.rowHeight = rowHeight;
+    this.visibleRows = Math.ceil(container.clientHeight / rowHeight);
+    this.startIndex = 0;
+    this.data = [];
+    
+    this.setupEventListeners();
+  }
+  
+  setupEventListeners() {
+    this.container.addEventListener('scroll', () => {
+      this.handleScroll();
+    });
+  }
+  
+  setData(data) {
+    this.data = data;
+    this.render();
+  }
+  
+  handleScroll() {
+    const scrollTop = this.container.scrollTop;
+    const newStartIndex = Math.floor(scrollTop / this.rowHeight);
+    
+    if (newStartIndex !== this.startIndex) {
+      this.startIndex = newStartIndex;
+      this.render();
+    }
+  }
+  
+  render() {
+    const endIndex = Math.min(this.startIndex + this.visibleRows + 5, this.data.length);
+    const visibleData = this.data.slice(this.startIndex, endIndex);
+    
+    const tbody = this.container.querySelector('tbody');
+    const fragment = document.createDocumentFragment();
+    
+    visibleData.forEach((trade, index) => {
+      const absoluteIndex = this.startIndex + index;
+      const date = new Date(trade.ts);
+      const tr = document.createElement('tr');
+      tr.style.position = 'absolute';
+      tr.style.top = (absoluteIndex * this.rowHeight) + 'px';
+      tr.style.width = '100%';
+      
+      tr.innerHTML = `
+        <td>${trade.ts}</td>
+        <td>${date.toLocaleTimeString('en-US', {hour12:false})}.${date.getMilliseconds().toString().padStart(3,'0')}</td>
+        <td>${trade.price.toFixed(6)}</td>
+        <td>${trade.size.toFixed(6)}</td>
+        <td style="color:${trade.side==='buy'?'#0f0':(trade.side==='sell'?'#f00':'#888')}">${trade.side}</td>
+        <td>${trade.inst}</td>
+        <td title="${trade.id}">${trade.id.substring(0, 10)}...</td>
+        <td>${trade.exchange || 'Unknown'}</td>
+      `;
+      fragment.appendChild(tr);
+    });
+    
+    tbody.innerHTML = '';
+    tbody.appendChild(fragment);
+    
+    // Set container height for proper scrolling
+    tbody.style.height = (this.data.length * this.rowHeight) + 'px';
+  }
+}
+
+// ============================================================================
+// CONFIGURATION AND ERROR HANDLING
+// ============================================================================
+
+class ConfigurationManager {
+  constructor() {
+    this.configKey = 'cryptoDashboardConfig';
+  }
+  
+  saveConfig() {
+    const config = {
+      instrument: instrumentSelect.value,
+      exchange: exchangeSelect.value,
+      wsUrl: wsUrlInput.value,
+      subscribeMsg: subscribeMsgInput.value,
+      parser: parserFuncInput.value,
+      logic: logicInput.value,
+      timestamp: Date.now()
+    };
+    try {
+      localStorage.setItem(this.configKey, JSON.stringify(config));
+    } catch (e) {
+      console.warn('Failed to save config:', e);
+    }
+  }
+  
+  loadConfig() {
+    try {
+      const config = JSON.parse(localStorage.getItem(this.configKey));
+      if (config) {
+        instrumentSelect.value = config.instrument || 'BTC-USDT';
+        exchangeSelect.value = config.exchange || 'okx';
+        wsUrlInput.value = config.wsUrl || 'wss://ws.okx.com:8443/ws/v5/public';
+        subscribeMsgInput.value = config.subscribeMsg || '{"op":"subscribe","args":[{"channel":"trades","instId":"BTC-USDT"}]}';
+        parserFuncInput.value = config.parser || parserFuncInput.value;
+        logicInput.value = config.logic || logicInput.value;
+        return true;
+      }
+    } catch (e) {
+      console.warn('Failed to load config:', e);
+    }
+    return false;
+  }
+}
+
+class ResilientMessageHandler {
+  constructor() {
+    this.errorCount = 0;
+    this.maxErrors = 10;
+    this.lastErrorTime = 0;
+    this.errorResetTime = 60000; // 1 minute
+  }
+  
+  async handleMessage(ev, parser, onSuccess, onError) {
+    try {
+      const trades = await this.parseMessage(ev.data, parser);
+      await onSuccess(trades);
+      this.errorCount = Math.max(0, this.errorCount - 1); // Recover slowly
+    } catch (error) {
+      this.errorCount++;
+      console.error(`Message handling error (${this.errorCount}/${this.maxErrors}):`, error);
+      
+      if (this.errorCount >= this.maxErrors) {
+        this.enterSafeMode();
+        onError('Too many errors, entering safe mode');
+      } else {
+        onError(error.message);
+      }
+    }
+  }
+  
+  async parseMessage(data, parser) {
+    if (!parser) throw new Error('No parser available');
+    
+    let parsedData;
+    try {
+      parsedData = JSON.parse(data);
+    } catch (e) {
+      throw new Error('Invalid JSON: ' + data.substring(0, 100));
+    }
+    
+    const trades = parser(parsedData);
+    if (!Array.isArray(trades)) {
+      throw new Error('Parser did not return array');
+    }
+    
+    // Validate trades
+    const validTrades = trades.filter(this.validateTradeStrict);
+    if (validTrades.length === 0 && trades.length > 0) {
+      throw new Error('All trades failed validation');
+    }
+    
+    return validTrades;
+  }
+  
+  validateTradeStrict(trade) {
+    const checks = [
+      () => trade && typeof trade === 'object',
+      () => typeof trade.ts === 'number' && trade.ts > 1609459200000, // After 2021
+      () => typeof trade.price === 'number' && 
+            trade.price > 0.000001 && 
+            trade.price < 100000000,
+      () => typeof trade.size === 'number' && 
+            trade.size >= 0.000000001 && 
+            trade.size < 1000000,
+      () => ['buy', 'sell', 'unknown'].includes(trade.side),
+      () => typeof trade.id === 'string' && trade.id.length > 0,
+      () => !isNaN(trade.price) && isFinite(trade.price),
+      () => !isNaN(trade.size) && isFinite(trade.size),
+    ];
+    
+    return checks.every(check => check());
+  }
+  
+  enterSafeMode() {
+    alertSystem.addAlert('system', 'Entering safe mode due to persistent errors', 'danger');
+    // Could implement fallback parsing or reduced functionality
+  }
+}
+
+// ============================================================================
+// ULTRA-FAST SOVEREIGN TRADING ANALYSIS ENGINE
+// ============================================================================
+
+/**
+ * ULTRA-FAST SOVEREIGN TRADING ANALYZER
+ * Military-grade precision with millisecond response
+ */
+function sovereignAnalyze(trades, aggStatsData = {}, customLogicData = null, options = {}) {
+  const analysisStart = performance.now();
+  
+  const {
+    lookbackTrades = 50,
+    useAnsi = false,
+    returnObject = false
+  } = options;
+
+  if (!Array.isArray(trades) || trades.length < 6) {
+    return '🔄 ULTRA-FAST INITIALIZATION...\nNeed at least 6 trades for analysis.';
+  }
+
+  // ULTRA-FAST ANALYSIS (6-12 trades only)
+  const recent = trades.slice(0, Math.min(trades.length, lookbackTrades));
+  const prices = recent.map(r => r.price);
+  const currentPrice = prices[0];
+
+  // MILLISECOND VOLUME ANALYSIS (last 6 trades)
+  const instantTrades = recent.slice(0, 6);
+  const instantBuys = instantTrades.filter(t => t.side === 'buy');
+  const instantSells = instantTrades.filter(t => t.side === 'sell');
+  const instantBuyVolume = instantBuys.reduce((sum, t) => sum + (t.size || 0), 0);
+  const instantSellVolume = instantSells.reduce((sum, t) => sum + (t.size || 0), 0);
+  const instantVolumeRatio = instantSellVolume > 0 ? instantBuyVolume / instantSellVolume : 10;
+  const instantBuyPressure = instantTrades.length ? instantBuys.length / instantTrades.length : 0;
+
+  // NANOSECOND MOMENTUM
+  const momentum2 = prices.length > 2 ? (prices[0] - prices[1]) / prices[1] * 100 : 0;
+  const momentum4 = prices.length > 4 ? (prices[0] - prices[3]) / prices[3] * 100 : 0;
+  const quantumMomentum = (momentum2 * 0.7 + momentum4 * 0.3);
+
+  // ZERO-LAG PREDICTIVE SCORE
+  const volumePower = Math.min(4, Math.max(-4, (instantVolumeRatio - 1) * 6));
+  const pressurePower = (instantBuyPressure - 0.5) * 8;
+  const momentumPower = Math.min(4, Math.max(-4, quantumMomentum / 0.15));
+  
+  const zeroLagScore = (volumePower * 0.5 + pressurePower * 0.35 + momentumPower * 0.15);
+
+  // FAST TECHNICALS
+  const vwap = recent.reduce((sum, t) => sum + (t.price * (t.size || 0)), 0) / 
+               Math.max(1, recent.reduce((sum, t) => sum + (t.size || 0), 0));
+  
+  // Fast EMAs
+  function FAST_EMA(arr, period) {
+    if (!arr.length || period <= 0) return [];
+    const k = 2 / (period + 1);
+    let ema = arr[0];
+    const out = [ema];
+    for (let i = 1; i < arr.length; i++) {
+      ema = arr[i] * k + ema * (1 - k);
+      out.push(ema);
+    }
+    return out;
+  }
+  
+  const ema3 = (FAST_EMA(prices, 3).slice(-1)[0]) || currentPrice;
+  const ema6 = (FAST_EMA(prices, 6).slice(-1)[0]) || currentPrice;
+
+  // Fast RSI
+  function computeFastRSI(prices, period = 4) {
+    if (prices.length < period + 1) return null;
+    let gains = 0, losses = 0;
+    for (let i = 0; i < period; i++) {
+      const change = prices[i] - prices[i + 1];
+      if (change > 0) gains += change;
+      else losses += Math.abs(change);
+    }
+    if (losses === 0) return 100;
+    const rs = gains / losses;
+    return 100 - (100 / (1 + rs));
+  }
+  
+  const rsi4 = computeFastRSI(prices, 4);
+
+  // ULTRA-FAST VOLATILITY
+  let instantVolatility = 0;
+  if (prices.length > 2) {
+    const changes = [];
+    for (let i = 0; i < Math.min(4, prices.length - 1); i++) {
+      const change = Math.abs(prices[i] - prices[i + 1]) / prices[i + 1];
+      changes.push(change);
+    }
+    instantVolatility = changes.length ? changes.reduce((a, b) => a + b, 0) / changes.length * 100 : 0;
+  }
+
+  // MULTI-SECTOR DATA INTEGRATION
+  const aggregatedSignals = [];
+  const customSignals = [];
+  
+  // Integrate aggregated data with exact counts
+  if (aggStatsData.buyCount !== undefined && aggStatsData.sellCount !== undefined) {
+    const totalTrades = aggStatsData.buyCount + aggStatsData.sellCount;
+    const aggBuyPressure = aggStatsData.buyCount / totalTrades;
+    const aggVolumeRatio = aggStatsData.buySize / (aggStatsData.sellSize || 1);
+    
+    if (aggBuyPressure > 0.6) aggregatedSignals.push(`AGG_BUY_${aggStatsData.buyCount}`);
+    if (aggVolumeRatio > 1.2) aggregatedSignals.push(`AGG_VOL_${aggVolumeRatio.toFixed(1)}x`);
+  }
+  
+  // Integrate custom logic data
+  if (customLogicData) {
+    if (typeof customLogicData === 'string') {
+      if (customLogicData.includes('BUY') && customLogicData.includes('HIGH')) {
+        customSignals.push('CUSTOM_BUY_HIGH');
+      } else if (customLogicData.includes('BUY')) {
+        customSignals.push('CUSTOM_BUY');
+      } else if (customLogicData.includes('SELL') && customLogicData.includes('HIGH')) {
+        customSignals.push('CUSTOM_SELL_HIGH');
+      } else if (customLogicData.includes('SELL')) {
+        customSignals.push('CUSTOM_SELL');
+      }
+    }
+  }
+
+  // CRYPTOGRAPHIC SIGNAL GENERATION
+  let finalSignal = 'HOLD';
+  let finalConfidence = 'CALIBRATING';
+  let executionPriority = 0;
+
+  // QUANTUM SIGNAL MATRIX
+  const quantumSignals = {
+    buy: [],
+    sell: []
+  };
+
+  // ULTRA-FAST VOLUME ANALYSIS
+  if (instantVolumeRatio > 1.8) quantumSignals.buy.push(`VOL_${instantVolumeRatio.toFixed(1)}x`);
+  if (instantVolumeRatio < 0.4) quantumSignals.sell.push(`VOL_${(1/instantVolumeRatio).toFixed(1)}x`);
+  if (instantBuyPressure > 0.75) quantumSignals.buy.push(`PRES_${(instantBuyPressure*100).toFixed(0)}%`);
+  if (instantBuyPressure < 0.25) quantumSignals.sell.push(`PRES_${(instantBuyPressure*100).toFixed(0)}%`);
+
+  // ULTRA-FAST MOMENTUM
+  if (quantumMomentum > 0.15) quantumSignals.buy.push(`MOM_+${quantumMomentum.toFixed(2)}%`);
+  if (quantumMomentum < -0.15) quantumSignals.sell.push(`MOM_${quantumMomentum.toFixed(2)}%`);
+
+  // ULTRA-FAST TECHNICALS
+  if (currentPrice > ema3 && ema3 > ema6) quantumSignals.buy.push(`EMA_BULL`);
+  if (currentPrice < ema3 && ema3 < ema6) quantumSignals.sell.push(`EMA_BEAR`);
+  if (rsi4 > 65 && rsi4 < 90) quantumSignals.buy.push(`RSI_${rsi4?.toFixed(0) || 'N/A'}`);
+  if (rsi4 < 35 && rsi4 > 10) quantumSignals.sell.push(`RSI_${rsi4?.toFixed(0) || 'N/A'}`);
+
+  // INTEGRATE MULTI-SECTOR SIGNALS
+  aggregatedSignals.forEach(sig => {
+    if (sig.includes('BUY')) quantumSignals.buy.push(sig);
+    if (sig.includes('SELL')) quantumSignals.sell.push(sig);
+  });
+  
+  customSignals.forEach(sig => {
+    if (sig.includes('BUY')) quantumSignals.buy.push(sig);
+    if (sig.includes('SELL')) quantumSignals.sell.push(sig);
+  });
+
+  // QUANTUM DECISION ENGINE
+  const buyPower = quantumSignals.buy.length * 4 + zeroLagScore;
+  const sellPower = quantumSignals.sell.length * 4 - zeroLagScore;
+  
+  // ZERO-LAG EXECUTION DECISION
+  if (buyPower >= 6 && buyPower > sellPower + 2) {
+    finalSignal = 'BUY';
+    executionPriority = Math.min(10, buyPower);
+    finalConfidence = executionPriority >= 8 ? 'EXTREME' : executionPriority >= 6 ? 'HIGH' : 'MEDIUM';
+  } else if (sellPower >= 6 && sellPower > buyPower + 2) {
+    finalSignal = 'SELL';
+    executionPriority = Math.min(10, sellPower);
+    finalConfidence = executionPriority >= 8 ? 'EXTREME' : executionPriority >= 6 ? 'HIGH' : 'MEDIUM';
+  }
+
+  const analysisEnd = performance.now();
+  
+  // ULTRA-FAST SOVEREIGN ANALYSIS OUTPUT
+  const sections = [];
+
+  sections.push(`🔰 ULTRA-TIGHT FUSION COMMAND CENTER`);
+  
+  // ZERO-LAG QUANTUM INDICATOR - ULTRA RESPONSIVE
+  const quantumWidth = 16;
+  const quantumPos = Math.max(0, Math.min(quantumWidth-1, Math.round((zeroLagScore + 3) / 6 * quantumWidth)));
+  
+  let quantumBar = '';
+  for (let i = 0; i < quantumWidth; i++) {
+    if (i === quantumPos) quantumBar += '▶';
+    else if (i === Math.floor(quantumWidth/2)) quantumBar += '│';
+    else quantumBar += '─';
+  }
+  
+  sections.push(`SELL ${quantumBar} BUY`);
+  sections.push(`     ${' '.repeat(quantumPos)}↑ ZERO-LAG: ${(zeroLagScore*100).toFixed(0)}%`);
+  sections.push(``);
+
+  // BATTLEFIELD STATUS
+  const battlefield = finalConfidence === 'EXTREME' ? '🚀 QUANTUM OPPORTUNITY' : 
+                     finalConfidence === 'HIGH' ? '🎯 HIGH FREQUENCY' :
+                     finalConfidence === 'MEDIUM' ? '⚡ ACTIVE TRADING' : '🛡️ QUANTUM DEFENSE';
+  
+  sections.push(`🎖️ ${battlefield} | POWER: BUY${Math.round(buyPower)}/SELL${Math.round(sellPower)}`);
+  sections.push(`📊 VOLUME: ${instantVolumeRatio > 1 ? 'BUYERS×' + instantVolumeRatio.toFixed(1) : 'SELLERS×' + (1/instantVolumeRatio).toFixed(1)}`);
+  sections.push(`⚡ MOMENTUM: ${quantumMomentum > 0 ? '+' : ''}${quantumMomentum.toFixed(2)}% | VOL:${instantVolatility.toFixed(2)}%`);
+  sections.push(``);
+
+  // TRADING SIGNAL
+  sections.push(`🎯 SOVEREIGN TRADING SIGNAL`);
+  const signalClass = finalSignal === 'BUY' ? 'signal-buy' : finalSignal === 'SELL' ? 'signal-sell' : 'signal-hold';
+  sections.push(`<div class="sovereign-signal ${signalClass}">${finalSignal} | CONFIDENCE: ${finalConfidence} | PRIORITY: ${executionPriority}/10</div>`);
+  
+  if (finalSignal !== 'HOLD') {
+    const volatilityStop = instantVolatility * 0.01 * currentPrice;
+    const stopLoss = finalSignal === 'BUY' ? currentPrice - volatilityStop : currentPrice + volatilityStop;
+    const takeProfit1 = finalSignal === 'BUY' ? currentPrice * (1 + instantVolatility * 0.02) : currentPrice * (1 - instantVolatility * 0.02);
+    
+    sections.push(``);
+    sections.push(`💎 INSTANT EXECUTION:`);
+    sections.push(`   🎯 ENTRY: $${currentPrice.toFixed(6)}`);
+    sections.push(`   ⛔ STOP: $${stopLoss.toFixed(6)}`);
+    sections.push(`   ✅ TP1: $${takeProfit1.toFixed(6)}`);
+    sections.push(``);
+    sections.push(`⚡ ZERO-LAG STRATEGY:`);
+    sections.push(`   • 100% instant entry at current price`);
+    sections.push(`   • Exit 50% at +0.3%, 25% at +0.6%, 25% at +1.0%`);
+    sections.push(`   • MAX HOLD: 10 seconds`);
+  } else {
+    sections.push(``);
+    sections.push(`🛡️ QUANTUM DEFENSE ACTIVE:`);
+    sections.push(`   • Market conditions uncertain`);
+    sections.push(`   • Required: 4+ quantum signals in same direction`);
+    sections.push(`   • Next analysis in 3 seconds`);
+  }
+
+  sections.push(``);
+  sections.push(`🔍 MULTI-SECTOR SIGNAL INTEGRATION:`);
+  
+  if (quantumSignals.buy.length > 0) {
+    sections.push(`   ✅ QUANTUM: ${quantumSignals.buy.join(' ')}`);
+  }
+  if (quantumSignals.sell.length > 0) {
+    sections.push(`   ❌ QUANTUM: ${quantumSignals.sell.join(' ')}`);
+  }
+  
+  if (aggregatedSignals.length > 0) {
+    sections.push(`   📊 AGGREGATED: ${aggregatedSignals.join(' ')}`);
+  }
+  
+  if (customSignals.length > 0) {
+    sections.push(`   🧠 CUSTOM: ${customSignals.join(' ')}`);
+  }
+
+  sections.push(``);
+  sections.push(`📊 MARKET INTELLIGENCE:`);
+  sections.push(`   • Price: $${currentPrice.toFixed(6)} | VWAP: $${vwap.toFixed(6)}`);
+  sections.push(`   • Trend: ${ema3 > ema6 ? 'BULLISH 🟢' : 'BEARISH 🔴'}`);
+  sections.push(`   • RSI: ${rsi4?.toFixed(1) || 'N/A'} ${rsi4 > 70 ? 'OVERBOUGHT' : rsi4 < 30 ? 'OVERSOLD' : 'NEUTRAL'}`);
+  sections.push(`   • Volatility: ${instantVolatility.toFixed(2)}%`);
+  sections.push(`   • Exact Counts: BUY${aggStatsData?.buyCount || 0}/SELL${aggStatsData?.sellCount || 0}/HOLD${aggStatsData?.holdsCount || 0}`);
+  sections.push(`   • Analysis Speed: ${(analysisEnd - analysisStart).toFixed(2)}ms`);
+
+  return {
+    output: sections.join('\n'),
+    signal: finalSignal,
+    confidence: finalConfidence,
+    message: `${finalSignal} | ${finalConfidence} | Score: ${(buyPower - sellPower).toFixed(1)}`,
+    analysisTime: analysisEnd - analysisStart
+  };
+}
+
+// ============================================================================
+// MAIN APPLICATION CODE - ENHANCED WITH ALL FEATURES
+// ============================================================================
+
+// Enhanced IndexedDB setup with unlimited storage
+const DB_NAME = 'crypto_trades_unlimited_db';
+const STORE_NAME = 'trades';
+let db;
+let dbVersion = 4;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, dbVersion);
+    request.onerror = e => reject(e);
+    request.onsuccess = e => {
+      db = e.target.result;
+      resolve(db);
+    };
+    request.onupgradeneeded = e => {
+      db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        store.createIndex('ts', 'ts', { unique: false });
+        store.createIndex('inst', 'inst', { unique: false });
+      }
+    };
+  });
+}
+
+// Unlimited batch insert with optimized performance
+function addTrades(trades) {
+  if (!db || !trades.length) return Promise.resolve();
+  
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    
+    let completed = 0;
+    const total = trades.length;
+    let errorOccurred = false;
+    
+    function processNext() {
+      if (completed >= total || errorOccurred) {
+        if (!errorOccurred) resolve();
+        return;
+      }
+      
+      const batchSize = Math.min(500, total - completed);
+      const batch = trades.slice(completed, completed + batchSize);
+      
+      try {
+        batch.forEach(trade => {
+          const request = store.put(trade);
+          request.onerror = (e) => {
+            console.error('DB put error:', e.target.error);
+            errorOccurred = true;
+            reject(e.target.error);
+          };
+        });
+        
+        completed += batchSize;
+        
+        if (completed < total) {
+          setTimeout(processNext, 0);
+        } else {
+          tx.oncomplete = () => {
+            if (!errorOccurred) resolve();
+          };
+        }
+      } catch (error) {
+        errorOccurred = true;
+        reject(error);
+      }
+    }
+    
+    tx.onerror = (e) => {
+      errorOccurred = true;
+      reject(e.target.error);
+    };
+    
+    processNext();
+  });
+}
+
+function clearTrades() {
+  if (!db) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.clear();
+    req.onsuccess = () => resolve();
+    req.onerror = e => reject(e);
+  });
+}
+
+// Unlimited data retrieval with instrument filtering
+function getLatestTrades(limit = Infinity, instrument = null) {
+  return new Promise((resolve, reject) => {
+    if (!db) return resolve([]);
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const index = store.index('ts');
+    const trades = [];
+    
+    let cursorRequest = index.openCursor(null, 'prev');
+    
+    cursorRequest.onsuccess = e => {
+      const cursor = e.target.result;
+      if (cursor && (limit === Infinity || trades.length < limit)) {
+        if (!instrument || cursor.value.inst === instrument) {
+          trades.push(cursor.value);
+        }
+        cursor.continue();
+      } else {
+        resolve(trades);
+      }
+    };
+    cursorRequest.onerror = e => reject(e);
+  });
+}
+
+// Get unlimited total count with filtering
+function getTotalTradeCount(instrument = null) {
+  return new Promise((resolve, reject) => {
+    if (!db) return resolve(0);
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    
+    if (!instrument) {
+      const countRequest = store.count();
+      countRequest.onsuccess = () => resolve(countRequest.result);
+      countRequest.onerror = e => reject(e);
+    } else {
+      const index = store.index('inst');
+      const range = IDBKeyRange.only(instrument);
+      const countRequest = index.count(range);
+      countRequest.onsuccess = () => resolve(countRequest.result);
+      countRequest.onerror = e => reject(e);
+    }
+  });
+}
+
+// Enhanced CSV export with unlimited data support
+async function exportCSV(trades) {
+  if (!trades.length) return '';
+  const headers = Object.keys(trades[0]);
+  const headerRow = headers.join(',');
+  
+  const chunkSize = 50000;
+  let csv = headerRow + '\r\n';
+  
+  for (let i = 0; i < trades.length; i += chunkSize) {
+    const chunk = trades.slice(i, i + chunkSize);
+    const rows = chunk.map(t => headers.map(h => {
+      const value = t[h];
+      if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+        return '"' + value.replace(/"/g, '""') + '"';
+      }
+      return value != null ? String(value) : '';
+    }).join(','));
+    
+    csv += rows.join('\r\n') + '\r\n';
+    
+    if (i % 100000 === 0) {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+  }
+  
+  return csv;
+}
+
+// Technical Indicators Calculation
+class TechnicalIndicators {
+  static calculateSMA(prices, period) {
+    if (prices.length < period) return null;
+    const sum = prices.slice(0, period).reduce((a, b) => a + b, 0);
+    return sum / period;
+  }
+
+  static calculateEMA(prices, period) {
+    if (prices.length < period) return null;
+    let ema = prices[0];
+    const multiplier = 2 / (period + 1);
+    
+    for (let i = 1; i < prices.length; i++) {
+      ema = (prices[i] * multiplier) + (ema * (1 - multiplier));
+    }
+    return ema;
+  }
+
+  static calculateRSI(prices, period = 14) {
+    if (prices.length < period + 1) return null;
+    
+    let gains = 0;
+    let losses = 0;
+    
+    for (let i = 1; i <= period; i++) {
+      const difference = prices[i] - prices[i - 1];
+      if (difference >= 0) {
+        gains += difference;
+      } else {
+        losses -= difference;
+      }
+    }
+    
+    const avgGain = gains / period;
+    const avgLoss = losses / period;
+    
+    if (avgLoss === 0) return 100;
+    const rs = avgGain / avgLoss;
+    return 100 - (100 / (1 + rs));
+  }
+
+  static calculateVWAP(trades) {
+    if (!trades.length) return null;
+    
+    let cumulativeTPV = 0;
+    let cumulativeVolume = 0;
+    
+    for (const trade of trades) {
+      const typicalPrice = (trade.price * trade.size);
+      cumulativeTPV += typicalPrice;
+      cumulativeVolume += trade.size;
+    }
+    
+    return cumulativeTPV / cumulativeVolume;
+  }
+
+  static calculateMACD(prices, fastPeriod = 12, slowPeriod = 26, signalPeriod = 9) {
+    if (prices.length < slowPeriod) return null;
+    
+    const fastEMA = this.calculateEMA(prices, fastPeriod);
+    const slowEMA = this.calculateEMA(prices, slowPeriod);
+    
+    if (fastEMA === null || slowEMA === null) return null;
+    
+    const macdLine = fastEMA - slowEMA;
+    return macdLine;
+  }
+}
+
+// UI Elements
+const instrumentSelect = document.getElementById('instrumentSelect');
+const exchangeSelect = document.getElementById('exchangeSelect');
+const loadPresetBtn = document.getElementById('loadPresetBtn');
+const wsUrlInput = document.getElementById('wsUrl');
+const subscribeMsgInput = document.getElementById('subscribeMsg');
+const parserFuncInput = document.getElementById('parserFunc');
+const applyParserBtn = document.getElementById('applyParserBtn');
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const exportBtn = document.getElementById('exportBtn');
+const clearBtn = document.getElementById('clearBtn');
+const statusDiv = document.getElementById('status');
+const latestPriceSpan = document.getElementById('latestPrice');
+const tradesStoredSpan = document.getElementById('tradesStored');
+const lastTsSpan = document.getElementById('lastTs');
+const connStatusSpan = document.getElementById('connStatus');
+const connectionDot = document.querySelector('.connection-dot');
+const tradesTableBody = document.querySelector('#tradesTable tbody');
+const chartCanvas = document.getElementById('chartCanvas');
+const aggStatsDiv = document.getElementById('aggStats');
+const aggMetricsGrid = document.getElementById('aggMetricsGrid');
+const aggTableBody = document.querySelector('#aggTable tbody');
+const logicInput = document.getElementById('logicInput');
+const runLogicBtn = document.getElementById('runLogicBtn');
+const logicOutput = document.getElementById('logicOutput');
+const sovereignOutput = document.getElementById('sovereignOutput');
+
+// Technical Indicators UI
+const rsiValue = document.getElementById('rsiValue');
+const smaValue = document.getElementById('smaValue');
+const emaValue = document.getElementById('emaValue');
+const vwapValue = document.getElementById('vwapValue');
+const macdValue = document.getElementById('macdValue');
+
+// Global instances
+let ws = null;
+let trades = [];
+let parser = null;
+let isRunning = false;
+let autoReconnect = true;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 10;
+const reconnectDelay = 2000;
+
+let chart;
+let virtualTable;
+let configManager;
+let messageHandler;
+
+// Performance monitoring for unlimited data
+let performanceStats = {
+  tradesProcessed: 0,
+  lastUpdateTime: Date.now(),
+  updateCount: 0,
+  totalTradesStored: 0
+};
+
+// Enhanced Alert System
+const alertSystem = new EnhancedAlertSystem();
+
+// Loading state management
+function setLoadingState(isLoading, message = 'Processing...') {
+  const overlay = document.getElementById('loadingOverlay');
+  const messageEl = document.getElementById('loadingMessage');
+  
+  if (overlay && messageEl) {
+    messageEl.textContent = message;
+    overlay.style.display = isLoading ? 'flex' : 'none';
+  }
+}
+
+// Exchange Preset Loader with Instrument Support
+function loadExchangePreset(exchangeKey) {
+  const config = EXCHANGE_CONFIGS[exchangeKey];
+  if (config) {
+    wsUrlInput.value = config.wsUrl;
+    subscribeMsgInput.value = config.subscribeMsg;
+    parserFuncInput.value = config.parser;
+    
+    // Update instrument in subscribe message if present
+    const currentInstrument = instrumentSelect.value;
+    if (currentInstrument && subscribeMsgInput.value.includes('BTC-')) {
+      subscribeMsgInput.value = subscribeMsgInput.value.replace(/BTC-[A-Z]+/g, currentInstrument);
+    }
+    
+    applyParserFromInput();
+    configManager.saveConfig();
+    alertSystem.addAlert('preset', `Loaded ${config.name} configuration`, 'success');
+  }
+}
+
+// Update technical indicators
+function updateTechnicalIndicators(trades) {
+  if (trades.length < 20) return;
+  
+  const prices = trades.map(t => t.price).slice(0, 100);
+  
+  // Calculate indicators
+  const rsi = TechnicalIndicators.calculateRSI(prices.reverse(), 14);
+  const sma = TechnicalIndicators.calculateSMA(prices, 20);
+  const ema = TechnicalIndicators.calculateEMA(prices, 20);
+  const vwap = TechnicalIndicators.calculateVWAP(trades.slice(0, 100));
+  const macd = TechnicalIndicators.calculateMACD(prices);
+  
+  // Update UI with indicator values
+  if (rsi !== null) {
+    rsiValue.textContent = rsi.toFixed(2);
+    rsiValue.className = 'indicator-value ' + 
+      (rsi > 70 ? 'indicator-sell' : (rsi < 30 ? 'indicator-buy' : 'indicator-neutral'));
+  }
+  
+  if (sma !== null) {
+    smaValue.textContent = sma.toFixed(2);
+    const currentPrice = prices[0] || 0;
+    smaValue.className = 'indicator-value ' + 
+      (currentPrice > sma ? 'indicator-buy' : 'indicator-sell');
+  }
+  
+  if (ema !== null) {
+    emaValue.textContent = ema.toFixed(2);
+  }
+  
+  if (vwap !== null) {
+    vwapValue.textContent = vwap.toFixed(2);
+  }
+  
+  if (macd !== null) {
+    macdValue.textContent = macd.toFixed(4);
+    macdValue.className = 'indicator-value ' + 
+      (macd > 0 ? 'indicator-buy' : 'indicator-sell');
+  }
+}
+
+// Unlimited data UI refresh with ultra-fast sovereign analysis
+async function refreshUI() {
+  const startTime = performance.now();
+  
+  try {
+    const currentInstrument = instrumentSelect.value;
+    const [latestTrades, totalCount] = await Promise.all([
+      getLatestTrades(5000, currentInstrument),
+      getTotalTradeCount(currentInstrument)
+    ]);
+    
+    trades = latestTrades;
+    tradesStoredSpan.textContent = totalCount.toLocaleString();
+    performanceStats.totalTradesStored = totalCount;
+
+    if (trades.length > 0) {
+      const last = trades[0];
+      latestPriceSpan.textContent = last.price.toFixed(6);
+      lastTsSpan.textContent = last.ts;
+
+      // Update virtual scrolling table
+      if (virtualTable) {
+        virtualTable.setData(trades.slice(0, 1000)); // Show first 1000 trades for performance
+      } else {
+        updateTradesTableUnlimited(trades.slice(0, 200));
+      }
+
+      // Update enhanced chart
+      if (chart) {
+        chart.setData(trades);
+      }
+
+      updateEnhancedAggregatedStats(trades);
+      updateTechnicalIndicators(trades);
+
+      // ULTRA-FAST SOVEREIGN ANALYSIS
+      runEnhancedSovereignAnalysis(trades);
+
+      runCustomLogic();
+
+    } else {
+      latestPriceSpan.textContent = '—';
+      lastTsSpan.textContent = '—';
+      tradesTableBody.innerHTML = '';
+      if (chart) chart.draw();
+      aggStatsDiv.textContent = 'No trades yet.';
+      aggMetricsGrid.innerHTML = '';
+      aggTableBody.innerHTML = '';
+      logicOutput.textContent = 'No trades data available to analyze.';
+      sovereignOutput.textContent = '🔄 Collecting market data for sovereign analysis...';
+      
+      // Reset indicators
+      rsiValue.textContent = '—';
+      smaValue.textContent = '—';
+      emaValue.textContent = '—';
+      vwapValue.textContent = '—';
+      macdValue.textContent = '—';
+    }
+
+    const endTime = performance.now();
+    performanceStats.updateCount++;
+    if (performanceStats.updateCount % 100 === 0) {
+      console.log(`UI refresh: ${((endTime - startTime)).toFixed(2)}ms, Total trades: ${totalCount}`);
+    }
+
+  } catch (error) {
+    console.error('UI refresh error:', error);
+    statusDiv.textContent = 'Status: Error refreshing UI';
+  }
+}
+
+// Enhanced Sovereign Analysis with Current Signal Display
+function runEnhancedSovereignAnalysis(trades) {
+  try {
+    // Get custom logic output for integration
+    const customLogicOutput = logicOutput.textContent;
+    
+    const analysisResult = sovereignAnalyze(trades, window.aggStatsData || {}, customLogicOutput, {
+      lookbackTrades: 50 // Reduced for ultra-fast performance
+    });
+    
+    sovereignOutput.innerHTML = analysisResult.output.replace(/\n/g, '<br>');
+    
+    // Update current signal display
+    alertSystem.updateCurrentSignal(
+      analysisResult.signal, 
+      analysisResult.confidence, 
+      analysisResult.message
+    );
+    
+    // Add enhanced alerts with proper signal coloring
+    if (analysisResult.confidence === 'EXTREME' || analysisResult.confidence === 'HIGH') {
+      alertSystem.addAlert('sovereign', 
+        `Sovereign ${analysisResult.signal} signal - ${analysisResult.confidence} confidence`, 
+        'success', 
+        analysisResult.signal
+      );
+    }
+  } catch (error) {
+    console.error('Sovereign analysis error:', error);
+    sovereignOutput.textContent = 'Error in sovereign analysis: ' + error.message;
+  }
+}
+
+// Enhanced Aggregated Stats with Exact Counts
+function updateEnhancedAggregatedStats(trades) {
+  const startTime = performance.now();
+  
+  if (trades.length === 0) {
+    aggStatsDiv.textContent = 'No trades available for analysis.';
+    aggMetricsGrid.innerHTML = '';
+    aggTableBody.innerHTML = '';
+    return;
+  }
+
+  let buyCount = 0, sellCount = 0, unknownCount = 0;
+  let buySize = 0, sellSize = 0, unknownSize = 0;
+  let holdsCount = 0;
+  let holdTimes = [];
+  let priceChanges = [];
+  let volumes = [];
+  let prices = [];
+
+  const HOLD_THRESHOLD_MS = 500;
+  
+  const sorted = [...trades].sort((a, b) => a.ts - b.ts);
+  
+  // Calculate basic metrics
+  for (let i = 0; i < sorted.length; i++) {
+    const t = sorted[i];
+    prices.push(t.price);
+    volumes.push(t.size || 0);
+    
+    if (t.side === 'buy') {
+      buyCount++;
+      buySize += t.size || 0;
+    } else if (t.side === 'sell') {
+      sellCount++;
+      sellSize += t.size || 0;
+    } else {
+      unknownCount++;
+      unknownSize += t.size || 0;
+    }
+
+    // Calculate hold times and price changes
+    if (i > 0) {
+      const gap = t.ts - sorted[i-1].ts;
+      if (gap > HOLD_THRESHOLD_MS) {
+        holdsCount++;
+        holdTimes.push(gap);
+      }
+      
+      const priceChange = ((t.price - sorted[i-1].price) / sorted[i-1].price) * 100;
+      priceChanges.push(priceChange);
+    }
+  }
+
+  // Enhanced metrics calculation
+  const totalTrades = trades.length;
+  const totalVolume = buySize + sellSize + unknownSize;
+  const avgHoldTime = holdTimes.length > 0 ? holdTimes.reduce((a, b) => a + b, 0) / holdTimes.length : 0;
+  const maxHoldTime = holdTimes.length > 0 ? Math.max(...holdTimes) : 0;
+  
+  // Price statistics
+  const currentPrice = prices[0] || 0;
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const priceRange = maxPrice - minPrice;
+  const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+  
+  // Volume statistics
+  const avgVolume = volumes.reduce((a, b) => a + b, 0) / volumes.length;
+  const maxVolume = Math.max(...volumes);
+  
+  // Volatility
+  const volatility = priceChanges.length > 0 ? 
+    Math.sqrt(priceChanges.reduce((s, x) => s + Math.pow(x - (priceChanges.reduce((a, b) => a + b, 0) / priceChanges.length), 2), 0) / priceChanges.length) : 0;
+
+  // Market sentiment indicators
+  const buyPressure = buyCount / totalTrades;
+  const volumeRatio = sellSize > 0 ? buySize / sellSize : buySize > 0 ? 2 : 1;
+  const dominance = (buySize - sellSize) / (buySize + sellSize);
+  
+  // Trade rate
+  const timeSpan = sorted.length > 1 ? (sorted[sorted.length-1].ts - sorted[0].ts) : 1;
+  const tradesPerSecond = (totalTrades / (timeSpan / 1000)) || 0;
+
+  // Store enhanced stats for sovereign analysis
+  window.aggStatsData = {
+    // Exact counts
+    buyCount, sellCount, unknownCount, holdsCount,
+    // Volume metrics
+    buySize, sellSize, unknownSize, totalVolume, avgVolume, maxVolume,
+    // Time metrics
+    avgHoldTime, maxHoldTime, tradesPerSecond,
+    // Price metrics
+    currentPrice, minPrice, maxPrice, priceRange, avgPrice, volatility,
+    // Market sentiment
+    buyPressure, volumeRatio, dominance,
+    // Performance
+    totalTrades,
+    performance: {
+      calculationTime: performance.now() - startTime,
+      dataPoints: trades.length,
+      totalStored: performanceStats.totalTradesStored
+    }
+  };
+
+  // Update enhanced metrics grid with exact counts
+  const metrics = [
+    { label: 'Current Price', value: `$${currentPrice.toFixed(6)}`, trend: 'current' },
+    { label: 'Buy Count', value: `${buyCount}`, trend: buyCount > sellCount ? 'positive' : 'negative' },
+    { label: 'Sell Count', value: `${sellCount}`, trend: sellCount > buyCount ? 'positive' : 'negative' },
+    { label: 'Hold Events', value: `${holdsCount}`, trend: 'neutral' },
+    { label: 'Buy Pressure', value: `${(buyPressure * 100).toFixed(1)}%`, trend: buyPressure > 0.5 ? 'positive' : 'negative' },
+    { label: 'Volume Ratio', value: `${volumeRatio.toFixed(2)}x`, trend: volumeRatio > 1 ? 'positive' : 'negative' },
+    { label: 'Market Dominance', value: `${(dominance * 100).toFixed(1)}%`, trend: dominance > 0 ? 'positive' : 'negative' },
+    { label: 'Trade Rate', value: `${tradesPerSecond.toFixed(1)}/s`, trend: 'neutral' }
+  ];
+
+  aggMetricsGrid.innerHTML = metrics.map(metric => `
+    <div class="agg-metric-card">
+      <div class="agg-metric-label">${metric.label}</div>
+      <div class="agg-metric-value ${metric.trend === 'positive' ? 'metric-positive' : metric.trend === 'negative' ? 'metric-negative' : 'metric-neutral'}">
+        ${metric.value}
+      </div>
+    </div>
+  `).join('');
+
+  // Update detailed table with exact counts
+  const rows = [
+    ['Total Trades', totalTrades, 'neutral'],
+    ['Buy Trades (Exact)', buyCount, 'positive'],
+    ['Sell Trades (Exact)', sellCount, 'negative'],
+    ['Hold Events (Exact)', holdsCount, 'neutral'],
+    ['Unknown Trades', unknownCount, 'neutral'],
+    ['Volume Buy/Sell', `${buySize.toFixed(4)}/${sellSize.toFixed(4)}`, buySize > sellSize ? 'positive' : 'negative'],
+    ['Buy/Sell Ratio', `${buyCount}/${sellCount} (${(buyCount/sellCount).toFixed(2)}x)`, buyCount > sellCount ? 'positive' : 'negative'],
+    ['Price Range', `$${minPrice.toFixed(6)} - $${maxPrice.toFixed(6)}`, 'neutral'],
+    ['Average Price', `$${avgPrice.toFixed(6)}`, 'neutral'],
+    ['Volatility', `${volatility.toFixed(3)}%`, volatility > 1 ? 'negative' : 'positive'],
+    ['Calculation Time', `${(performance.now() - startTime).toFixed(2)}ms`, 'neutral']
+  ];
+  
+  aggTableBody.innerHTML = '';
+  rows.forEach(([metric, val, trend]) => {
+    const tr = document.createElement('tr');
+    const trendClass = trend === 'positive' ? 'metric-positive' : trend === 'negative' ? 'metric-negative' : 'metric-neutral';
+    tr.innerHTML = `<td>${metric}</td><td class="${trendClass}">${val}</td><td>${trend}</td>`;
+    aggTableBody.appendChild(tr);
+  });
+}
+
+// Unlimited table update with better performance
+function updateTradesTableUnlimited(displayTrades) {
+  const fragment = document.createDocumentFragment();
+  
+  for (let trade of displayTrades) {
+    const date = new Date(trade.ts);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${trade.ts}</td>
+      <td>${date.toLocaleTimeString('en-US', {hour12:false})}.${date.getMilliseconds().toString().padStart(3,'0')}</td>
+      <td>${trade.price.toFixed(6)}</td>
+      <td>${trade.size.toFixed(6)}</td>
+      <td style="color:${trade.side==='buy'?'#0f0':(trade.side==='sell'?'#f00':'#888')}">${trade.side}</td>
+      <td>${trade.inst}</td>
+      <td title="${trade.id}">${trade.id.substring(0, 15)}...</td>
+      <td>${trade.exchange || 'Unknown'}</td>
+    `;
+    fragment.appendChild(tr);
+  }
+  
+  tradesTableBody.innerHTML = '';
+  tradesTableBody.appendChild(fragment);
+}
+
+// Safe parser with unlimited data support for all coins
+function safeParseTrades(rawMsg) {
+  try {
+    const parsedTrades = parser(rawMsg);
+    if (!Array.isArray(parsedTrades)) {
+      console.warn('Parser did not return array');
+      return [];
+    }
+    return parsedTrades.filter(validateTrade);
+  } catch(e) {
+    console.error('Parser error:', e);
+    return [];
+  }
+}
+
+// Enhanced trade validation for unlimited data and all coins
+function validateTrade(trade) {
+  const now = Date.now();
+  return trade && 
+         typeof trade.ts === 'number' && 
+         trade.ts > 1609459200000 &&
+         trade.ts <= now + 60000 &&
+         typeof trade.price === 'number' &&
+         trade.price > 0.000001 && // Support all coin prices
+         trade.price < 100000000 &&
+         typeof trade.size === 'number' &&
+         trade.size >= 0.000000001 && // Support all coin sizes
+         trade.size < 1000000 &&
+         ['buy', 'sell', 'unknown'].includes(trade.side) &&
+         typeof trade.id === 'string' &&
+         trade.id.length > 0;
+}
+
+// Enhanced WebSocket with connection timeout and instrument support
+function startWebSocket() {
+  if (isRunning) return;
+  isRunning = true;
+  autoReconnect = true;
+
+  statusDiv.textContent = 'Status: Connecting...';
+  connectionDot.className = 'connection-dot connecting';
+  connStatusSpan.textContent = 'Connecting...';
+
+  try {
+    const currentInstrument = instrumentSelect.value;
+    
+    // Update subscribe message with current instrument
+    let subMsg = subscribeMsgInput.value.trim();
+    if (currentInstrument && subMsg) {
+      subMsg = subMsg.replace(/"instId":"[^"]*"/g, `"instId":"${currentInstrument}"`);
+      subMsg = subMsg.replace(/"product_ids":\["[^"]*"\]/g, `"product_ids":["${currentInstrument}"]`);
+      subMsg = subMsg.replace(/btcusdt/g, currentInstrument.toLowerCase().replace('-', ''));
+    }
+    
+    ws = new WebSocket(wsUrlInput.value.trim());
+    
+    // Connection timeout
+    const CONNECTION_TIMEOUT = 10000; // 10 seconds
+    const connectionTimeout = setTimeout(() => {
+      if (ws && ws.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket connection timeout');
+        ws.close();
+        alertSystem.addAlert('connection', 'Connection timeout after 10 seconds', 'danger');
+      }
+    }, CONNECTION_TIMEOUT);
+    
+    ws.onopen = () => {
+      clearTimeout(connectionTimeout);
+      console.log('WebSocket connected successfully');
+      reconnectAttempts = 0;
+      connectionDot.className = 'connection-dot connected';
+      connStatusSpan.textContent = 'Connected';
+      statusDiv.textContent = `Status: Connected & Streaming ${currentInstrument}`;
+
+      if (subMsg) {
+        try {
+          let msgObj = JSON.parse(subMsg);
+          console.log('Sending subscription:', msgObj);
+          ws.send(JSON.stringify(msgObj));
+        } catch(e) {
+          console.log('Sending raw subscription:', subMsg);
+          ws.send(subMsg);
+        }
+      }
+      
+      alertSystem.addAlert('connection', `WebSocket connected for ${currentInstrument}`, 'success');
+    };
+
+    ws.onerror = e => {
+      clearTimeout(connectionTimeout);
+      console.error('WebSocket error:', e);
+      connectionDot.className = 'connection-dot disconnected';
+      connStatusSpan.textContent = 'Error';
+      statusDiv.textContent = 'Status: WebSocket Error';
+      alertSystem.addAlert('connection', 'WebSocket connection error', 'danger');
+    };
+
+    ws.onclose = e => {
+      clearTimeout(connectionTimeout);
+      console.log('WebSocket closed:', e.code, e.reason);
+      connectionDot.className = 'connection-dot disconnected';
+      connStatusSpan.textContent = 'Disconnected';
+      statusDiv.textContent = `Status: Disconnected (${e.code})`;
+      isRunning = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      exportBtn.disabled = false;
+      clearBtn.disabled = false;
+
+      if (autoReconnect && reconnectAttempts < maxReconnectAttempts) {
+        reconnectAttempts++;
+        const delay = Math.min(reconnectDelay * Math.pow(1.5, reconnectAttempts - 1), 30000);
+        statusDiv.textContent = `Status: Reconnecting in ${delay/1000}s... (Attempt ${reconnectAttempts}/${maxReconnectAttempts})`;
+        setTimeout(() => {
+          if (autoReconnect) startWebSocket();
+        }, delay);
+      } else {
+        alertSystem.addAlert('connection', 'WebSocket disconnected', 'warning');
+      }
+    };
+
+    // Debounced UI update
+    let refreshTimeout;
+    function scheduleUIUpdate() {
+      clearTimeout(refreshTimeout);
+      refreshTimeout = setTimeout(() => {
+        refreshUI();
+      }, 100); // Update max 10x per second
+    }
+
+    ws.onmessage = async (ev) => {
+      try {
+        performanceStats.tradesProcessed++;
+        
+        await messageHandler.handleMessage(
+          ev, 
+          parser,
+          async (parsedTrades) => {
+            if (parsedTrades.length > 0) {
+              await addTrades(parsedTrades);
+              
+              // Add alerts for significant events
+              if (parsedTrades.some(t => t.size > (t.inst.includes('BTC') ? 1 : 1000))) {
+                alertSystem.addAlert('large_trade', 'Large trade detected', 'warning');
+              }
+              
+              scheduleUIUpdate();
+            }
+          },
+          (error) => {
+            console.error('Message processing error:', error);
+          }
+        );
+      } catch(e) {
+        console.error('Error processing WebSocket message:', e);
+      }
+    };
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    exportBtn.disabled = true;
+    clearBtn.disabled = true;
+  } catch (error) {
+    console.error('Failed to create WebSocket:', error);
+    statusDiv.textContent = 'Status: Failed to create WebSocket';
+    isRunning = false;
+    startBtn.disabled = false;
+    alertSystem.addAlert('connection', 'Failed to create WebSocket: ' + error.message, 'danger');
+  }
+}
+
+function stopWebSocket() {
+  autoReconnect = false;
+  if (ws) {
+    ws.close(1000, 'Manual stop');
+    ws = null;
+  }
+  isRunning = false;
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  exportBtn.disabled = false;
+  clearBtn.disabled = false;
+  statusDiv.textContent = 'Status: Stopped';
+  connectionDot.className = 'connection-dot disconnected';
+  connStatusSpan.textContent = 'Disconnected';
+  alertSystem.addAlert('connection', 'WebSocket stopped manually', 'info');
+}
+
+// Enhanced parser application with security
+function applyParserFromInput() {
+  const code = parserFuncInput.value;
+  try {
+    if (!code.includes('function parseTrades') && !code.includes('parseTrades=')) {
+      throw new Error('Code must define parseTrades function');
+    }
+    
+    // Safer parser creation
+    const func = new Function('raw', `
+      "use strict";
+      ${code}
+      if (typeof parseTrades !== 'function') {
+        throw new Error('parseTrades is not a function');
+      }
+      return parseTrades(raw);
+    `);
+    
+    // Test with sample data
+    const testData = {
+      "arg": { "channel": "trades", "instId": "BTC-USDT" },
+      "data": [{
+        "instId": "BTC-USDT",
+        "tradeId": "12345",
+        "px": "50000.0",
+        "sz": "0.001",
+        "side": "buy",
+        "ts": "1700000000000"
+      }]
+    };
+    
+    const testResult = func(testData);
+    if (!Array.isArray(testResult)) {
+      throw new Error('Parser must return an array');
+    }
+    
+    parser = func;
+    configManager.saveConfig();
+    alert('Parser applied successfully!');
+    alertSystem.addAlert('parser', 'Parser applied successfully', 'success');
+  } catch(e) {
+    alert('Parser Error: ' + e.message);
+    console.error('Parser compilation failed:', e);
+    alertSystem.addAlert('parser', 'Parser error: ' + e.message, 'danger');
+  }
+}
+
+// Unlimited CSV export with progress tracking
+async function exportTradesCSV() {
+  try {
+    setLoadingState(true, 'Preparing export...');
+    
+    const currentInstrument = instrumentSelect.value;
+    const allTrades = await getLatestTrades(Infinity, currentInstrument);
+    
+    if (!allTrades.length) {
+      alert('No trades to export.');
+      setLoadingState(false);
+      return;
+    }
+
+    setLoadingState(true, `Exporting ${allTrades.length.toLocaleString()} trades...`);
+    
+    const csv = await exportCSV(allTrades.reverse());
+    
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `crypto_trades_${currentInstrument}_${Date.now()}_${allTrades.length.toLocaleString()}_trades.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    setLoadingState(false);
+    statusDiv.textContent = `Status: Exported ${allTrades.length.toLocaleString()} trades successfully`;
+    alertSystem.addAlert('export', `Exported ${allTrades.length.toLocaleString()} ${currentInstrument} trades`, 'success');
+    
+  } catch (error) {
+    console.error('Export error:', error);
+    setLoadingState(false);
+    alert('Export failed: ' + error.message);
+    statusDiv.textContent = 'Status: Export failed';
+    alertSystem.addAlert('export', 'Export failed: ' + error.message, 'danger');
+  }
+}
+
+// Clear all unlimited trades with confirmation
+async function clearAllTrades() {
+  const totalCount = await getTotalTradeCount();
+  if (confirm(`Clear ALL ${totalCount.toLocaleString()} stored trades? This cannot be undone.`)) {
+    try {
+      setLoadingState(true, 'Clearing all trades...');
+      await clearTrades();
+      trades = [];
+      await refreshUI();
+      setLoadingState(false);
+      statusDiv.textContent = `Status: All ${totalCount.toLocaleString()} trades cleared`;
+      alertSystem.clearAlerts();
+      alertSystem.addAlert('clear', `Cleared ${totalCount.toLocaleString()} trades`, 'info');
+    } catch (error) {
+      console.error('Clear error:', error);
+      setLoadingState(false);
+      statusDiv.textContent = 'Status: Clear failed';
+      alertSystem.addAlert('clear', 'Clear failed: ' + error.message, 'danger');
+    }
+  }
+}
+
+// Enhanced custom logic runner with unlimited data access
+function runCustomLogic() {
+  if (!logicInput.value.trim()) {
+    logicOutput.textContent = 'Enter custom logic above to get suggestions.';
+    return;
+  }
+  
+  try {
+    const userCode = logicInput.value;
+    let analyze;
+    
+    try {
+      analyze = new Function('trades', 'aggStatsData', `
+        "use strict";
+        ${userCode}
+        return analyze(trades, aggStatsData);
+      `);
+    } catch(e) {
+      logicOutput.textContent = 'Error compiling logic: ' + e.message;
+      return;
+    }
+    
+    const startTime = performance.now();
+    
+    const result = analyze(trades, window.aggStatsData || {});
+    const endTime = performance.now();
+    
+    const executionTime = (endTime - startTime).toFixed(2);
+    const dataSize = trades.length.toLocaleString();
+    
+    logicOutput.textContent = typeof result === 'string' 
+      ? `${result}\n\n[Analyzed ${dataSize} trades in ${executionTime}ms]`
+      : JSON.stringify(result, null, 2) + `\n\n[Analyzed ${dataSize} trades in ${executionTime}ms]`;
+      
+    configManager.saveConfig();
+  } catch(e) {
+    logicOutput.textContent = 'Error running logic: ' + e.message + '\n\nMake sure your analyze function is properly defined.';
+  }
+}
+
+// Event listeners
+applyParserBtn.onclick = applyParserFromInput;
+startBtn.onclick = startWebSocket;
+stopBtn.onclick = stopWebSocket;
+exportBtn.onclick = exportTradesCSV;
+clearBtn.onclick = clearAllTrades;
+runLogicBtn.onclick = runCustomLogic;
+loadPresetBtn.onclick = () => {
+  const selectedExchange = exchangeSelect.value;
+  if (selectedExchange !== 'custom') {
+    loadExchangePreset(selectedExchange);
+  }
+};
+
+// Auto-save configuration on changes
+[instrumentSelect, exchangeSelect, wsUrlInput, subscribeMsgInput, parserFuncInput, logicInput].forEach(element => {
+  element.addEventListener('change', () => {
+    configManager.saveConfig();
+  });
+});
+
+// Auto-run logic every 20 seconds when streaming with unlimited data
+setInterval(() => {
+  if (isRunning && logicInput.value.trim()) {
+    runCustomLogic();
+  }
+}, 20000);
+
+// Initialize application with unlimited data support for all coins
+window.onload = async () => {
+  try {
+    setLoadingState(true, 'Initializing system...');
+    
+    // Initialize managers
+    configManager = new ConfigurationManager();
+    messageHandler = new ResilientMessageHandler();
+    
+    // Load configuration
+    configManager.loadConfig();
+    
+    // Initialize database
+    await openDB();
+    
+    // Initialize chart
+    chart = new MillisecondPrecisionChart('chartCanvas');
+    
+    // Initialize virtual scrolling table
+    virtualTable = new VirtualScrollTable(document.querySelector('.virtual-scroll'));
+    
+    // Apply parser and refresh UI
+    applyParserFromInput();
+    await refreshUI();
+    
+    setLoadingState(false);
+    statusDiv.textContent = 'Status: Ready - Multi Exchange & All Coins Mode Active';
+    
+    const totalCount = await getTotalTradeCount();
+    console.log(`Universal Crypto System Ready - ${totalCount} trades in database`);
+    alertSystem.addAlert('system', `System ready with ${totalCount} historical trades across all instruments`, 'success');
+    
+  } catch (error) {
+    console.error('Initialization error:', error);
+    setLoadingState(false);
+    statusDiv.textContent = 'Status: Initialization failed';
+    alertSystem.addAlert('system', 'Initialization failed: ' + error.message, 'danger');
+  }
+};
+
+// Export global functions for unlimited data access
+window.getUnlimitedTrades = getLatestTrades;
+window.getTotalTradesCount = getTotalTradeCount;
+window.exportAllData = exportTradesCSV;
+window.alertSystem = alertSystem;
+window.TechnicalIndicators = TechnicalIndicators;
+window.sovereignAnalyze = sovereignAnalyze;
+
+console.log('⚡ Crypto Realtime Unlimited - Universal Multi Exchange System Loaded');
+console.log('Available global functions:');
+console.log('- getUnlimitedTrades() - Get all stored trades');
+console.log('- getTotalTradesCount() - Get total trade count');
+console.log('- exportAllData() - Export all data as CSV');
+console.log('- alertSystem - Enhanced real-time alert system');
+console.log('- TechnicalIndicators - Technical analysis functions');
+console.log('- sovereignAnalyze() - Military-grade trading analysis with multi-sector integration');
+</script>
+
+</body>
+</html>

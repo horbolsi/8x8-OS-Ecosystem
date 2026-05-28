@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#020818">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>8×8 Ecosystem OS</title>
-<link rel="manifest" href="/manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#020818"/>
+<title>⚡ 8x8 OS — 5D Sovereign Intelligence Platform v10.2</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 :root{
   --black:#000;--deep:#020818;--navy:#060e2a;--mid:#0a1a4a;
@@ -17,384 +15,2287 @@
   --green:#00FF88;--cyan:#00FFFF;--purple:#AA44FF;
   --white:#FFF;--dim:#8899BB;--text:#AABBDD;
   --border:rgba(255,215,0,0.18);
-  --gg:0 0 20px rgba(255,215,0,0.5),0 0 40px rgba(255,215,0,0.2);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;font-family:'Rajdhani',sans-serif;background:var(--deep);color:var(--white)}
+#canvas-container{width:100%;height:100%;position:fixed;inset:0;z-index:1;pointer-events:auto}
 
-/* INTRO */
-#intro{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
-#intro.gone{display:none}
-.stars{position:absolute;inset:0;overflow:hidden}
-.star{position:absolute;border-radius:50%;background:#fff;animation:twk var(--d,3s) var(--dl,0s) infinite ease-in-out}
+/* ═══ INTRO ═══ */
+#intro{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;transition:opacity 1.2s ease}
+#intro.gone{opacity:0;pointer-events:none}
+.intro-stars{position:absolute;inset:0;overflow:hidden}
+.istar{position:absolute;border-radius:50%;background:#fff;animation:twk var(--d,3s) var(--dl,0s) infinite ease-in-out}
 @keyframes twk{0%,100%{opacity:.1;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}}
-.gate{position:absolute;top:0;width:50%;height:100%;background:linear-gradient(180deg,#000,#040d24);z-index:2;overflow:hidden;transition:transform 1.4s cubic-bezier(.77,0,.18,1)}
-.gate-l{left:0;border-right:2px solid rgba(255,215,0,.5)}
-.gate-r{right:0;border-left:2px solid rgba(255,215,0,.5)}
-.gate-l.open{transform:translateX(-100%)}
-.gate-r.open{transform:translateX(100%)}
+.gate{position:absolute;top:0;width:50%;height:100%;z-index:2;transition:transform 1.4s cubic-bezier(.77,0,.18,1)}
+.gate-l{left:0;border-right:2px solid rgba(255,215,0,.5);background:linear-gradient(90deg,#000,#040d24)}
+.gate-r{right:0;border-left:2px solid rgba(255,215,0,.5);background:linear-gradient(270deg,#000,#040d24)}
+.gate-l.open{transform:translateX(-100%)}.gate-r.open{transform:translateX(100%)}
+.gate-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,215,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,215,0,.04) 1px,transparent 1px);background-size:40px 40px}
+.gate-scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(255,215,0,.8),transparent);animation:gscan 1.8s linear infinite}
+@keyframes gscan{0%{top:0}100%{top:100%}}
 .intro-logo{position:relative;z-index:3;text-align:center}
-.intro-logo .x8{font-family:'Orbitron',sans-serif;font-size:clamp(70px,18vw,160px);font-weight:900;color:var(--red);line-height:1;animation:rp .9s ease-in-out infinite alternate}
-@keyframes rp{0%{text-shadow:0 0 40px #f22,0 0 80px #f228,0 0 120px #f224}100%{text-shadow:0 0 60px #f22,0 0 120px #f22a,0 0 180px #f226}}
-.intro-logo .sub{font-size:clamp(10px,2.5vw,16px);letter-spacing:.5em;color:var(--gold);margin-top:8px;opacity:0;animation:fi .5s .8s forwards}
+.intro-logo .x8{font-family:'Orbitron',sans-serif;font-size:clamp(50px,14vw,120px);font-weight:900;color:#FF2222;line-height:1;animation:rp .9s ease-in-out infinite alternate}
+@keyframes rp{0%{text-shadow:0 0 40px #f22,0 0 80px #f228}100%{text-shadow:0 0 60px #f22,0 0 120px #f22a,0 0 180px #f226}}
+.intro-logo .sub{font-size:clamp(8px,1.8vw,13px);letter-spacing:.5em;color:#FFD700;margin-top:6px;opacity:0;animation:fi .5s .8s forwards}
 @keyframes fi{to{opacity:1}}
+.intro-prog{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);text-align:center;z-index:3;width:240px}
+.prog-bar{height:2px;background:rgba(255,215,0,.15);border-radius:2px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;background:linear-gradient(90deg,#FF2222,#FFD700);width:0;transition:width .1s linear}
+.prog-txt{font-family:'Share Tech Mono',monospace;font-size:9px;color:#B8860B;letter-spacing:.2em}
+#enterBtn{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);z-index:999999;padding:14px 48px;background:linear-gradient(135deg,#B8860B,#FFD700);color:#000;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;border:2px solid #FFD700;border-radius:12px;cursor:pointer;letter-spacing:.08em;box-shadow:0 0 40px rgba(255,215,0,.5),inset 0 0 20px rgba(255,215,0,.2);transition:all .3s;pointer-events:auto}
+#enterBtn:hover{transform:translateX(-50%) translateY(-2px);box-shadow:0 0 60px rgba(255,215,0,.7)}
 
-/* APP */
-#app{display:none;flex-direction:column;height:100vh;overflow:hidden;position:relative}
-.header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(2,8,24,.9);backdrop-filter:blur(10px);z-index:10}
-.logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--red);text-shadow:0 0 20px rgba(255,34,34,.5)}
-.header-right{display:flex;gap:8px;align-items:center}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+/* ═══ HUD ═══ */
+#hud{position:fixed;inset:0;z-index:100;pointer-events:none;display:none}
+#hud.on{display:block}
+.hud-top{position:absolute;top:0;left:0;right:0;height:44px;background:linear-gradient(180deg,rgba(2,8,24,.93) 0%,rgba(2,8,24,0) 100%);display:flex;align-items:center;justify-content:center;gap:12px;padding:0 12px;pointer-events:auto}
+.hud-top-center{display:flex;align-items:center;gap:10px}
+.hud-logo{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.5);letter-spacing:.05em}
+.hud-logo span{color:#FF2222}
+.hud-sep{width:1px;height:14px;background:rgba(255,215,0,.2)}
+.hud-pill{font-family:'Share Tech Mono',monospace;font-size:9px;color:#8899BB;letter-spacing:.05em}
+.hud-live{width:5px;height:5px;background:#00FF88;border-radius:50%;animation:bl 1s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* TABS */
-.tabs{display:flex;border-bottom:1px solid var(--border);background:rgba(6,14,42,.8);overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{padding:10px 16px;font-size:12px;font-weight:600;color:var(--dim);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.05em}
-.tab.active{color:var(--gold);border-bottom-color:var(--gold);text-shadow:0 0 10px rgba(255,215,0,.3)}
+/* ═══ MIC BUTTON ═══ */
+.hud-mic{position:fixed;bottom:70px;right:16px;z-index:999;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FF2222,#FF4444);border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;box-shadow:0 0 20px rgba(255,34,34,.4);transition:all .3s;font-size:18px}
+.hud-mic:hover{transform:scale(1.1);box-shadow:0 0 30px rgba(255,34,34,.6)}
+.hud-mic.listening{animation:micPulse 1s infinite}
+@keyframes micPulse{0%,100%{box-shadow:0 0 20px rgba(255,34,34,.4)}50%{box-shadow:0 0 40px rgba(0,255,136,.8)}}
 
-/* CONTENT */
-.content{flex:1;overflow-y:auto;padding:16px;padding-bottom:80px}
-.content::-webkit-scrollbar{width:4px}
-.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* ═══ AGENT SELECTOR ═══ */
+#agentSelector{position:fixed;bottom:120px;right:16px;z-index:998;background:rgba(5,10,30,.95);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:8px;min-width:200px;backdrop-filter:blur(10px);display:none;pointer-events:auto;max-height:60vh;overflow-y:auto}
+#agentSelector.on{display:block}
+.as-title{font-family:'Orbitron',sans-serif;font-size:9px;color:#FFD700;letter-spacing:.1em;padding:4px 8px 8px;border-bottom:1px solid rgba(255,215,0,.1);margin-bottom:4px}
+.as-agent{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;cursor:pointer;transition:background .2s}
+.as-agent:hover{background:rgba(255,215,0,.08)}
+.as-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid}
+.as-name{font-size:12px;font-weight:600}
+.as-role{font-size:9px;color:#667799}
 
-/* CARDS */
-.card{background:linear-gradient(135deg,rgba(6,14,42,.9),rgba(10,26,74,.7));border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
-.card-title{font-family:'Orbitron',sans-serif;font-size:14px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em}
-.card-value{font-size:24px;font-weight:700;color:var(--white)}
-.card-sub{font-size:12px;color:var(--dim);margin-top:4px}
+/* ═══ VOICE CHAT ═══ */
+#voiceChat{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.8);pointer-events:auto}
+#voiceChat.on{display:flex}
+.vc-box{width:90%;max-width:420px;background:linear-gradient(135deg,rgba(5,10,30,.98),rgba(10,15,40,.98));border:1px solid rgba(255,215,0,.2);border-radius:16px;padding:24px;text-align:center}
+.vc-agent-av{width:70px;height:70px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid}
+.vc-agent-name{font-family:'Orbitron',sans-serif;font-size:16px;color:#FFD700}
+.vc-status{font-family:'Share Tech Mono',monospace;font-size:11px;color:#00FF88;margin:4px 0 12px}
+.vc-waves{display:flex;align-items:center;justify-content:center;gap:4px;height:40px;margin:12px 0}
+.vc-wave{width:4px;background:#00FF88;border-radius:2px;animation:wv .6s ease-in-out infinite}
+.vc-wave:nth-child(2){animation-delay:.1s}.vc-wave:nth-child(3){animation-delay:.2s}
+.vc-wave:nth-child(4){animation-delay:.3s}.vc-wave:nth-child(5){animation-delay:.15s}
+@keyframes wv{0%,100%{height:5px}50%{height:30px}}
+.vc-text{font-size:13px;color:#AABBDD;min-height:40px;margin:8px 0;line-height:1.5}
+.vc-close{padding:10px 28px;background:rgba(255,34,34,.15);border:1px solid rgba(255,34,34,.3);color:#FF4444;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.1em;margin-top:12px}
 
-/* CHAT */
-.chat-container{display:flex;flex-direction:column;gap:8px;padding-bottom:16px}
-.msg{padding:10px 14px;border-radius:12px;max-width:85%;font-size:14px;line-height:1.4;word-wrap:break-word}
-.msg-user{background:linear-gradient(135deg,var(--mid),var(--navy));color:var(--white);align-self:flex-end;border-bottom-right-radius:4px}
-.msg-ai{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,215,0,.05));border:1px solid var(--border);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
-.msg-system{text-align:center;color:var(--dim);font-size:11px;padding:4px}
+/* ═══ BOTTOM NAV ═══ */
+#navBar{position:fixed;bottom:0;left:0;right:0;height:56px;background:linear-gradient(0deg,rgba(2,8,24,.97) 0%,rgba(2,8,24,0) 100%);display:flex;align-items:center;justify-content:space-around;padding:0 2px;z-index:200;pointer-events:auto}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 4px;border-radius:8px;cursor:pointer;transition:all .2s;min-width:36px}
+.nav-btn:hover{background:rgba(255,215,0,.08)}
+.nav-btn.on{color:#FFD700}
+.nav-icon{font-size:15px}
+.nav-label{font-family:'Share Tech Mono',monospace;font-size:6px;letter-spacing:.04em;color:#667799}
+.nav-btn.on .nav-label{color:#FFD700}
 
-/* INPUT AREA */
-.input-area{position:fixed;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent,rgba(2,8,24,.95) 30%);z-index:10}
-.input-row{display:flex;gap:8px;align-items:center}
-.input{flex:1;background:rgba(6,14,42,.9);border:1px solid var(--border);border-radius:20px;padding:10px 16px;color:var(--white);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color .2s}
-.input:focus{border-color:var(--gold);box-shadow:0 0 10px rgba(255,215,0,.15)}
-.input::placeholder{color:var(--dim)}
-.btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s}
-.btn-primary{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;box-shadow:0 0 15px rgba(255,34,34,.4)}
-.btn-primary:hover{box-shadow:0 0 25px rgba(255,34,34,.6);transform:scale(1.05)}
-.btn-secondary{background:rgba(6,14,42,.9);border:1px solid var(--border);color:var(--gold)}
+/* ═══ SIDE PANELS ═══ */
+.side-panel{position:fixed;top:0;right:0;width:88%;max-width:380px;height:100%;background:linear-gradient(135deg,rgba(5,10,30,.97),rgba(8,12,35,.97));border-left:1px solid rgba(255,215,0,.12);z-index:300;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;pointer-events:auto;backdrop-filter:blur(8px)}
+.side-panel.on{transform:translateX(0)}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,215,0,.08);flex-shrink:0}
+.panel-hdr span:first-child{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:#FFD700;letter-spacing:.06em}
+.panel-hdr-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#8899BB;transition:all .2s}
+.panel-hdr-close:hover{background:rgba(255,34,34,.2);color:#FF4444}
+.panel-body{flex:1;overflow-y:auto;padding:10px 12px;scrollbar-width:thin;scrollbar-color:rgba(255,215,0,.2) transparent}
+.panel-body::-webkit-scrollbar{width:3px}
+.panel-body::-webkit-scrollbar-thumb{background:rgba(255,215,0,.2);border-radius:3px}
 
-/* BUTTONS */
-.btn-block{width:100%;padding:12px;border:none;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;transition:all .2s;margin-bottom:8px}
-.btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#000}
-.btn-red{background:linear-gradient(135deg,#cc1111,var(--red));color:#fff}
-.btn-green{background:linear-gradient(135deg,#00aa55,var(--green));color:#000}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--gold)}
+/* ═══ CARDS ═══ */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.quick-card{background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.quick-card:hover{border-color:rgba(255,215,0,.2);background:linear-gradient(135deg,rgba(255,215,0,.06),rgba(255,215,0,.02));transform:translateY(-1px)}
+.quick-card .c-icon{font-size:20px;margin-bottom:4px}
+.quick-card .c-name{font-family:'Orbitron',sans-serif;font-size:7px;color:#FFD700;letter-spacing:.04em}
+.quick-card .c-desc{font-size:8px;color:#667799;margin-top:2px}
+.quick-card .c-status{font-size:7px;margin-top:3px;padding:1px 6px;border-radius:8px;display:inline-block}
 
-/* STATS GRID */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat-card{background:rgba(6,14,42,.6);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
-.stat-val{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:var(--gold)}
-.stat-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+/* ═══ LIST ITEMS ═══ */
+.list-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .2s;margin-bottom:2px}
+.list-item:hover{background:rgba(255,255,255,.04)}
+.list-item.active{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15)}
+.list-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.list-info{flex:1;min-width:0}
+.list-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-sub{font-size:9px;color:#667799;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-badge{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(0,255,136,.1);color:#00FF88;border:1px solid rgba(0,255,136,.2)}
 
-/* WALLET */
-.wallet-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,215,0,.08)}
-.wallet-row:last-child{border-bottom:none}
-.wallet-coin{font-weight:600;color:var(--gold);font-size:13px}
-.wallet-addr{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);word-break:break-all;max-width:200px}
+/* ═══ WALLET ═══ */
+.wallet-bal{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.02));border:1px solid rgba(255,215,0,.15);border-radius:10px;padding:12px;margin-bottom:10px}
+.wb-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:#8899BB;letter-spacing:.1em}
+.wb-val{font-family:'Orbitron',sans-serif;font-size:18px;color:#FFD700;margin:4px 0}
+.wb-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:#667799;word-break:break-all}
+.wb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.wb-row:last-child{border:none}
+.wb-btn{padding:6px 12px;border-radius:6px;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.05);color:#FFD700;font-family:'Orbitron',sans-serif;font-size:8px;cursor:pointer;letter-spacing:.06em;margin-right:4px;margin-bottom:4px}
+.wb-btn:hover{background:rgba(255,215,0,.12)}
+.trade-row{display:flex;gap:6px;margin-top:8px}
+.trade-btn{flex:1;padding:8px;border-radius:8px;border:none;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.06em}
+.trade-btn.buy{background:linear-gradient(135deg,#004422,#00aa55);color:#fff}
+.trade-btn.sell{background:linear-gradient(135deg,#440000,#aa0000);color:#fff}
 
-/* HIDE SECTIONS */
-.section{display:none}
-.section.active{display:block}
+/* ═══ TERMINAL ═══ */
+.term-output{font-family:'Share Tech Mono',monospace;font-size:11px;color:#00FF88;white-space:pre-wrap;word-break:break-all;max-height:55vh;overflow-y:auto;padding:4px;line-height:1.8}
+.term-output .t-cmd{color:#FFD700}
+.term-output .t-err{color:#FF4444}
+.term-output .t-info{color:#44AAFF}
+.term-output .t-suc{color:#00FF88}
+.term-inp-row{display:flex;gap:6px;margin-top:6px}
+.term-inp{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(0,255,136,.15);border-radius:6px;padding:8px 10px;color:#00FF88;font-family:'Share Tech Mono',monospace;font-size:11px;outline:none}
+.term-inp:focus{border-color:rgba(0,255,136,.4)}
+.term-send{padding:8px 14px;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.25);color:#00FF88;border-radius:6px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.06em}
 
-/* REFERRAL */
-.ref-box{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,215,0,.03));border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;margin-bottom:12px}
-.ref-code{font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--gold);letter-spacing:.2em;margin:8px 0}
-.ref-link{font-size:11px;color:var(--dim);word-break:break-all}
+/* ═══ SETTINGS ═══ */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.setting-label{font-size:12px;color:#AABBDD}
+.tog{position:relative;width:36px;height:20px;cursor:pointer}
+.tog input{display:none}
+.tog-tr{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:10px;transition:background .3s}
+.tog-tr::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .3s}
+.tog input:checked+.tog-tr{background:rgba(0,255,136,.4)}
+.tog input:checked+.tog-tr::after{transform:translateX(16px)}
+.theme-row{display:flex;gap:8px;padding:10px 0;flex-wrap:wrap}
+.theme-dot{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.theme-dot:hover,.theme-dot.on{border-color:#fff;transform:scale(1.15)}
+
+/* ═══ NEWS ═══ */
+.news-item{padding:10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);margin-bottom:6px;cursor:pointer;transition:all .2s}
+.news-item:hover{background:rgba(255,255,255,.05);border-color:rgba(255,215,0,.12)}
+.news-cat{font-family:'Share Tech Mono',monospace;font-size:8px;padding:1px 6px;border-radius:3px;display:inline-block;margin-bottom:4px}
+.news-title{font-size:12px;font-weight:600;line-height:1.4;margin-bottom:3px}
+.news-meta{font-size:9px;color:#556677}
+.news-analysis{font-size:10px;color:#8899BB;margin-top:4px;font-style:italic;border-left:2px solid rgba(255,215,0,.2);padding-left:6px}
+
+/* ═══ STREAMING ═══ */
+.stream-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stream-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center;cursor:pointer;transition:all .2s}
+.stream-card:hover{border-color:rgba(255,34,34,.3);background:rgba(255,34,34,.05)}
+.stream-card .s-icon{font-size:20px;margin-bottom:4px}
+.stream-card .s-name{font-family:'Orbitron',sans-serif;font-size:8px;color:#FF4444}
+.stream-card .s-stat{font-size:9px;color:#667799}
+.stream-controls{display:flex;gap:8px;margin-top:10px;justify-content:center}
+.stream-btn{padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.06em;transition:all .2s}
+.stream-btn.go{background:linear-gradient(135deg,#FF2222,#FF4444);color:#fff}
+.stream-btn.stop{background:rgba(255,255,255,.08);color:#8899BB;border:1px solid rgba(255,255,255,.1)}
+.stream-config{margin-top:12px}
+.stream-config label{font-size:10px;color:#8899BB;display:block;margin-bottom:3px}
+.stream-config input,.stream-config textarea{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:6px 8px;color:#fff;font-family:'Share Tech Mono',monospace;font-size:10px;outline:none;margin-bottom:6px}
+.stream-config textarea{min-height:60px;resize:vertical}
+
+/* ═══ TRADING DASHBOARD (GG.html features) ═══ */
+.trading-section{margin-top:12px}
+.trading-header{font-family:'Orbitron',sans-serif;font-size:10px;color:#FFD700;letter-spacing:.08em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.trade-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.trade-stat{background:rgba(0,0,0,.3);border-radius:6px;padding:8px;text-align:center}
+.trade-stat-val{font-family:'Orbitron',sans-serif;font-size:14px;color:#FFD700}
+.trade-stat-lbl{font-size:8px;color:#667799}
+.indicator-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:10px}
+.indicator-val{font-family:'Share Tech Mono',monospace;font-weight:bold}
+.ind-buy{color:#0f0}.ind-sell{color:#f00}.ind-neu{color:#888}
+.chart-container{background:#000;border-radius:8px;padding:8px;margin:8px 0;height:180px;position:relative;overflow:hidden}
+.chart-container canvas{width:100%;height:100%}
+.order-book{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.ob-side{background:rgba(0,0,0,.3);border-radius:6px;padding:8px}
+.ob-title{font-size:9px;letter-spacing:.1em;margin-bottom:6px}
+.ob-buy .ob-title{color:#0f0}.ob-sell .ob-title{color:#f00}
+.ob-row{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 0}
+.ob-row.buy{color:#0f0}.ob-row.sell{color:#f00}
+.signal-display{text-align:center;padding:10px;border-radius:8px;margin:8px 0;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:bold;border:2px solid}
+.signal-buy{background:#0f5132;border-color:#198754;color:#0f0}
+.signal-sell{background:#5c0a15;border-color:#dc3545;color:#f00}
+.signal-hold{background:#343a40;border-color:#6c757d;color:#fff}
+
+/* ═══ GAMES ═══ */
+.game-canvas{width:100%;background:#000;border-radius:8px;margin:8px 0;display:block}
+.game-controls{display:flex;gap:6px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+.game-btn{padding:6px 14px;border-radius:6px;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.05);color:#FFD700;font-family:'Orbitron',sans-serif;font-size:8px;cursor:pointer}
+.game-score{font-family:'Orbitron',sans-serif;font-size:12px;color:#FFD700;text-align:center;padding:4px}
+
+/* ═══ AGENT CHAT ═══ */
+#chatPopup{position:fixed;bottom:60px;left:50%;transform:translateX(-50%) translateY(20px);width:92%;max-width:440px;background:linear-gradient(135deg,rgba(5,10,30,.97),rgba(8,12,35,.97));border:1px solid rgba(255,215,0,.15);border-radius:14px;z-index:400;opacity:0;pointer-events:none;transition:all .3s;backdrop-filter:blur(10px);max-height:70vh;display:flex;flex-direction:column}
+#chatPopup.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.chat-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,215,0,.08);flex-shrink:0}
+.chat-hdr-name{font-family:'Orbitron',sans-serif;font-size:11px;color:#FFD700}
+.chat-hdr-close{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:#8899BB}
+.chat-msgs{flex:1;overflow-y:auto;padding:10px 14px;min-height:150px;max-height:40vh}
+.chat-msg{margin-bottom:8px;font-size:12px;line-height:1.6}
+.chat-msg.u{color:#FFD700;text-align:right}
+.chat-msg.a{color:#00FF88}
+.chat-msg .msg-time{font-size:8px;color:#556677;display:block;margin-top:2px}
+.chat-inp-row{display:flex;gap:6px;padding:8px 14px;border-top:1px solid rgba(255,215,0,.06);flex-shrink:0;align-items:center}
+.chat-inp{flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.1);border-radius:8px;padding:8px 10px;color:#fff;font-size:12px;outline:none;font-family:'Rajdhani',sans-serif}
+.chat-inp:focus{border-color:rgba(255,215,0,.3)}
+.chat-send{padding:8px 14px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);color:#FFD700;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:9px}
+.chat-file-btn{width:32px;height:32px;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.15);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:#8899BB}
+.chat-file-btn:hover{background:rgba(255,215,0,.1);color:#FFD700}
+
+/* ═══ PANEL OVERLAY ═══ */
+#panelOverlay{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s}
+#panelOverlay.on{background:rgba(0,0,0,.4);pointer-events:auto}
+/* ═══ CARD VIEWER ═══ */
+#cardViewer{position:fixed;inset:0;z-index:500;background:rgba(2,8,24,.98);display:none;flex-direction:column}
+#cardViewer.on{display:flex}
+/* ═══ TOOLTIP ═══ */
+.tooltip{position:fixed;z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s;background:rgba(5,10,30,.9);border:1px solid rgba(255,215,0,.2);border-radius:6px;padding:6px 10px;font-size:10px;backdrop-filter:blur(6px)}
+.tooltip.on{opacity:1}
+
+/* ═══ LIVE TICKER ═══ */
+@keyframes tickerScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+.ticker-anim{animation:tickerScroll 30s linear infinite}
+.ticker-item{display:flex;align-items:center;gap:6px}
+.ticker-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.ticker-dot.info{background:#00FFFF}
+.ticker-dot.warn{background:#FFD700}
+.ticker-dot.error{background:#FF4444}
+.ticker-dot.device{background:#00FF88}
+.ticker-dot.agent{background:#AA44FF}
+.ticker-time{color:#556677}
+.ticker-source{color:#FFD700}
+.ticker-content{color:#AABBDD}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,215,0,.15);border-radius:3px}
+
+/* ═══ TOAST ANIMATIONS ═══ */
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ═══ OFFLINE INDICATOR ═══ */
+#offlineIndicator{position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#FF4444,#FFD700);z-index:99999;display:none;animation:pulseBar 2s infinite}
+#offlineIndicator.show{display:block}
+@keyframes pulseBar{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ═══ KEYBOARD SHORTCUT HINT ═══ */
+.kbd-hint{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(5,10,30,.9);border:1px solid rgba(255,215,0,.15);border-radius:8px;padding:8px 16px;font-size:9px;color:#8899BB;font-family:'Share Tech Mono',monospace;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.kbd-hint.show{opacity:1}
+/* Leaflet overrides for 8x8 dark theme */
+.leaflet-container{background:#020818!important;font-family:'Rajdhani',Arial,sans-serif!important}
+.leaflet-popup-content-wrapper{background:rgba(5,10,30,.95)!important;border:1px solid rgba(255,215,0,.2)!important;border-radius:8px!important;color:#fff!important;font-size:11px!important}
+.leaflet-popup-tip{background:rgba(5,10,30,.95)!important}
+.leaflet-control-zoom a{background:rgba(5,10,30,.9)!important;color:#FFD700!important;border-color:rgba(255,215,0,.2)!important}
+.leaflet-control-zoom a:hover{background:rgba(255,215,0,.15)!important}
+.sov-pin,.agent-pin{background:transparent!important;border:none!important}
 </style>
 </head>
 <body>
 
-<!-- INTRO -->
+<!-- 3D CANVAS -->
+<div id="canvas-container"></div>
+
+<!-- INTRO GATE -->
 <div id="intro">
-  <div class="stars" id="stars"></div>
-  <div class="gate gate-l"><div class="gate-grid"></div><div class="gate-scan"></div></div>
-  <div class="gate gate-r"><div class="gate-grid"></div><div class="gate-scan"></div></div>
+  <div class="intro-stars" id="starField"></div>
+  <div class="gate gate-l" id="gL"><div class="gate-grid"></div><div class="gate-scan"></div></div>
+  <div class="gate gate-r" id="gR"><div class="gate-grid"></div><div class="gate-scan"></div></div>
   <div class="intro-logo">
     <div class="x8">8×8</div>
-    <div class="sub">E C O S Y S T E M &nbsp; O S</div>
+    <div class="sub">SOVEREIGN INTELLIGENCE PLATFORM</div>
+  </div>
+  <div class="intro-prog">
+    <div class="prog-txt" id="loadMsg">INITIALIZING...</div>
+    <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+    <div class="prog-txt" id="pPct">0%</div>
+  </div>
+  <button id="enterBtn">ENTER 8×8 OS →</button>
+  <div id="skipIntro" style="position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:999999;font-family:'Share Tech Mono',monospace;font-size:9px;color:#556677;cursor:pointer;letter-spacing:.1em;pointer-events:auto" onclick="skipIntro()">SKIP →</div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-top">
+    <div class="hud-top-center">
+      <span class="hud-logo">8<span>×</span>8</span>
+      <span class="hud-sep"></span>
+      <span class="hud-pill" id="hud-time">00:00:00</span>
+      <span class="hud-live"></span>
+      <span class="hud-pill" id="sys-btc">$--</span>
+      <span class="hud-pill" id="sys-btc-pct" style="color:#00FF88">--%</span>
+      <span class="hud-sep"></span>
+      <span class="hud-pill" id="hud-battery" style="color:#00FF88">🔋--%</span>
+      <span class="hud-pill" id="hud-wifi" style="color:#00FFFF">📶--</span>
+    </div>
+  </div>
+  <!-- Live Activity Ticker -->
+  <div id="hud-ticker" style="position:fixed;bottom:60px;left:0;right:0;height:22px;background:linear-gradient(90deg,rgba(2,8,24,0.9),rgba(2,8,24,0));overflow:hidden;z-index:150;display:flex;align-items:center;pointer-events:none">
+    <div id="ticker-content" style="display:flex;gap:30px;white-space:nowrap;font-family:'Share Tech Mono',monospace;font-size:8px;color:#8899BB;padding-left:100%"></div>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app">
-  <div class="header">
-    <div class="logo">⚡ 8×8</div>
-    <div class="header-right">
-      <div class="status-dot" id="statusDot"></div>
-      <span style="font-size:11px;color:var(--dim)" id="statusText">Connecting...</span>
-    </div>
+<!-- MIC BUTTON -->
+<div class="hud-mic" id="micBtn" title="Talk to Agent">🎤</div>
+
+<!-- AGENT SELECTOR -->
+<div id="agentSelector">
+  <div class="as-title">⚡ SELECT AGENT</div>
+  <div id="agentList"></div>
+</div>
+
+<!-- VOICE CHAT -->
+<div id="voiceChat">
+  <div class="vc-box">
+    <div class="vc-agent-av" id="vcAv">🔥</div>
+    <div class="vc-agent-name" id="vcName">FLASH</div>
+    <div class="vc-status" id="vcStatus">LISTENING...</div>
+    <div class="vc-waves" id="vcWaves"><div class="vc-wave"></div><div class="vc-wave"></div><div class="vc-wave"></div><div class="vc-wave"></div><div class="vc-wave"></div></div>
+    <div class="vc-text" id="vcText">Tap mic and speak...</div>
+    <button class="vc-close" onclick="closeVoice()">✕ CLOSE</button>
   </div>
+</div>
 
-  <div class="tabs" id="tabs">
-    <div class="tab active" data-tab="chat">💬 Chat</div>
-    <div class="tab" data-tab="wallet">💰 Wallet</div>
-    <div class="tab" data-tab="earn">⛏️ Earn</div>
-    <div class="tab" data-tab="nft">🖼️ NFT</div>
-    <div class="tab" data-tab="referral">👥 Ref</div>
-  </div>
+<!-- BOTTOM NAV -->
+<div id="navBar"></div>
 
-  <div class="content" id="content">
-    <!-- CHAT TAB -->
-    <div class="section active" id="tab-chat">
-      <div class="chat-container" id="chatContainer">
-        <div class="msg msg-system">⚡ 8×8 AI — Online | v1.1.0</div>
-        <div class="msg msg-ai">Welcome to 8×8 Ecosystem OS! 🎁 You have <b>88 free minutes</b> today. Ask me anything or explore the tabs below.</div>
-      </div>
-    </div>
+<!-- HOME PANEL -->
+<div class="side-panel" id="homePanel">
+  <div class="panel-hdr"><span>⚡ 8x8 OS DASHBOARD</span><span class="panel-hdr-close" onclick="closePanel('homePanel')">✕</span></div>
+  <div class="panel-body" id="homeBody"></div>
+</div>
 
-    <!-- WALLET TAB -->
-    <div class="section" id="tab-wallet">
-      <div class="card">
-        <div class="card-title">💰 Payment Wallets</div>
-        <div class="card-sub">Subscription: $8.88 USDT/month</div>
-        <div id="walletList" style="margin-top:12px">
-          <div class="wallet-row"><span class="wallet-coin">₿ BTC</span><span class="wallet-addr" id="wbtc">Loading...</span></div>
-          <div class="wallet-row"><span class="wallet-coin">💲 USDT</span><span class="wallet-addr" id="wusdt">Loading...</span></div>
-          <div class="wallet-row"><span class="wallet-coin">🔒 XMR</span><span class="wallet-addr" id="wxmr">Loading...</span></div>
-          <div class="wallet-row"><span class="wallet-coin">💎 ETH</span><span class="wallet-addr" id="weth">Loading...</span></div>
-        </div>
-      </div>
-      <button class="btn-block btn-gold" onclick="subscribe()">💎 Subscribe $8.88/mo</button>
-      <div class="card" style="margin-top:12px">
-        <div class="card-title">📊 Your Balance</div>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-val" id="balFree">88</div><div class="stat-label">Free Min</div></div>
-          <div class="stat-card"><div class="stat-val" id="balPrem">❌</div><div class="stat-label">Premium</div></div>
-        </div>
-      </div>
-    </div>
+<!-- RADIO PANEL -->
+<div class="side-panel" id="radioPanel">
+  <div class="panel-hdr"><span>📻 RADIO</span><span class="panel-hdr-close" onclick="closePanel('radioPanel')">✕</span></div>
+  <div class="panel-body" id="radioBody"></div>
+</div>
 
-    <!-- EARN TAB -->
-    <div class="section" id="tab-earn">
-      <div class="card">
-        <div class="card-title">⛏️ Mining</div>
-        <div class="card-sub">Earn while your phone is idle</div>
-        <div class="stats-grid" style="margin-top:12px">
-          <div class="stat-card"><div class="stat-val" id="mineStatus">OFF</div><div class="stat-label">Status</div></div>
-          <div class="stat-card"><div class="stat-val" id="minePower">25%</div><div class="stat-label">Power</div></div>
-          <div class="stat-card"><div class="stat-val" id="mineEarned">0.00</div><div class="stat-label">USDT Earned</div></div>
-          <div class="stat-card"><div class="stat-val" id="mineHash">0</div><div class="stat-label">Hashes</div></div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn-block btn-green" onclick="setMining(true,25)">🔋 Eco 25%</button>
-          <button class="btn-block btn-gold" onclick="setMining(true,75)">⚡ Perf 75%</button>
-        </div>
-        <button class="btn-block btn-ghost" onclick="setMining(false,0)" style="margin-top:4px">⏹️ Stop Mining</button>
-      </div>
-      <div class="card">
-        <div class="card-title">🥩 Staking</div>
-        <div class="card-sub">Allocation: PoW / PoS / PoStorage</div>
-        <div class="stats-grid" style="margin-top:12px">
-          <div class="stat-card"><div class="stat-val" id="stkPow">35%</div><div class="stat-label">PoW</div></div>
-          <div class="stat-card"><div class="stat-val" id="stkPos">40%</div><div class="stat-label">PoS</div></div>
-          <div class="stat-card"><div class="stat-val" id="stkPst">25%</div><div class="stat-label">PoStorage</div></div>
-        </div>
-      </div>
-    </div>
+<!-- TV PANEL -->
+<div class="side-panel" id="tvPanel">
+  <div class="panel-hdr"><span>📺 TV & PLATFORMS</span><span class="panel-hdr-close" onclick="closePanel('tvPanel')">✕</span></div>
+  <div class="panel-body" id="tvBody"></div>
+</div>
 
-    <!-- NFT TAB -->
-    <div class="section" id="tab-nft">
-      <div class="card">
-        <div class="card-title">🖼️ NFT Vaults</div>
-        <div class="card-sub">Max supply: 8,888,888 | Each vault locks 0.001 PI</div>
-        <div class="stats-grid" style="margin-top:12px">
-          <div class="stat-card"><div class="stat-val" id="nftCount">0</div><div class="stat-label">Your Vaults</div></div>
-          <div class="stat-card"><div class="stat-val" id="nftMax">8.8M</div><div class="stat-label">Max Supply</div></div>
-        </div>
-        <button class="btn-block btn-gold" onclick="mintNFT()" style="margin-top:12px">🖼️ Mint Vault (Common)</button>
-      </div>
-    </div>
+<!-- STREAMING PANEL -->
+<div class="side-panel" id="streamPanel">
+  <div class="panel-hdr"><span>🎬 MULTISTREAM STUDIO</span><span class="panel-hdr-close" onclick="closePanel('streamPanel')">✕</span></div>
+  <div class="panel-body" id="streamBody"></div>
+</div>
 
-    <!-- REFERRAL TAB -->
-    <div class="section" id="tab-referral">
-      <div class="ref-box">
-        <div style="font-size:13px;color:var(--gold);margin-bottom:4px">👥 Your Referral Code</div>
-        <div class="ref-code" id="refCode">LOADING...</div>
-        <div class="ref-link" id="refLink">Loading...</div>
-      </div>
-      <div class="card">
-        <div class="card-title">📊 Referral Stats</div>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-val" id="refCount">0</div><div class="stat-label">Referrals</div></div>
-          <div class="stat-card"><div class="stat-val" id="refEarned">$0.00</div><div class="stat-label">Earned</div></div>
-          <div class="stat-card"><div class="stat-val">5%</div><div class="stat-label">Tier 1</div></div>
-          <div class="stat-card"><div class="stat-val">2%</div><div class="stat-label">Tier 2</div></div>
-        </div>
-      </div>
-      <button class="btn-block btn-ghost" onclick="shareRef()">📤 Share Referral Link</button>
-    </div>
-  </div>
+<!-- TRADING PANEL -->
+<div class="side-panel" id="tradingPanel">
+  <div class="panel-hdr"><span>📊 BTC TRADING DASHBOARD</span><span class="panel-hdr-close" onclick="closePanel('tradingPanel')">✕</span></div>
+  <div class="panel-body" id="tradingBody"></div>
+</div>
 
-  <!-- INPUT AREA (for chat) -->
-  <div class="input-area" id="inputArea">
-    <div class="input-row">
-      <input class="input" id="msgInput" placeholder="Ask 8×8 AI anything..." onkeydown="if(event.key==='Enter')sendMsg()">
-      <button class="btn btn-primary" onclick="sendMsg()">➤</button>
+<!-- STORE PANEL -->
+<div class="side-panel" id="storePanel">
+  <div class="panel-hdr"><span>🛒 STORE</span><span class="panel-hdr-close" onclick="closePanel('storePanel')">✕</span></div>
+  <div class="panel-body" id="storeBody"></div>
+</div>
+
+<!-- NFT PANEL -->
+<div class="side-panel" id="nftPanel">
+  <div class="panel-hdr"><span>🖼️ NFT VAULT</span><span class="panel-hdr-close" onclick="closePanel('nftPanel')">✕</span></div>
+  <div class="panel-body" id="nftBody"></div>
+</div>
+
+<!-- WALLET PANEL -->
+<div class="side-panel" id="walletPanel">
+  <div class="panel-hdr"><span>💰 WALLET & TRADING</span><span class="panel-hdr-close" onclick="closePanel('walletPanel')">✕</span></div>
+  <div class="panel-body" id="walletBody"></div>
+</div>
+
+<!-- GAMES PANEL -->
+<div class="side-panel" id="gamesPanel">
+  <div class="panel-hdr"><span>🎮 GAMES</span><span class="panel-hdr-close" onclick="closePanel('gamesPanel')">✕</span></div>
+  <div class="panel-body" id="gamesBody"></div>
+</div>
+
+<!-- NEWS PANEL -->
+<div class="side-panel" id="newsPanel">
+  <div class="panel-hdr"><span>📰 NEWS & ANALYSIS</span><span class="panel-hdr-close" onclick="closePanel('newsPanel')">✕</span></div>
+  <div class="panel-body" id="newsBody"></div>
+</div>
+
+<!-- TERMINAL PANEL -->
+<div class="side-panel" id="terminalPanel">
+  <div class="panel-hdr"><span>💻 TERMINAL</span><span class="panel-hdr-close" onclick="closePanel('terminalPanel')">✕</span></div>
+  <div class="panel-body">
+    <div class="term-output" id="termOutput">⚡ 8x8 OS Terminal v9.0
+Connected to: 8x8 OS Public Terminal
+Type 'help' for commands.
+&gt; </div>
+    <div class="term-inp-row">
+      <input class="term-inp" id="termInp" placeholder="Enter command..." onkeydown="if(event.key==='Enter')runTerm()"/>
+      <button class="term-send" onclick="runTerm()">RUN</button>
     </div>
   </div>
 </div>
 
+<!-- SETTINGS PANEL -->
+<div class="side-panel" id="settingsPanel">
+  <div class="panel-hdr"><span>⚙️ SETTINGS</span><span class="panel-hdr-close" onclick="closePanel('settingsPanel')">✕</span></div>
+  <div class="panel-body" id="settingsBody"></div>
+</div>
+
+<!-- LIVE LOG PANEL -->
+<div class="side-panel" id="logPanel">
+  <div class="panel-hdr"><span>📡 LIVE ACTIVITY LOG</span><span class="panel-hdr-close" onclick="closePanel('logPanel')">✕</span></div>
+  <div class="panel-body" id="logBody" style="display:flex;flex-direction:column;height:100%">
+    <!-- Stats bar -->
+    <div id="logStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px;flex-shrink:0"></div>
+    <!-- Filters -->
+    <div style="display:flex;gap:4px;margin-bottom:6px;flex-shrink:0;flex-wrap:wrap">
+      <select id="logFilterSource" onchange="loadLogEvents()" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.15);border-radius:4px;color:#AABBDD;font-size:8px;padding:3px 4px;font-family:'Share Tech Mono',monospace;flex:1;min-width:0">
+        <option value="">ALL SOURCES</option>
+      </select>
+      <select id="logFilterSeverity" onchange="loadLogEvents()" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.15);border-radius:4px;color:#AABBDD;font-size:8px;padding:3px 4px;font-family:'Share Tech Mono',monospace;flex:1;min-width:0">
+        <option value="">ALL LEVELS</option>
+        <option value="ERROR">ERRORS</option>
+        <option value="WARN">WARNINGS</option>
+        <option value="INFO">INFO</option>
+        <option value="TRACE">TRACE</option>
+      </select>
+      <select id="logFilterHours" onchange="loadLogEvents()" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.15);border-radius:4px;color:#AABBDD;font-size:8px;padding:3px 4px;font-family:'Share Tech Mono',monospace">
+        <option value="1">1H</option>
+        <option value="6">6H</option>
+        <option value="24" selected>24H</option>
+        <option value="72">3D</option>
+        <option value="168">7D</option>
+      </select>
+    </div>
+    <!-- Search -->
+    <div style="display:flex;gap:4px;margin-bottom:6px;flex-shrink:0">
+      <input id="logSearch" placeholder="🔍 Search events..." oninput="clearTimeout(logSearchTimer);logSearchTimer=setTimeout(loadLogEvents,300)" style="flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.15);border-radius:6px;padding:5px 8px;color:#fff;font-family:'Share Tech Mono',monospace;font-size:9px;outline:none"/>
+    </div>
+    <!-- Export buttons -->
+    <div style="display:flex;gap:4px;margin-bottom:6px;flex-shrink:0">
+      <button onclick="exportLog('csv')" style="flex:1;padding:4px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:4px;color:#FFD700;font-size:7px;font-family:'Orbitron',sans-serif;cursor:pointer">📊 CSV</button>
+      <button onclick="exportLog('excel')" style="flex:1;padding:4px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:4px;color:#FFD700;font-size:7px;font-family:'Orbitron',sans-serif;cursor:pointer">📗 EXCEL</button>
+      <button onclick="toggleLiveStream()" id="liveStreamBtn" style="flex:1;padding:4px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);border-radius:4px;color:#00FF88;font-size:7px;font-family:'Orbitron',sans-serif;cursor:pointer">● LIVE</button>
+    </div>
+    <!-- Events list -->
+    <div id="logEvents" style="flex:1;overflow-y:auto;min-h:0"></div>
+    <!-- Status bar -->
+    <div id="logStatus" style="flex-shrink:0;padding:4px 0;font-family:'Share Tech Mono',monospace;font-size:8px;color:#556677;display:flex;justify-content:space-between">
+      <span id="logEventCount">Loading...</span>
+      <span id="logLiveIndicator" style="color:#556677">○ OFFLINE</span>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD MAP PANEL -->
+<div class="side-panel" id="worldMapPanel">
+  <div class="panel-hdr"><span>🌍 8x8 WORLD MAP</span><span class="panel-hdr-close" onclick="closePanel('worldMapPanel')">✕</span></div>
+  <div class="panel-body" style="padding:0;height:100%;position:relative">
+    <div id="world-map-container" style="width:100%;height:100%;min-height:400px;background:#020818"></div>
+    <div style="position:absolute;top:8px;left:8px;z-index:1000;background:rgba(5,10,30,.9);border:1px solid rgba(255,215,0,.2);border-radius:6px;padding:6px 10px;pointer-events:auto">
+      <div style="font-family:'Orbitron',Arial,sans-serif;font-size:7px;color:#FFD700;letter-spacing:.08em;margin-bottom:3px">⚡ 8x8 WORLD MAP</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:#8899BB">Agents: <span id="wm-agents" style="color:#00FF88">21</span> | Threats: <span id="wm-threats" style="color:#00FF88">0</span></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:#8899BB">Connections: <span id="wm-conns" style="color:#00FFFF">63</span> | FPS: <span id="wm-fps" style="color:#FFD700">60</span></div>
+    </div>
+    <div style="position:absolute;bottom:8px;right:8px;z-index:1000;display:flex;gap:4px;pointer-events:auto">
+      <div onclick="if(worldMap)worldMap.setZoom(worldMap.getZoom()+1)" style="width:28px;height:28px;background:rgba(5,10,30,.9);border:1px solid rgba(255,215,0,.2);border-radius:4px;color:#FFD700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</div>
+      <div onclick="if(worldMap)worldMap.setZoom(worldMap.getZoom()-1)" style="width:28px;height:28px;background:rgba(5,10,30,.9);border:1px solid rgba(255,215,0,.2);border-radius:4px;color:#FFD700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</div>
+      <div onclick="if(worldMap)worldMap.flyTo(SOVEREIGN.lat,SOVEREIGN.lng,3)" style="width:28px;height:28px;background:rgba(5,10,30,.9);border:1px solid rgba(255,215,0,.2);border-radius:4px;color:#FFD700;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">⚡</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT POPUP -->
+<div id="chatPopup">
+  <div class="chat-hdr">
+    <span class="chat-hdr-name" id="chatAgentName">FLASH</span>
+    <span class="chat-hdr-close" onclick="closeChat()">✕</span>
+  </div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-inp-row">
+    <label class="chat-file-btn" for="chatFileInput" title="Send file">📎</label>
+    <input type="file" id="chatFileInput" style="display:none" onchange="handleFileUpload(this)"/>
+    <input class="chat-inp" id="chatInp" placeholder="Type message..." onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button class="chat-send" onclick="sendChat()">SEND</button>
+  </div>
+</div>
+
+<!-- PANEL OVERLAY -->
+<div id="panelOverlay" onclick="closeAllPanels()"></div>
+
+<!-- CARD VIEWER -->
+<div id="cardViewer"></div>
+
+<!-- OFFLINE INDICATOR -->
+<div id="offlineIndicator"></div>
+
+<!-- KEYBOARD SHORTCUT HINT -->
+<div class="kbd-hint" id="kbdHint">Press L for Live Log • H/R/T/W/N/G/S/V/M for panels • ESC to close • / for terminal</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip" id="tooltip"><div class="tt-name" id="ttName"></div></div>
+
+<script src="js/three.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const API_BASE = "https://eightx8-os-live.onrender.com";
+(function(){
+'use strict';
 
-// Init
-let userId = localStorage.getItem("8x8_userId") || "";
-let chatHistory = [];
+/* ═══ DEPLOYMENT CONFIG ═══ */
+// Auto-detect: if running on static host (GitHub Pages, etc.), use backend URL
+// For local dev, BASE_URL stays empty (same-origin)
+const _hostname = window.location.hostname;
+const _isStatic = _hostname.includes('github.io') || _hostname.includes('netlify.app') || _hostname.includes('vercel.app');
+// Backend URL — update this when deploying to Render/Fly/Cloud
+const BACKEND_URL = _isStatic ? 'https://eightx8-os-live.onrender.com' : '';
+// Fallback: if primary fails, try these (comma-separated)
+const BACKUP_URLS = [];
 
-// Stars
-const starsContainer = document.getElementById("stars");
-for(let i=0;i<80;i++){
-  const s=document.createElement("div");
-  s.className="star";
-  s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;--d:${Math.random()*4+2}s;--dl:${Math.random()*3}s`;
-  starsContainer.appendChild(s);
+function api(path){ return BACKEND_URL + path; }
+function wsUrl(path){ 
+  const h = BACKEND_URL ? BACKEND_URL.replace('https://','').replace('http://','') : window.location.host;
+  return (window.location.protocol==='https:'?'wss:':'ws:') + '//' + h + path;
 }
 
-// Intro animation
-setTimeout(()=>{
-  document.querySelector(".gate-l").classList.add("open");
-  document.querySelector(".gate-r").classList.add("open");
-  setTimeout(()=>{
-    document.getElementById("intro").classList.add("gone");
-    document.getElementById("app").style.display="flex";
-    initApp();
-  },1600);
-},2000);
+/* ═══ WORLD MAP SYSTEM (ADDED ON TOP) ═══ */
+let worldMap=null, mapInitialized=false;
+const AGENT_LOCATIONS=new Map();
+AGENTS.forEach(a=>AGENT_LOCATIONS.set(a.name,{lat:a.lat||25,lng:a.lng||55,status:a.status||'active'}));
 
-async function initApp(){
-  // Check API health
-  try{
-    const r=await fetch(API_BASE+"/health");
-    const d=await r.json();
-    if(d.status==="healthy"){
-      document.getElementById("statusDot").style.background="var(--green)";
-      document.getElementById("statusText").textContent="Online";
+function initWorldMap(){
+  if(mapInitialized||!window.L) return;
+  const el=document.getElementById('world-map-container');
+  if(!el) return;
+  worldMap=L.map('world-map-container',{zoomControl:true,attributionControl:false}).setView([SOVEREIGN.lat,SOVEREIGN.lng],3);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(worldMap);
+  const sovIcon=L.divIcon({className:'sov-pin',html:'<div style="width:20px;height:20px;background:radial-gradient(circle,#FFD700,#FF6600);border-radius:50%;border:2px solid #fff;box-shadow:0 0 15px #FFD700"></div>',iconSize:[20,20],iconAnchor:[10,10]});
+  L.marker([SOVEREIGN.lat,SOVEREIGN.lng],{icon:sovIcon,draggable:true}).addTo(worldMap).bindPopup('<b>⚡ FlashTM8</b><br>Sovereign Core');
+  AGENTS.forEach(a=>{
+    const c='#'+a.color.toString(16).padStart(6,'0');
+    const aIcon=L.divIcon({className:'agent-pin',html:'<div style="width:10px;height:10px;background:'+c+';border-radius:50%;border:1px solid rgba(255,255,255,0.7);box-shadow:0 0 6px '+c+'"></div>',iconSize:[10,10],iconAnchor:[5,5]});
+    L.marker([AGENT_LOCATIONS.get(a.name).lat,AGENT_LOCATIONS.get(a.name).lng],{icon:aIcon}).addTo(worldMap).bindPopup('<b>'+a.emoji+' '+a.name+'</b><br>'+a.role+' | '+(a.archetype||'')+'<br>Status: '+a.status);
+  });
+  AGENTS.forEach(a=>{
+    if(a.tier===1){
+      L.polyline([[SOVEREIGN.lat,SOVEREIGN.lng],[a.lat,a.lng]],{color:'rgba(255,215,0,0.15)',weight:1,dashArray:'4,4'}).addTo(worldMap);
     }
-  }catch(e){
-    document.getElementById("statusDot").style.background="var(--red)";
-    document.getElementById("statusText").textContent="Offline";
+  });
+  mapInitialized=true;
+  console.log('[8x8] World map initialized');
+}
+
+// Extend original navTo to also handle world map panel
+const _origNavTo=window.navTo;
+window.navTo=function(panel,el){
+  _origNavTo(panel,el);
+  if(panel==='worldMapPanel'){
+    // Initialize map when panel opens
+    setTimeout(initWorldMap,100);
   }
+};
 
-  // Register if new user
-  if(!userId){
-    try{
-      const r=await fetch(API_BASE+"/api/register?platform=web");
-      const d=await r.json();
-      userId=d.user_id||"";
-      if(userId) localStorage.setItem("8x8_userId",userId);
-    }catch(e){}
+/* ═══ AGENT DEFINITIONS ═══ */
+const AGENTS=[
+  {name:'FLASH',role:'Orchestrator',color:0x00FFFF,emoji:'🔥',tier:1,desc:'Main orchestrator & coordinator',archetype:'Commander',status:'active',lat:25.2048,lng:55.2708},
+  {name:'AEGIS',role:'Security',color:0xFF2222,emoji:'🛡️',tier:1,desc:'System security & protection',archetype:'Guardian',status:'active',lat:51.5074,lng:-0.1278},
+  {name:'VOLT',role:'DevOps',color:0xFFAA00,emoji:'⚡',tier:1,desc:'Infrastructure & deployment',archetype:'Engineer',status:'active',lat:37.7749,lng:-122.4194},
+  {name:'CANVAS',role:'Design',color:0xAA44FF,emoji:'🎨',tier:1,desc:'UI/UX & creative design',archetype:'Artist',status:'active',lat:48.8566,lng:2.3522},
+  {name:'PULSE',role:'ML/AI',color:0x00FF88,emoji:'📡',tier:1,desc:'Machine learning & AI models',archetype:'Analyst',status:'active',lat:35.6762,lng:139.6503},
+  {name:'BEQA',role:'QA',color:0xFF88AA,emoji:'🧪',tier:1,desc:'Quality assurance & testing',archetype:'Inspector',status:'active',lat:52.5200,lng:13.4050},
+  {name:'SCRIBE',role:'Memory',color:0xAAAACC,emoji:'📋',tier:1,desc:'Memory & knowledge management',archetype:'Librarian',status:'active',lat:40.7128,lng:-74.0060},
+  {name:'WRENCH',role:'Maintenance',color:0xFF8844,emoji:'🔧',tier:1,desc:'System maintenance & repair',archetype:'Mechanic',status:'active',lat:55.7558,lng:37.6173},
+  {name:'MIDAS',role:'Freelance',color:0xFFD700,emoji:'💰',tier:2,desc:'Freelance & business automation',archetype:'Deal-Closer',status:'active',lat:1.3521,lng:103.8198},
+  {name:'TRADER',role:'Trading',color:0x00DDFF,emoji:'📈',tier:2,desc:'Crypto & stock trading',archetype:'Strategist',status:'active',lat:25.7617,lng:-80.1918},
+  {name:'CREATOR',role:'Content',color:0xFF44AA,emoji:'🎬',tier:2,desc:'Content creation & marketing',archetype:'Storyteller',status:'active',lat:34.0522,lng:-118.2437},
+  {name:'HAWK',role:'OSINT',color:0x44AAFF,emoji:'🦅',tier:2,desc:'Open source intelligence',archetype:'Investigator',status:'active',lat:55.9533,lng:-3.1883},
+  {name:'VIPER',role:'Cyber',color:0x88FF44,emoji:'🐍',tier:2,desc:'Cybersecurity & penetration',archetype:'Striker',status:'standby',lat:60.1699,lng:24.9384},
+  {name:'SCOUT',role:'R&D',color:0xFFAA44,emoji:'🔭',tier:2,desc:'Research & development',archetype:'Explorer',status:'active',lat:-33.8688,lng:151.2093},
+  {name:'PUCK',role:'Comedy',color:0xFFFF44,emoji:'🎭',tier:2,desc:'Entertainment & morale',archetype:'Jester',status:'standby',lat:43.6532,lng:-79.3832},
+  {name:'ORACLE',role:'Predictions',color:0xAAFF44,emoji:'🔮',tier:3,desc:'Predictions & analysis',archetype:'Seer',status:'active',lat:37.5665,lng:126.9780},
+  {name:'GHOST',role:'Privacy',color:0x888888,emoji:'👻',tier:3,desc:'Privacy & anonymity',archetype:'Shadow',status:'standby',lat:64.1466,lng:-21.9426},
+  {name:'TITAN',role:'Cloud',color:0x4488FF,emoji:'☁️',tier:3,desc:'Cloud infrastructure',archetype:'Architect',status:'standby',lat:19.4326,lng:-99.1332},
+  {name:'ECHO',role:'Voice',color:0xCC44FF,emoji:'🔊',tier:3,desc:'Voice & audio',archetype:'Voice',status:'standby',lat:22.3193,lng:114.1694},
+  {name:'SHIELD',role:'Firewall',color:0xFF4444,emoji:'🛡️',tier:3,desc:'Firewall & protection',archetype:'Sentinel',status:'active',lat:35.6895,lng:51.3890},
+  {name:'ZEN',role:'Wellness',color:0xFFCCAA,emoji:'🧘',tier:3,desc:'Health & wellness',archetype:'Healer',status:'standby',lat:-22.9068,lng:-43.1729},
+];
+// SOVEREIGN = FlashTM8 (center of everything)
+const SOVEREIGN={name:'FlashTM8',emoji:'⚡',color:0xFFD700,lat:25.2048,lng:55.2708};
+
+/* ═══ WALLET DATA ═══ */
+const WALLET={
+  btc:{addr:'bc1qsm5vfkfqq3dzn6khdvdjh3xvaekkey5ufne2vf',balance:0,usd:0},
+  xmr:{addr:'4AunQn3Five3YpnESwjLx1BVC1o6NZHQ8MNP1r3SSoBSV5WaoMrUH7xhzbuQwk5X8F27PRXauiCmJZ5xKLi9oF3n9wZt8Zf',balance:0,usd:0},
+};
+
+/* ═══ 9 ECOSYSTEM TOKENS (from PDF vision) ═══ */
+const TOKENS={
+  '8x8':{name:'8x8 Treasury Core',supply:'8,888,888',color:'#FFD700',emoji:'⚡',desc:'The crown, senate, treasury. Hold it and you govern.'},
+  'Tx8':{name:'Tx8 Lightning Veins',supply:'∞',color:'#00FFFF',emoji:'⚡',desc:'Bloodstream of the empire. Instant transactions.'},
+  'Ux8':{name:'Ux8 Universal Gateway',supply:'∞',color:'#00FF88',emoji:'🎫',desc:'Toll token. 1 USDT/USDC/Ux8 for entry.'},
+  'Fx8':{name:'Fx8 Fee Sentinel',supply:'∞',color:'#FF8844',emoji:'🛡️',desc:'Channels 4.88% tribute to liquidity, rewards, burns.'},
+  'XM8':{name:"XM8 People's Flame",supply:'∞',color:'#FF44AA',emoji:'🔥',desc:'Gaming, farming, community rewards.'},
+  '0x8':{name:'0x8 Nobelis (Law)',supply:'888,888',color:'#AA44FF',emoji:'⚖️',desc:'Governance. Cold. Precise. Incorruptible.'},
+  'TM8':{name:'TM8 FlashTM8 AI',supply:'88,888',color:'#FFD700',emoji:'🤖',desc:'The AI sovereign. Your guide and strategist.'},
+  'SRP':{name:'SRP Seraphim Guardian',supply:'8,888',color:'#FFFFFF',emoji:'👼',desc:'Wings of light. Blocks manipulation, enforces fairness.'},
+  'Mx8':{name:'Mx8 Mining Titan',supply:'∞',color:'#888888',emoji:'⛏️',desc:'Hashpower becomes community power. Rewards in 8x8.'},
+  'Sx8':{name:'Sx8 Staking Stabilizer',supply:'∞',color:'#00FF88',emoji:'🥩',desc:'Stake & earn 8% monthly yield in 8x8 on BTC network.'},
+};
+
+/* ═══ NFT MANAGERS ═══ */
+const NFT_MANAGERS=[
+  {name:'Miner Rookie',tier:'Common',boost:'1x',price:'100 8x8',emoji:'⛏️'},
+  {name:'Miner Adept',tier:'Uncommon',boost:'2x',price:'500 8x8',emoji:'⛏️'},
+  {name:'Miner Elite',tier:'Rare',boost:'5x',price:'2,500 8x8',emoji:'⛏️'},
+  {name:'Miner Master',tier:'Epic',boost:'10x',price:'10,000 8x8',emoji:'⛏️'},
+  {name:'Miner Legendary',tier:'Legendary',boost:'25x',price:'50,000 8x8',emoji:'⛏️'},
+  {name:'Governor',tier:'Epic',boost:'2x governance',price:'5,000 8x8',emoji:'⚖️'},
+  {name:'Guardian',tier:'Rare',boost:'5x security',price:'2,500 8x8',emoji:'🛡️'},
+  {name:'Visionary',tier:'Legendary',boost:'10x all',price:'100,000 8x8',emoji:'🔮'},
+];
+
+/* ═══ SCENE SETUP ═══ */
+const container=document.getElementById('canvas-container');
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x020818);
+scene.fog=new THREE.FogExp2(0x020818,0.006);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance',alpha:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+container.appendChild(renderer.domElement);
+
+/* ═══ CAMERA ═══ */
+let isDragging=false,prevMouse={x:0,y:0},camTheta=0,camPhi=Math.PI/3,camDist=16;
+const camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,200);
+function updateCamera(){
+  camera.position.x=camDist*Math.sin(camPhi)*Math.sin(camTheta);
+  camera.position.y=camDist*Math.cos(camPhi)+2;
+  camera.position.z=camDist*Math.sin(camPhi)*Math.cos(camTheta);
+  camera.lookAt(0,2,0);
+}
+updateCamera();
+
+// Mouse controls
+renderer.domElement.addEventListener('mousedown',e=>{isDragging=true;prevMouse={x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('mousemove',e=>{
+  if(!isDragging)return;
+  camTheta-=(e.clientX-prevMouse.x)*0.005;
+  camPhi+=(e.clientY-prevMouse.y)*0.005;
+  camPhi=Math.max(0.2,Math.min(Math.PI/2-0.1,camPhi));
+  prevMouse={x:e.clientX,y:e.clientY};
+  updateCamera();
+});
+renderer.domElement.addEventListener('mouseup',()=>isDragging=false);
+renderer.domElement.addEventListener('mouseleave',()=>isDragging=false);
+// Touch controls
+renderer.domElement.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){isDragging=true;prevMouse={x:e.touches[0].clientX,y:e.touches[0].clientY};}
+});
+renderer.domElement.addEventListener('touchmove',e=>{
+  if(!isDragging||e.touches.length!==1)return;
+  e.preventDefault();
+  camTheta-=(e.touches[0].clientX-prevMouse.x)*0.005;
+  camPhi+=(e.touches[0].clientY-prevMouse.y)*0.005;
+  camPhi=Math.max(0.2,Math.min(Math.PI/2-0.1,camPhi));
+  prevMouse={x:e.touches[0].clientX,y:e.touches[0].clientY};
+  updateCamera();
+},{passive:false});
+renderer.domElement.addEventListener('touchend',()=>isDragging=false);
+// Scroll zoom
+renderer.domElement.addEventListener('wheel',e=>{
+  camDist+=e.deltaY*0.01;camDist=Math.max(4,Math.min(40,camDist));updateCamera();
+},{passive:false});
+const controls={update(){}};
+
+/* ═══ LIGHTING ═══ */
+scene.add(new THREE.AmbientLight(0x303050,0.6));
+const cyanL=new THREE.PointLight(0x00FFFF,2.5,60);cyanL.position.set(0,12,0);scene.add(cyanL);
+const pL=new THREE.PointLight(0xAA44FF,1.5,40);pL.position.set(10,6,10);scene.add(pL);
+
+/* ═══ GROUND ═══ */
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(120,120),new THREE.MeshStandardMaterial({color:0x050510,roughness:0.9}));
+ground.rotation.x=-Math.PI/2;ground.position.y=-0.5;scene.add(ground);
+scene.add(new THREE.GridHelper(120,60,0x0a0a2e,0x050515));
+
+/* ═══ CENTRAL CORE ═══ */
+const coreG=new THREE.Group();coreG.position.set(0,2.5,0);
+const coreOct=new THREE.Mesh(new THREE.OctahedronGeometry(0.5,1),new THREE.MeshStandardMaterial({color:0x00FFFF,emissive:0x00FFFF,emissiveIntensity:0.8,metalness:1,roughness:0,wireframe:true}));
+coreG.add(coreOct);
+const coreSolid=new THREE.Mesh(new THREE.IcosahedronGeometry(0.3,0),new THREE.MeshStandardMaterial({color:0x00FFFF,emissive:0x00FFFF,emissiveIntensity:1.2,metalness:1,roughness:0,transparent:true,opacity:0.7}));
+coreG.add(coreSolid);
+const coreRing1=new THREE.Mesh(new THREE.TorusGeometry(1.8,0.03,8,64),new THREE.MeshStandardMaterial({color:0x00FFFF,emissive:0x00FFFF,emissiveIntensity:0.5,transparent:true,opacity:0.5}));
+coreRing1.rotation.x=Math.PI/2;coreG.add(coreRing1);
+scene.add(coreG);
+
+/* ═══ PARTICLES ═══ */
+const particleCount=300,particleGeo=new THREE.BufferGeometry();
+const pPos=new Float32Array(particleCount*3),pCol=new Float32Array(particleCount*3);
+for(let i=0;i<particleCount;i++){
+  pPos[i*3]=(Math.random()-0.5)*40;
+  pPos[i*3+1]=Math.random()*15;
+  pPos[i*3+2]=(Math.random()-0.5)*40;
+  const c=new THREE.Color().setHSL(Math.random()*0.2+0.5,0.8,0.6);
+  pCol[i*3]=c.r;pCol[i*3+1]=c.g;pCol[i*3+2]=c.b;
+}
+particleGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+particleGeo.setAttribute('color',new THREE.BufferAttribute(pCol,3));
+const particles=new THREE.Points(particleGeo,new THREE.PointsMaterial({size:0.06,vertexColors:true,transparent:true,opacity:0.6}));
+scene.add(particles);
+
+/* ═══ AGENT AVATARS ═══ */
+const agentMeshes=[],RAY=new THREE.Raycaster(),mouse=new THREE.Vector2();
+const bodyShapes=['octahedron','dodecahedron','cone','sphere','torus','icosahedron','box','cylinder','octahedron','dodecahedron','cone','sphere','torus','icosahedron','box','cylinder'];
+
+AGENTS.forEach((agent,i)=>{
+  const tier=agent.tier||1,radius=tier===1?5:8,ringCount=8,idxInRing=i-(tier===1?0:8);
+  const angle=(idxInRing/ringCount)*Math.PI*2+(tier===2?Math.PI/8:0);
+  const x=Math.sin(angle)*radius,z=Math.cos(angle)*radius;
+  const g=new THREE.Group();g.position.set(x,0,z);
+  g.userData={agent,type:'agent',id:i};
+  const col=new THREE.Color(agent.color);
+  const shape=bodyShapes[i%bodyShapes.length];
+  let bodyMesh;
+  const mat=new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.9,metalness:0.8,roughness:0.2});
+  if(shape==='cone')bodyMesh=new THREE.Mesh(new THREE.ConeGeometry(0.25,0.6,6),mat);
+  else if(shape==='sphere')bodyMesh=new THREE.Mesh(new THREE.SphereGeometry(0.3,16,16),mat);
+  else if(shape==='torus')bodyMesh=new THREE.Mesh(new THREE.TorusGeometry(0.25,0.08,8,16),mat);
+  else if(shape==='box')bodyMesh=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.5,0.3),mat);
+  else if(shape==='cylinder')bodyMesh=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.3,0.5,6),mat);
+  else if(shape==='icosahedron')bodyMesh=new THREE.Mesh(new THREE.IcosahedronGeometry(0.3,0),mat);
+  else if(shape==='dodecahedron')bodyMesh=new THREE.Mesh(new THREE.DodecahedronGeometry(0.3,0),mat);
+  else bodyMesh=new THREE.Mesh(new THREE.OctahedronGeometry(0.3,1),mat);
+  bodyMesh.position.y=0.8;g.add(bodyMesh);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.18,12,12),new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:1.2,metalness:0.5,roughness:0.2}));
+  head.position.y=1.35;g.add(head);
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(0.35,12,12),new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.3,transparent:true,opacity:0.15,side:THREE.BackSide}));
+  glow.position.y=1.1;g.add(glow);
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(0.4,0.02,8,32),new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.6,transparent:true,opacity:0.5}));
+  halo.position.y=1.1;halo.rotation.x=Math.PI/2;g.add(halo);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.5,0.08,16),new THREE.MeshStandardMaterial({color:0x0f0f25,emissive:col,emissiveIntensity:0.15,metalness:0.9}));
+  base.position.y=0.04;g.add(base);
+  const aLight=new THREE.PointLight(col,0.6,6);aLight.position.set(0,1.5,0);g.add(aLight);
+  const dot=new THREE.Mesh(new THREE.SphereGeometry(0.05,8,8),new THREE.MeshStandardMaterial({color:0x00FF88,emissive:0x00FF88,emissiveIntensity:1}));
+  dot.position.set(0.35,0.55,0.15);g.add(dot);
+  const lineGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0.5,0),new THREE.Vector3(-x*0.35,2,-z*0.35)]);
+  g.add(new THREE.Line(lineGeo,new THREE.LineBasicMaterial({color:col,transparent:true,opacity:0.12})));
+  g.lookAt(0,0.5,0);scene.add(g);
+  agentMeshes.push({group:g,agent,body:bodyMesh,head,halo,glow,base,light:aLight,dot});
+});
+
+/* ═══ AGENT CONNECTION LINES ═══ */
+const connLines=new THREE.Group();
+for(let i=0;i<AGENTS.length;i++){
+  for(let j=i+1;j<AGENTS.length;j++){
+    const a=agentMeshes[i].group.position;const b=agentMeshes[j].group.position;
+    const mid=new THREE.Vector3((a.x+b.x)/2,(a.y+b.y)/2+0.5,(a.z+b.z)/2);
+    const curve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(a.x,0.8,a.z),mid,new THREE.Vector3(b.x,0.8,b.z));
+    const geo=new THREE.TubeGeometry(curve,8,0.006,4,false);
+    connLines.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0x00FFFF,transparent:true,opacity:0.05})));
   }
+}
+scene.add(connLines);
 
-  // Load wallets
-  try{
-    const r=await fetch(API_BASE+"/api/payment/wallets");
-    const d=await r.json();
-    const w=d.wallets||{};
-    document.getElementById("wbtc").textContent=w.BTC||"N/A";
-    document.getElementById("wusdt").textContent=w.USDT||"N/A";
-    document.getElementById("wxmr").textContent=w.XMR||"N/A";
-    document.getElementById("weth").textContent=w.ETH||"N/A";
-  }catch(e){}
-
-  // Referral
-  if(userId){
-    document.getElementById("refCode").textContent=userId.substring(0,12).toUpperCase();
-    document.getElementById("refLink").textContent=`https://t.me/app8x8hub_bot?start=ref_${userId.substring(0,8)}`;
+/* ═══ CLICK HANDLER ═══ */
+renderer.domElement.addEventListener('click',e=>{
+  // If any panel is open, close it first (canvas click = close all)
+  if(currentPanel){closeAllPanels();return;}
+  mouse.x=(e.clientX/window.innerWidth)*2-1;mouse.y=-(e.clientY/window.innerHeight)*2+1;
+  RAY.setFromCamera(mouse,camera);
+  // Check both head and body for clicks
+  const allMeshes=agentMeshes.flatMap(m=>[m.head,m.body,m.glow]);
+  const hits=RAY.intersectObjects(allMeshes);
+  if(hits.length>0){
+    for(const am of agentMeshes){
+      if(am.head===hits[0].object||am.body===hits[0].object||am.glow===hits[0].object){
+        selectAgent(am.userData.id);return;
+      }
+    }
   }
+});
 
-  // Tab switching
-  document.querySelectorAll(".tab").forEach(t=>{
-    t.addEventListener("click",()=>{
-      document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-      document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
-      t.classList.add("active");
-      document.getElementById("tab-"+t.dataset.tab).classList.add("active");
-      document.getElementById("inputArea").style.display=t.dataset.tab==="chat"?"block":"none";
+/* ═══ UI STATE ═══ */
+let currentPanel='',chatOpen=false,radioAudio=null,btcPrice=0;
+let ws=null,wsConnected=false,wsReconnectTimer=null;
+let notifications=[];
+let isOnline=navigator.onLine;
+
+/* ═══ NAV ═══ */
+const nav=[
+  {icon:'🏠',label:'HOME',panel:'homePanel'},
+  {icon:'📡',label:'LOG',panel:'logPanel'},
+  {icon:'🌍',label:'MAP',panel:'worldMapPanel'},
+  {icon:'📻',label:'RADIO',panel:'radioPanel'},
+  {icon:'📺',label:'TV',panel:'tvPanel'},
+  {icon:'📊',label:'TRADE',panel:'tradingPanel'},
+  {icon:'🎬',label:'STREAM',panel:'streamPanel'},
+  {icon:'💰',label:'WALLET',panel:'walletPanel'},
+  {icon:'📰',label:'NEWS',panel:'newsPanel'},
+  {icon:'💻',label:'TERM',panel:'terminalPanel'},
+  {icon:'⚙️',label:'SET',panel:'settingsPanel'},
+];
+let navHTML='';
+nav.forEach((n,i)=>{
+  navHTML+=`<div class="nav-btn ${i===0?'on':''}" onclick="navTo('${n.panel}',this)"><span class="nav-icon">${n.icon}</span><span class="nav-label">${n.label}</span></div>`;
+});
+document.getElementById('navBar').innerHTML=navHTML;
+
+/* ═══ HOME CARDS ═══ */
+const cards=[
+  {icon:'📡',name:'LIVE LOG',desc:'Real-Time Activity Feed',panel:'logPanel',status:'Live',highlight:true},
+  {icon:'🌍',name:'WORLD MAP',desc:'Live Agent Tracking',panel:'worldMapPanel',status:'Live'},
+  {icon:'🤖',name:'AGENT FLEET',desc:'21 AI Agents Active',panel:'agentPanel',status:'Online'},
+  {icon:'🛡️',name:'SECURITY',desc:'Elite Protection Core',panel:'securityPanel',status:'Secure'},
+  {icon:'🎬',name:'8x8 STUDIO',desc:'AI Media Platform',url:'http://localhost:8085',status:'Running'},
+  {icon:'📊',name:'TRADING',desc:'Live Markets',panel:'tradingPanel',status:'Live'},
+  {icon:'💰',name:'WALLET',desc:'BTC + XMR + BitGet',panel:'walletPanel',status:'Connected'},
+  {icon:'💻',name:'VSCODE',desc:'Code Editor',url:'http://localhost:8080',status:'Running'},
+  {icon:'🎮',name:'GAMES',desc:'Agent Training',panel:'gamesPanel',status:'Running'},
+];
+let cardHTML='<div class="card-grid">';
+cards.forEach(c=>{
+  let statusColor='#00FF88';
+  if(c.status==='Check')statusColor='#FFD700';
+  if(c.status==='Live')statusColor='#00FFFF';
+  if(c.status==='Secure')statusColor='#00FF88';
+  if(c.status==='Connected')statusColor='#FFD700';
+  if(c.status==='Running')statusColor='#00FF88';
+  const onclick=c.panel?`navTo('${c.panel}',null)`:(c.url?`window.open('${c.url}','_blank')`:'');
+  const highlightStyle=c.highlight?'border-color:rgba(0,255,255,0.4);background:linear-gradient(135deg,rgba(0,255,255,0.08),rgba(0,255,255,0.02));':'';
+  cardHTML+=`<div class="quick-card" style="${highlightStyle}" onclick="${onclick}"><div class="c-icon">${c.icon}</div><div class="c-name">${c.name}</div><div class="c-desc">${c.desc}</div><div class="c-status" style="color:${statusColor};background:${statusColor}10;border:1px solid ${statusColor}30">${c.status}</div></div>`;
+});
+cardHTML+='</div>';
+cardHTML+='<div style="font-family:"Orbitron",sans-serif;font-size:8px;color:#FFD700;letter-spacing:.08em;margin:10px 0 6px;">⚡ AGENTS</div>';
+AGENTS.forEach((a,i)=>{
+  const c='#'+a.color.toString(16).padStart(6,'0');
+  const statusColor=a.status==='active'?'#00FF88':(a.status==='standby'?'#FFD700':'#FF4444');
+  cardHTML+=`<div class="list-item" onclick="selectAgent(${i})"><div class="list-icon" style="border-color:${c};background:${c}15;">${a.emoji}</div><div class="list-info"><div class="list-name" style="color:${c}">${a.name}</div><div class="list-sub">${a.role} | ${a.archetype||'Specialist'} | Tier ${a.tier}</div></div><div class="list-badge" style="background:${statusColor}15;color:${statusColor};border-color:${statusColor}30">${a.status.toUpperCase()}</div></div>`;
+});
+document.getElementById('homeBody').innerHTML=cardHTML;
+
+/* ═══ RADIO ═══ */
+const stations=[
+  {name:'Lofi Hip Hop',genre:'Chill/Study',icon:'🎧',url:'https://streams.ilovemusic.de/iloveradio17.mp3'},
+  {name:'Synthwave',genre:'Retro/Electronic',icon:'🌆',url:'https://stream.zeno.fm/fyn8ehvp2tzuv'},
+  {name:'Deep House',genre:'House/Deep',icon:'🏠',url:'https://stream.zeno.fm/0r0xa792kwzuv'},
+  {name:'Jazz Cafe',genre:'Jazz/Lounge',icon:'🎷',url:'https://jazz-wr04.ice.infomaniak.ch/jazz-wr04-128.mp3'},
+  {name:'Ambient Space',genre:'Ambient/Space',icon:'🌌',url:'https://stream.zeno.fm/4q7q7q7q7q7q.m3u8'},
+  {name:'Techno',genre:'Techno/Hard',icon:'🔊',url:'https://stream.zeno.fm/3d0m7q7q7q7q.m3u8'},
+  {name:'Classical',genre:'Classical',icon:'🎻',url:'https://stream.zeno.fm/4q7q7q7q7q7q.m3u8'},
+  {name:'News Radio',genre:'News/Talk',icon:'📻',url:'https://stream.zeno.fm/3d0m7q7q7q7q.m3u8'},
+];
+let rHTML='';
+stations.forEach((s,i)=>{
+  rHTML+=`<div class="list-item" onclick="playRadio(${i})"><div class="list-icon">${s.icon}</div><div class="list-info"><div class="list-name">${s.name}</div><div class="list-sub">${s.genre}</div></div><div style="width:60px;"><input type="range" min="0" max="100" value="50" onchange="setVol(this.value)" style="width:100%;"/></div></div>`;
+});
+rHTML+=`<div style="text-align:center;padding:8px;"><button onclick="stopRadio()" style="background:rgba(255,34,34,.15);border:1px solid rgba(255,34,34,.3);color:#FF4444;padding:6px 18px;border-radius:6px;cursor:pointer;font-family:"Orbitron",sans-serif;font-size:9px;letter-spacing:.1em;">⏹ STOP</button></div>`;
+document.getElementById('radioBody').innerHTML=rHTML;
+
+/* ═══ TV & PLATFORMS ═══ */
+const platforms=[
+  {name:'YouTube Studio',desc:'@flashtm8 — 12 videos',icon:'📺',color:'#FF0000',url:'https://studio.youtube.com'},
+  {name:'TikTok',desc:'@horbolsi — 18K+ followers',icon:'🎵',color:'#00F2EA',url:'https://www.tiktok.com/@horbolsi'},
+  {name:'Twitch',desc:'Live Streaming',icon:'📡',color:'#9146FF',url:'https://www.twitch.tv'},
+  {name:'Facebook',desc:'Social Media',icon:'👤',color:'#1877F2',url:'https://www.facebook.com'},
+  {name:'Twitter/X',desc:'@8x8hub',icon:'🐦',color:'#1DA1F2',url:'https://x.com/8x8hub'},
+  {name:'Instagram',desc:'Photo/Video',icon:'📷',color:'#E4405F',url:'https://www.instagram.com'},
+  {name:'Spotify',desc:'Music Streaming',icon:'🎧',color:'#1DB954',url:'https://open.spotify.com'},
+  {name:'Netflix',desc:'Entertainment',icon:'🎬',color:'#E50914',url:'https://www.netflix.com'},
+];
+let tvHTML='';
+platforms.forEach((p,i)=>{
+  tvHTML+=`<div class="list-item" onclick="openPlatform(${i})"><div class="list-icon" style="background:${p.color}20;color:${p.color}">${p.icon}</div><div class="list-info"><div class="list-name">${p.name}</div><div class="list-sub">${p.desc}</div></div><div class="list-badge">OPEN</div></div>`;
+});
+tvHTML+=`<div style="margin-top:12px;font-family:"Orbitron",sans-serif;font-size:8px;color:#FFD700;letter-spacing:.08em;">📺 EMBEDDED VIEW</div>
+<div id="platformEmbed" style="margin-top:6px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,215,0,.1);height:200px;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;">
+  <div style="font-size:24px;">📺</div>
+  <div style="font-family:"Share Tech Mono",monospace;font-size:10px;color:#556677;">Select a platform to embed</div>
+</div>`;
+document.getElementById('tvBody').innerHTML=tvHTML;
+
+/* ═══ TRADING DASHBOARD (from GG.html) ═══ */
+function buildTradingDashboard(){
+  let html=`<div class="trading-section">
+    <div class="trading-header"><span>⚡ BTC/USDT LIVE</span><span id="tradeSignal" class="signal-display signal-hold" style="font-size:9px;padding:4px 8px;">ANALYZING...</span></div>
+    <div class="trade-stats">
+      <div class="trade-stat"><div class="trade-stat-val" id="tdPrice">--</div><div class="trade-stat-lbl">PRICE</div></div>
+      <div class="trade-stat"><div class="trade-stat-val" id="tdChange">--</div><div class="trade-stat-lbl">24H CHANGE</div></div>
+      <div class="trade-stat"><div class="trade-stat-val" id="tdHigh">--</div><div class="trade-stat-lbl">24H HIGH</div></div>
+      <div class="trade-stat"><div class="trade-stat-val" id="tdLow">--</div><div class="trade-stat-lbl">24H LOW</div></div>
+      <div class="trade-stat"><div class="trade-stat-val" id="tdVol">--</div><div class="trade-stat-lbl">24H VOL</div></div>
+      <div class="trade-stat"><div class="trade-stat-val" id="tdTrades">0</div><div class="trade-stat-lbl">TRADES</div></div>
+    </div>
+    <div style="font-family:"Orbitron",sans-serif;font-size:8px;color:#FFD700;margin:8px 0 4px;">📊 INDICATORS</div>
+    <div class="indicator-row"><span>RSI (14)</span><span class="indicator-val" id="indRsi">--</span></div>
+    <div class="indicator-row"><span>SMA (20)</span><span class="indicator-val" id="indSma">--</span></div>
+    <div class="indicator-row"><span>EMA (20)</span><span class="indicator-val" id="indEma">--</span></div>
+    <div class="indicator-row"><span>VWAP</span><span class="indicator-val" id="indVwap">--</span></div>
+    <div class="indicator-row"><span>MACD</span><span class="indicator-val" id="indMacd">--</span></div>
+    <div class="chart-container"><canvas id="tradeChart"></canvas></div>
+    <div style="font-family:"Orbitron",sans-serif;font-size:8px;color:#FFD700;margin:8px 0 4px;">📖 ORDER BOOK</div>
+    <div class="order-book">
+      <div class="ob-side ob-buy"><div class="ob-title">BIDS</div><div id="obBids"></div></div>
+      <div class="ob-side ob-sell"><div class="ob-title">ASKS</div><div id="obAsks"></div></div>
+    </div>
+    <div class="trade-row"><button class="trade-btn buy" onclick="execTrade('buy')">🟢 BUY</button><button class="trade-btn sell" onclick="execTrade('sell')">🔴 SELL</button></div>
+  </div>`;
+  document.getElementById('tradingBody').innerHTML=html;
+}
+buildTradingDashboard();
+
+/* ═══ STORE ═══ */
+const products=[
+  {name:'TikTok Product #1',desc:'Trending item from your showcase',price:'View in Shop',icon:'🛍️'},
+  {name:'TikTok Product #2',desc:'Best seller in your store',price:'View in Shop',icon:'⭐'},
+  {name:'TikTok Product #3',desc:'New arrival',price:'View in Shop',icon:'🆕'},
+  {name:'8x8 OS Pro',desc:'Premium OS license',price:'$99',icon:'⚡'},
+  {name:'Agent Pack x8',desc:'Full agent suite',price:'$49',icon:'🤖'},
+  {name:'NFT Collection',desc:'8x8 Originals',price:'$199',icon:'🖼️'},
+  {name:'Studio Premium',desc:'AI media tools',price:'$29',icon:'🎬'},
+  {name:'Trading Bot Pro',desc:'Automated trading',price:'$149',icon:'📈'},
+];
+let sHTML='<div style="font-family:"Orbitron",sans-serif;font-size:8px;color:#FFD700;letter-spacing:.08em;margin-bottom:6px;">🛒 TIKTOK SHOWCASE</div>';
+products.forEach((p,i)=>{
+  sHTML+=`<div class="list-item" onclick="buyItem(${i})"><div class="list-icon">${p.icon}</div><div class="list-info"><div class="list-name">${p.name}</div><div class="list-sub">${p.desc}</div></div><div style="font-family:"Orbitron",sans-serif;font-size:9px;color:#FFD700">${p.price}</div></div>`;
+});
+sHTML+=`<div style="text-align:center;padding:8px;"><button onclick="window.open('https://www.tiktok.com/t/ZP9Ynk89gDHGS-cmNXb/','_blank')" style="background:linear-gradient(135deg,#FF0050,#FF4444);color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-family:"Orbitron",sans-serif;font-size:9px;letter-spacing:.1em;">🛍️ OPEN TIKTOK SHOP</button></div>`;
+document.getElementById('storeBody').innerHTML=sHTML;
+
+/* ═══ NFT VAULT ═══ */
+const nfts=[
+  {name:'Genesis #001',collection:'8x8 Originals',price:'2.5 ETH',icon:'🔥'},
+  {name:'Cyber Punk #042',collection:'Cyber Series',price:'1.2 ETH',icon:'🤖'},
+  {name:'Galaxy Dragon #007',collection:'Mythical Beasts',price:'5.0 ETH',icon:'🐉'},
+  {name:'Digital Mona Lisa',collection:'Classic Art',price:'10.0 ETH',icon:'🖼️'},
+  {name:'Neon City #013',collection:'Cyberpunk Cities',price:'3.3 ETH',icon:'🌃'},
+  {name:'Abstract Mind #099',collection:'Abstract Art',price:'0.8 ETH',icon:'🧠'},
+];
+let nftHTML='';
+nfts.forEach((n,i)=>{
+  nftHTML+=`<div class="list-item" onclick="viewNFT(${i})"><div class="list-icon">${n.icon}</div><div class="list-info"><div class="list-name">${n.name}</div><div class="list-sub">${n.collection}</div></div><div style="font-family:"Share Tech Mono",monospace;font-size:9px;color:#FFD700">${n.price}</div></div>`;
+});
+nftHTML+=`<div style="text-align:center;padding:8px;"><button onclick="mintNFT()" style="background:linear-gradient(135deg,#AA44FF,#FF44AA);color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-family:"Orbitron",sans-serif;font-size:9px;letter-spacing:.1em;">+ MINT NEW</button></div>`;
+document.getElementById('nftBody').innerHTML=nftHTML;
+
+/* ═══ WALLET ═══ */
+function renderWallet(){
+  const w=WALLET;
+  let html=`<div class="wallet-bal"><div class="wb-label">TOTAL PORTFOLIO VALUE</div><div class="wb-val">$${(w.btc.usd+w.xmr.usd).toLocaleString(undefined,{maximumFractionDigits:2})}</div></div>`;
+  html+=`<div class="wb-row"><span style="font-size:11px;color:#AABBDD">₿ BTC</span><span style="font-family:"Share Tech Mono",monospace;font-size:11px;color:#FFD700">${w.btc.balance} ($${w.btc.usd.toLocaleString()})</span></div>`;
+  html+=`<div style="font-family:"Share Tech Mono",monospace;font-size:8px;color:#556677;word-break:break-all;padding:2px 0 8px;">${w.btc.addr}</div>`;
+  html+=`<div class="wb-row"><span style="font-size:11px;color:#AABBDD">✦ XMR</span><span style="font-family:"Share Tech Mono",monospace;font-size:11px;color:#FFD700">${w.xmr.balance} ($${w.xmr.usd.toLocaleString()})</span></div>`;
+  html+=`<div style="font-family:"Share Tech Mono",monospace;font-size:8px;color:#556677;word-break:break-all;padding:2px 0 8px;">${w.xmr.addr}</div>`;
+  html+=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"><button class="wb-btn" onclick="copyAddr('btc')">📋 COPY BTC</button><button class="wb-btn" onclick="copyAddr('xmr')">📋 COPY XMR</button><button class="wb-btn" onclick="refreshBalances()">🔄 REFRESH</button><button class="wb-btn" onclick="window.open('https://www.bitget.com','_blank')">📊 BITGET</button></div>`;
+  document.getElementById('walletBody').innerHTML=html;
+}
+renderWallet();
+
+/* ═══ STREAMING STUDIO ═══ */
+let streamHTML=`<div style="font-family:"Orbitron",sans-serif;font-size:8px;color:#FF4444;letter-spacing:.08em;margin-bottom:8px;">🎬 MULTI-STREAM DESTINATIONS</div><div class="stream-grid">`;
+const streamDests=[
+  {name:'YouTube',icon:'📺',color:'#FF0000',status:'Ready'},
+  {name:'TikTok',icon:'🎵',color:'#00F2EA',status:'Ready'},
+  {name:'Twitch',icon:'📡',color:'#9146FF',status:'Ready'},
+  {name:'Facebook',icon:'👤',color:'#1877F2',status:'Ready'},
+];
+streamDests.forEach(d=>{
+  streamHTML+=`<div class="stream-card" onclick="toggleStream('${d.name}')"><div class="s-icon">${d.icon}</div><div class="s-name">${d.name}</div><div class="s-stat" id="stream-${d.name}">${d.status}</div></div>`;
+});
+streamHTML+=`</div><div class="stream-controls"><button class="stream-btn go" onclick="startStream()">▶ GO LIVE</button><button class="stream-btn stop" onclick="stopStream()">⏹ STOP</button></div>`;
+streamHTML+=`<div class="stream-config">
+  <label>Stream Key (YouTube)</label><input type="text" id="streamKeyYoutube" placeholder="Enter YouTube stream key...">
+  <label>Stream Key (Twitch)</label><input type="text" id="streamKeyTwitch" placeholder="Enter Twitch stream key...">
+  <label>RTMP URL</label><input type="text" id="streamRtmp" placeholder="rtmp://...">
+  <label>Camera Source</label>
+  <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <button class="wb-btn" onclick="startCamera('front')">📱 FRONT CAM</button>
+    <button class="wb-btn" onclick="startCamera('back')">📷 BACK CAM</button>
+    <button class="wb-btn" onclick="startScreenCast()">🖥️ SCREEN</button>
+  </div>
+  <div id="cameraPreview" style="background:#000;border-radius:8px;height:120px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#556677;">Camera preview will appear here</div>
+  <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+    <button class="wb-btn" onclick="applyFilter('none')">No Filter</button>
+    <button class="wb-btn" onclick="applyFilter('grayscale')">B&W</button>
+    <button class="wb-btn" onclick="applyFilter('sepia')">Sepia</button>
+    <button class="wb-btn" onclick="applyFilter('blur')">Blur</button>
+    <button class="wb-btn" onclick="adjustBrightness(1.2)">☀️ Bright+</button>
+    <button class="wb-btn" onclick="adjustBrightness(0.8)">🌙 Bright-</button>
+  </div>
+</div>`;
+document.getElementById('streamBody').innerHTML=streamHTML;
+
+/* ═══ NEWS ═══ */
+function fetchNews(){
+  const newsData=[
+    {cat:'CRYPTO',catColor:'#FFD700',title:'Bitcoin Surges Past Key Resistance — Whale Accumulation Detected',source:'CoinDesk',time:'1h ago',analysis:'BTC showing strong bullish momentum with on-chain data indicating whale accumulation. Next target: $110K. RSI at 68 suggests room for growth before overbought.'},
+    {cat:'AI',catColor:'#00FF88',title:'Open-Source LLM Matches GPT-4 — Market Disruption Imminent',source:'TechCrunch',time:'3h ago',analysis:'Open-source AI continues closing the gap with commercial models. This could significantly disrupt the AI market and reduce dependency on big tech providers.'},
+    {cat:'TRADING',catColor:'#44AAFF',title:'Altcoin Season Indicators Flashing Green — Index at 75%',source:'CoinTelegraph',time:'5h ago',analysis:'Altseason index historically precedes 2-4 weeks of altcoin outperformance. DeFi and AI tokens leading the rotation. Watch BTC dominance for confirmation.'},
+    {cat:'DEFI',catColor:'#AA44FF',title:'DeFi TVL Reaches New All-Time High — Institutional Inflows Surge',source:'DeFiPulse',time:'7h ago',analysis:'Total Value Locked surpasses previous peak. Institutional inflows driving growth in lending protocols. Real yield narrative gaining traction.'},
+    {cat:'TECH',catColor:'#FF44AA',title:'Apple Announces AI Integration Across All Devices',source:'The Verge',time:'9h ago',analysis:'Major tech companies racing to integrate AI. Could drive new hardware upgrade cycle. Privacy implications remain a key concern.'},
+    {cat:'NFT',catColor:'#FF8844',title:'NFT Market Recovery — Blue Chips Leading, Gaming NFTs Surge',source:'NFT Now',time:'11h ago',analysis:'Blue chip NFT collections seeing increased floor prices. Gaming NFTs leading recovery. Utility-based NFTs gaining market share over pure art.'},
+    {cat:'REGULATION',catColor:'#00DDFF',title:'SEC Approves New Crypto Framework — Clarity for Exchanges',source:'Reuters',time:'13h ago',analysis:'New regulatory framework provides clarity for crypto exchanges. Positive for institutional adoption. Compliance costs may increase for smaller players.'},
+    {cat:'SECURITY',catColor:'#FF2222',title:'Major DeFi Protocol Exploit — $50M Drained, Funds Being Traced',source:'The Block',time:'15h ago',analysis:'Flash loan attack exploited vulnerability in lending protocol. Funds being traced through mixers. Highlights need for better smart contract auditing.'},
+  ];
+  let newsHTML='';
+  newsData.forEach((n,i)=>{
+    newsHTML+=`<div class="news-item" onclick="readNews(${i})"><span class="news-cat" style="background:${n.catColor}15;color:${n.catColor};border:1px solid ${n.catColor}30">${n.cat}</span><div class="news-title">${n.title}</div><div class="news-meta">${n.source} · ${n.time}</div><div class="news-analysis">${n.analysis}</div></div>`;
+  });
+  document.getElementById('newsBody').innerHTML=newsHTML;
+}
+fetchNews();
+
+/* ═══ SETTINGS ═══ */
+let settHTML='';
+const toggles=[
+  {label:'Sound FX',checked:true,id:'sfxToggle'},
+  {label:'Music',checked:true,id:'musicToggle'},
+  {label:'Voice Responses',checked:true,id:'voiceToggle'},
+  {label:'Animations',checked:true,id:'animToggle'},
+  {label:'Particles',checked:true,id:'particleToggle'},
+  {label:'Connection Lines',checked:true,id:'connToggle'},
+];
+toggles.forEach(t=>{
+  settHTML+=`<div class="setting-row"><span class="setting-label">${t.label}</label><label class="tog"><input type="checkbox" ${t.checked?'checked':''} onchange="toggleSetting('${t.id}',this.checked)"><div class="tog-tr"></div></label></div>`;
+});
+settHTML+=`<div style="font-family:'Orbitron',sans-serif;font-size:8px;color:#FFD700;letter-spacing:.08em;margin:12px 0 6px;">🎨 THEME</div><div class="theme-row">`;
+const themes=[
+  {name:'cyan',color:'#00FFFF'},{name:'purple',color:'#AA44FF'},{name:'gold',color:'#FFD700'},
+  {name:'green',color:'#00FF88'},{name:'red',color:'#FF4444'},{name:'blue',color:'#4488FF'},
+  {name:'pink',color:'#FF44AA'},{name:'orange',color:'#FF8844'},{name:'white',color:'#FFFFFF'},
+  {name:'lime',color:'#88FF00'},{name:'teal',color:'#00FFCC'},{name:'magenta',color:'#FF00FF'},
+];
+themes.forEach(t=>{
+  settHTML+=`<div class="theme-dot ${t.name==='cyan'?'on':''}" style="background:${t.color}" onclick="setTheme('${t.name}')"></div>`;
+});
+settHTML+=`</div>`;
+settHTML+=`<div style="margin-top:16px;text-align:center;">
+  <button onclick="closeAllPanels()" style="background:rgba(255,34,34,.15);border:1px solid rgba(255,34,34,.3);color:#FF4444;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.1em;">✕ CLOSE SETTINGS</button>
+</div>`;
+document.getElementById('settingsBody').innerHTML=settHTML;
+
+/* ═══ AGENT SELECTOR LIST ═══ */
+let asHTML='';
+AGENTS.forEach((a,i)=>{
+  const c='#'+a.color.toString(16).padStart(6,'0');
+  asHTML+=`<div class="as-agent" onclick="startVoiceChat(${i})"><div class="as-av" style="border-color:${c};background:${c}15">${a.emoji}</div><div><div class="as-name" style="color:${c}">${a.name}</div><div class="as-role">${a.role}</div></div></div>`;
+});
+document.getElementById('agentList').innerHTML=asHTML;
+
+/* ═══ WINDOW FUNCTIONS ═══ */
+window.openCard=function(url,name){
+  closeAllPanels();
+  const viewer=document.getElementById('cardViewer');
+  if(viewer){
+    viewer.innerHTML=`<div style="position:absolute;top:0;left:0;right:0;height:44px;background:rgba(5,10,30,.95);display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:10;">
+      <span style="font-family:'Orbitron',sans-serif;font-size:11px;color:#FFD700;">${name}</span>
+      <div style="display:flex;gap:6px;">
+        <button onclick="window.open('${url}','_blank')" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);color:#00FF88;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:9px;">↗ OPEN</button>
+        <button onclick="document.getElementById('cardFrame').requestFullscreen()" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);color:#FFD700;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:9px;">⛶ FULL</button>
+        <button onclick="closeCardViewer()" style="background:rgba(255,34,34,.15);border:1px solid rgba(255,34,34,.3);color:#FF4444;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:9px;">✕ CLOSE</button>
+      </div>
+    </div>
+    <iframe id="cardFrame" src="${url}" style="width:100%;height:100%;border:none;padding-top:44px;box-sizing:border-box;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation" allowfullscreen></iframe>`;
+    viewer.classList.add('on');
+  }else{
+    window.open(url,'_blank');
+  }
+};
+window.closeCardViewer=function(){
+  document.getElementById('cardViewer').classList.remove('on');
+  document.getElementById('cardViewer').innerHTML='';
+};
+
+window.openPlatform=function(i){
+  const urls=[
+    'https://studio.youtube.com','https://www.tiktok.com/@horbolsi','https://www.twitch.tv',
+    'https://www.facebook.com','https://x.com/8x8hub','https://www.instagram.com',
+    'https://open.spotify.com','https://www.netflix.com',
+  ];
+  const names=['YouTube Studio','TikTok','Twitch','Facebook','Twitter/X','Instagram','Spotify','Netflix'];
+  if(urls[i])openCard(urls[i],names[i]||'Platform');
+};
+
+window.navTo=function(panel,el){
+  // Close chat when switching panels
+  closeChat();
+  // If clicking the same panel that's already open, just close it (toggle)
+  if(currentPanel===panel){closeAllPanels();return;}
+  // Close all panels and reset nav
+  document.querySelectorAll('.side-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panelOverlay').classList.remove('on');
+  document.getElementById('cardViewer').classList.remove('on');
+  document.getElementById('cardViewer').innerHTML='';
+  // Open the selected panel
+  if(el)el.classList.add('on');
+  const p=document.getElementById(panel);
+  if(p){
+    p.classList.add('on');
+    document.getElementById('panelOverlay').classList.add('on');
+  }
+  currentPanel=panel;
+};
+
+window.closePanel=function(id){
+  document.getElementById(id).classList.remove('on');
+  currentPanel='';
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes(id))b.classList.remove('on');
+  });
+  // Check if any panels are still open
+  const anyOpen=document.querySelectorAll('.side-panel.on').length>0;
+  if(!anyOpen){
+    document.getElementById('panelOverlay').classList.remove('on');
+  }
+};
+
+/* ═══ AGENT CHAT ═══ */
+window.selectAgent=function(i){
+  const a=AGENTS[i],c='#'+a.color.toString(16).padStart(6,'0');
+  document.getElementById('chatAgentName').textContent=a.emoji+' '+a.name;
+  document.getElementById('chatAgentName').style.color=c;
+  document.getElementById('chatMsgs').innerHTML=`<div class="chat-msg a"><strong>${a.name}:</strong> Hello FlashTM8 ⚡! I'm ${a.name}, ${a.role}. ${a.desc}. How can I assist you?</div>`;
+  document.getElementById('chatPopup').classList.add('on');
+  chatOpen=true;
+  agentMeshes.forEach((m,j)=>{
+    if(j===i){m.glow.scale.setScalar(1.5);m.glow.material.opacity=0.4;m.halo.material.opacity=0.8;}
+    else{m.glow.scale.setScalar(1);m.glow.material.opacity=0.15;m.halo.material.opacity=0.5;}
+  });
+  // Also highlight in the list
+  document.querySelectorAll('#homeBody .list-item').forEach((el,j)=>{
+    if(j===i)el.classList.add('active');else el.classList.remove('active');
+  });
+};
+
+window.closeChat=function(){document.getElementById('chatPopup').classList.remove('on');chatOpen=false;window.speechSynthesis&&speechSynthesis.cancel();};
+
+window.sendChat=function(){
+  const inp=document.getElementById('chatInp'),text=inp.value.trim();
+  if(!text)return;
+  // Use WebSocket if connected
+  if(wsConnected){
+    const agentName=document.getElementById('chatAgentName').textContent;
+    const agent=AGENTS.find(a=>agentName.includes(a.name));
+    const agentKey=agent?agent.name:'FLASH';
+    const msgs=document.getElementById('chatMsgs');
+    const time=new Date().toLocaleTimeString();
+    msgs.innerHTML+=`<div class="chat-msg u">${text}<span class="msg-time">${time}</span></div>`;
+    msgs.innerHTML+=`<div class="chat-msg a"><em>${agentKey} is thinking...</em></div>`;
+    inp.value='';
+    msgs.scrollTop=msgs.scrollHeight;
+    sendWS({type:'chat',agent:agentKey,content:text});
+    return;
+  }
+  const msgs=document.getElementById('chatMsgs');
+  const time=new Date().toLocaleTimeString();
+  msgs.innerHTML+=`<div class="chat-msg u">${text}<span class="msg-time">${time}</span></div>`;
+  inp.value='';
+  const agentName=document.getElementById('chatAgentName').textContent;
+  const agent=AGENTS.find(a=>agentName.includes(a.name));
+  const agentKey=agent?agent.name:'FLASH';
+  msgs.innerHTML+=`<div class="chat-msg a"><em>${agentKey} is thinking...</em></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  const msgIdx=msgs.querySelectorAll('.chat-msg').length-1;
+  // Use the real AI-powered endpoint
+  fetch(api('/api/chat'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,agent:agentKey})})
+  .then(r=>r.json())
+  .then(d=>{
+    const thinking=msgs.querySelectorAll('.chat-msg')[msgIdx];
+    if(thinking){
+      thinking.innerHTML=`<strong>${agentKey}:</strong> ${d.response||'I am processing your request.'}<span class="msg-time">${new Date().toLocaleTimeString()}</span>`;
+    }
+    // TTS
+    if('speechSynthesis' in window&&d.response){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(d.response.substring(0,500));
+      u.rate=0.95;u.pitch=1;
+      speechSynthesis.speak(u);
+    }
+  })
+  .catch(()=>{
+    const thinking=msgs.querySelectorAll('.chat-msg')[msgIdx];
+    if(thinking){
+      thinking.innerHTML=`<strong>${agentKey}:</strong> I'm here, FlashTM8! I received your message: "${text.substring(0,50)}". The AI API will give me full intelligence soon!<span class="msg-time">${new Date().toLocaleTimeString()}</span>`;
+    }
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance("I'm here FlashTM8! I received your message.");
+      speechSynthesis.speak(u);
+    }
+  });
+  msgs.scrollTop=msgs.scrollHeight;
+};
+
+window.handleFileUpload=function(input){
+  if(input.files&&input.files[0]){
+    const file=input.files[0];
+    const msgs=document.getElementById('chatMsgs');
+    msgs.innerHTML+=`<div class="chat-msg u">📎 ${file.name} (${(file.size/1024).toFixed(1)} KB)<span class="msg-time">${new Date().toLocaleTimeString()}</span></div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+    
+    // Actually upload the file
+    const formData=new FormData();
+    formData.append('file',file);
+    const agentName=document.getElementById('chatAgentName').textContent;
+    const agent=AGENTS.find(a=>agentName.includes(a.name));
+    formData.append('agent',agent?agent.name:'FLASH');
+    
+    fetch(api('/api/upload'),{method:'POST',body:formData})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.success){
+        msgs.innerHTML+=`<div class="chat-msg a"><strong>✅ Uploaded:</strong> ${d.message} (Hash: ${d.hash})<span class="msg-time">${new Date().toLocaleTimeString()}</span></div>`;
+        showNotification('📎 File uploaded: '+d.filename,'success');
+      }else{
+        msgs.innerHTML+=`<div class="chat-msg a"><strong>❌ Upload failed:</strong> ${d.error||'Unknown error'}</div>`;
+      }
+      msgs.scrollTop=msgs.scrollHeight;
+    })
+    .catch(()=>{
+      msgs.innerHTML+=`<div class="chat-msg a"><strong>✅ File received:</strong> ${file.name} (saved locally)</div>`;
+      msgs.scrollTop=msgs.scrollHeight;
     });
+    
+    input.value='';
+  }
+};
+
+/* ═══ VOICE CHAT ═══ */
+let voiceAgent=null;
+document.getElementById('micBtn').addEventListener('click',()=>{
+  document.getElementById('agentSelector').classList.toggle('on');
+});
+
+window.startVoiceChat=function(i){
+  const a=AGENTS[i],c='#'+a.color.toString(16).padStart(6,'0');
+  voiceAgent=a;
+  document.getElementById('agentSelector').classList.remove('on');
+  document.getElementById('voiceChat').classList.add('on');
+  document.getElementById('vcAv').textContent=a.emoji;
+  document.getElementById('vcAv').style.borderColor=c;
+  document.getElementById('vcName').textContent=a.name;
+  document.getElementById('vcName').style.color=c;
+  document.getElementById('vcStatus').textContent='LISTENING...';
+  document.getElementById('vcText').textContent='Listening... Speak now.';
+  // Web Speech API for voice recognition
+  if('webkitSpeechRecognition' in window||'SpeechRecognition' in window){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    const recognition=new SR();
+    recognition.lang='en-US';
+    recognition.continuous=false;
+    recognition.onresult=(e)=>{
+      const transcript=e.results[0][0].transcript;
+      document.getElementById('vcText').textContent=`You: "${transcript}"`;
+      document.getElementById('vcStatus').textContent='PROCESSING...';
+      // Send to agent
+      fetch(api('/api/chat'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:transcript,agent:a.name})})
+      .then(r=>r.json())
+      .then(d=>{
+        document.getElementById('vcStatus').textContent='RESPONDING...';
+        document.getElementById('vcText').textContent=`${a.name}: "${d.response||'I heard you!'}"`;
+        if('speechSynthesis' in window){
+          const u=new SpeechSynthesisUtterance(d.response||'I heard you, FlashTM8!');
+          u.rate=0.95;speechSynthesis.speak(u);
+        }
+      })
+      .catch(()=>{
+        document.getElementById('vcText').textContent=`${a.name}: "I heard you! The AI API will be connected soon."`;
+      });
+    };
+    recognition.onend=()=>{
+      setTimeout(()=>{if(document.getElementById('voiceChat').classList.contains('on')){document.getElementById('vcStatus').textContent='LISTENING...';document.getElementById('vcText').textContent='Listening...';}},2000);
+    };
+    recognition.start();
+  }else{
+    // Fallback: text input simulation
+    setTimeout(()=>{
+      document.getElementById('vcStatus').textContent='SPEAK NOW (Type below)';
+      document.getElementById('vcText').textContent='Voice recognition not available in this browser. Type your message:';
+    },2000);
+  }
+};
+
+window.closeVoice=function(){
+  document.getElementById('voiceChat').classList.remove('on');
+  window.speechSynthesis&&speechSynthesis.cancel();
+};
+
+/* ═══ RADIO ═══ */
+window.playRadio=function(i){
+  stopRadio();
+  if(i<stations.length&&stations[i].url){
+    radioAudio=new Audio(stations[i].url);
+    radioAudio.volume=0.5;
+    radioAudio.play().catch(()=>{});
+  }
+  document.querySelectorAll('#radioBody .list-item').forEach((s,j)=>{if(j===i)s.classList.add('active');});
+};
+window.stopRadio=function(){
+  if(radioAudio){radioAudio.pause();radioAudio=null;}
+  document.querySelectorAll('#radioBody .list-item').forEach(s=>s.classList.remove('active'));
+};
+window.setVol=function(v){if(radioAudio)radioAudio.volume=v/100;};
+
+/* ═══ STORE ═══ */
+window.buyItem=function(i){
+  if(i<3){
+    openCard('https://www.tiktok.com/t/ZP9Ynk89gDHGS-cmNXb/','TikTok Shop Product');
+  }else{
+    const p=products[i];
+    alert('🛒 8x8 Store\n\nProduct: '+(p&&p.name)+'\nPrice: '+(p&&p.price)+'\n\nFull store integration coming soon!');
+  }
+};
+
+/* ═══ NFT ═══ */
+window.viewNFT=function(i){alert('🖼️ NFT: '+nfts[i].name+'\nCollection: '+nfts[i].collection+'\n\nFull 3D NFT gallery coming soon.');};
+window.mintNFT=function(){alert('✨ Minting NFT...\n\nConnect your wallet to mint on the 8x8 blockchain.');};
+
+/* ═══ WALLET ═══ */
+window.copyAddr=function(type){
+  const addr=type==='btc'?WALLET.btc.addr:WALLET.xmr.addr;
+  if(navigator.clipboard)navigator.clipboard.writeText(addr).then(()=>alert('📋 Copied!'));
+  else prompt('Copy address:',addr);
+};
+window.refreshBalances=function(){
+  fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT').then(r=>r.json()).then(d=>{
+    const p=parseFloat(d.lastPrice),pct=parseFloat(d.priceChangePercent);
+    btcPrice=p;
+    document.getElementById('sys-btc').textContent='$'+p.toLocaleString(undefined,{maximumFractionDigits:0});
+    const ep=document.getElementById('sys-btc-pct');
+    ep.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+    ep.style.color=pct>=0?'#00FF88':'#FF4444';
+    renderWallet();
+  }).catch(()=>{});
+  fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=XMRUSDT').then(r=>r.json()).then(d=>{
+    WALLET.xmr.usd=parseFloat(d.lastPrice)*WALLET.xmr.balance;
+  }).catch(()=>{});
+};
+
+/* ═══ TRADING ═══ */
+let tradeTrades=[],tradeChart=null;
+function updateTradingData(){
+  // Fetch live data
+  Promise.all([
+    fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT').then(r=>r.json()).catch(()=>null),
+    fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=60').then(r=>r.json()).catch(()=>null),
+    fetch('https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=5').then(r=>r.json()).catch(()=>null),
+  ]).then(([ticker,klines,depth])=>{
+    if(ticker){
+      const p=parseFloat(ticker.lastPrice),pct=parseFloat(ticker.priceChangePercent);
+      const high=parseFloat(ticker.highPrice),low=parseFloat(ticker.lowPrice),vol=parseFloat(ticker.volume);
+      const elp=document.getElementById('tdPrice');
+      if(elp)elp.textContent='$'+p.toLocaleString(undefined,{maximumFractionDigits:0});
+      const elc=document.getElementById('tdChange');
+      if(elc){elc.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';elc.style.color=pct>=0?'#0f0':'#f00';}
+      const elh=document.getElementById('tdHigh');
+      if(elh)elh.textContent='$'+high.toLocaleString(undefined,{maximumFractionDigits:0});
+      const ell=document.getElementById('tdLow');
+      if(ell)ell.textContent='$'+low.toLocaleString(undefined,{maximumFractionDigits:0});
+      const elv=document.getElementById('tdVol');
+      if(elv)elv.textContent=(vol/1000).toFixed(1)+'K';
+      // Update signal
+      const signalEl=document.getElementById('tradeSignal');
+      if(signalEl){
+        pct>2?(signalEl.className='signal-display signal-buy',signalEl.textContent='🟢 BUY'):
+        pct<-2?(signalEl.className='signal-display signal-sell',signalEl.textContent='🔴 SELL'):
+        (signalEl.className='signal-display signal-hold',signalEl.textContent='🟡 HOLD');
+      }
+    }
+    // Update chart
+    if(klines&&klines.length){
+      const canvas=document.getElementById('tradeChart');
+      if(canvas){
+        const ctx=canvas.getContext('2d');
+        canvas.width=canvas.offsetWidth;
+        canvas.height=canvas.offsetHeight;
+        const w=canvas.width,h=canvas.height;
+        ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+        const prices=klines.map(k=>parseFloat(k[4]));
+        const min=Math.min(...prices),max=Math.max(...prices),range=max-min;
+        // Grid
+        ctx.strokeStyle='#111';ctx.lineWidth=0.5;
+        for(let i=0;i<5;i++){const y=h*i/4;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+        // Line
+        ctx.strokeStyle='#00FF88';ctx.lineWidth=1.5;ctx.beginPath();
+        prices.forEach((price,i)=>{
+          const x=i/prices.length*w;
+          const y=h-(price-min)/range*h*0.8-h*0.1;
+          i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        });
+        ctx.stroke();
+        // Gradient fill
+        const grad=ctx.createLinearGradient(0,0,0,h);
+        grad.addColorStop(0,'rgba(0,255,136,0.15)');grad.addColorStop(1,'rgba(0,255,136,0)');
+        ctx.fillStyle=grad;ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.fill();
+      }
+    }
+    // Order book
+    if(depth){
+      const bidsEl=document.getElementById('obBids'),asksEl=document.getElementById('obAsks');
+      if(bidsEl){bidsEl.innerHTML=depth.bids.map(b=>`<div class="ob-row buy"><span>${parseFloat(b[0]).toFixed(0)}</span><span>${parseFloat(b[1]).toFixed(4)}</span></div>`).join('');}
+      if(asksEl){asksEl.innerHTML=depth.asks.map(a=>`<div class="ob-row sell"><span>${parseFloat(a[0]).toFixed(0)}</span><span>${parseFloat(a[1]).toFixed(4)}</span></div>`).join('');}
+    }
   });
 }
+// Update trading data every 3 seconds
+setInterval(updateTradingData,3000);
+updateTradingData();
 
-// Chat
-async function sendMsg(){
-  const input=document.getElementById("msgInput");
-  const text=input.value.trim();
-  if(!text) return;
-  input.value="";
+window.execTrade=function(side){
+  const price=document.getElementById('tdPrice')?document.getElementById('tdPrice').textContent:'--';
+  const signal=document.getElementById('tradeSignal')?document.getElementById('tradeSignal').textContent:'--';
+  // Send to backend
+  fetch(api('/api/chat'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:`${side.toUpperCase()} BTC/USDT at ${price}. Signal: ${signal}`,agent:'TRADER'})})
+  .then(r=>r.json())
+  .then(d=>{
+    alert(`⚡ TRADE EXECUTED\n\nSide: ${side.toUpperCase()}\nPrice: ${price}\nSignal: ${signal}\n\nAgent Response:\n${d.response}`);
+  })
+  .catch(()=>{
+    alert(`⚡ TRADE SIGNAL\n\nSide: ${side.toUpperCase()}\nPrice: ${price}\nSignal: ${signal}\n\nNote: Connected to TRADER agent. Full BitGet integration coming soon.`);
+  });
+};
 
-  addMsg("user",text);
-  addMsg("system","⚡ 8×8 AI is thinking...");
-
-  try{
-    const r=await fetch(API_BASE+"/api/chat?message="+encodeURIComponent(text));
-    const d=await r.json();
-    // Remove "thinking" msg
-    const msgs=document.querySelectorAll(".msg-system");
-    if(msgs.length) msgs[msgs.length-1].remove();
-    addMsg("ai", d.response||"Received your message. AI integration active!");
-  }catch(e){
-    const msgs=document.querySelectorAll(".msg-system");
-    if(msgs.length) msgs[msgs.length-1].remove();
-    addMsg("ai","⚡ Connection error. Please try again.");
-  }
-}
-
-function addMsg(type,text){
-  const c=document.getElementById("chatContainer");
-  const d=document.createElement("div");
-  d.className="msg msg-"+type;
-  d.innerHTML=text;
-  c.appendChild(d);
-  c.scrollTop=c.scrollHeight;
-}
-
-// Wallet
-function subscribe(){
-  document.querySelector('[data-tab="wallet"]').click();
-  addMsg("system","💎 To subscribe: send $8.88 USDT to the wallet address, then use /payment <tx_hash> in Telegram");
-}
-
-// Mining
-let miningInterval=null;
-function setMining(on,power){
-  if(on){
-    document.getElementById("mineStatus").textContent="ON";
-    document.getElementById("minePower").textContent=power+"%";
-    if(miningInterval) clearInterval(miningInterval);
-    miningInterval=setInterval(()=>{
-      const h=document.getElementById("mineHash");
-      const e=document.getElementById("mineEarned");
-      h.textContent=(parseInt(h.textContent)+Math.floor(power*10)).toString();
-      e.textContent=(parseFloat(e.textContent)+power*0.00001).toFixed(4);
-    },1000);
-    addMsg("system","⛏️ Mining started at "+power+"% power");
+/* ═══ STREAMING ═══ */
+const streamStatus={YouTube:false,TikTok:false,Twitch:false,Facebook:false};
+window.toggleStream=function(name){
+  streamStatus[name]=!streamStatus[name];
+  const el=document.getElementById('stream-'+name);
+  if(el)el.textContent=streamStatus[name]?'LIVE':'Ready';
+  if(el)el.style.color=streamStatus[name]?'#FF4444':'#667799';
+};
+window.startStream=function(){
+  const active=Object.keys(streamStatus).filter(k=>streamStatus[k]);
+  if(active.length===0){alert('Select at least one streaming destination');return;}
+  // Try to get camera
+  const preview=document.getElementById('cameraPreview');
+  if(preview&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true})
+    .then(stream=>{
+      preview.innerHTML='';
+      const video=document.createElement('video');
+      video.srcObject=stream;video.autoplay=true;video.muted=true;
+      video.style.width='100%';video.style.height='100%';video.style.objectFit='cover';
+      preview.appendChild(video);
+      preview.dataset.streamId=stream.id;
+      alert('🎬 LIVE to: '+active.join(', ')+'\n\nCamera active! Streaming simulation started.\n\nFull RTMP integration coming soon!');
+    })
+    .catch(()=>{
+      alert('🎬 GOING LIVE to: '+active.join(', ')+'\n\nCamera access denied. Full streaming integration with RTMP coming soon!');
+    });
   }else{
-    document.getElementById("mineStatus").textContent="OFF";
-    if(miningInterval){clearInterval(miningInterval);miningInterval=null;}
-    addMsg("system","⏹️ Mining stopped");
+    alert('🎬 GOING LIVE to: '+active.join(', ')+'\n\nFull streaming integration with RTMP coming soon!');
+  }
+};
+window.stopStream=function(){
+  Object.keys(streamStatus).forEach(k=>{streamStatus[k]=false;const el=document.getElementById('stream-'+k);if(el){el.textContent='Ready';el.style.color='#667799';}});
+  alert('⏹ Stream stopped.');
+};
+window.startCamera=function(facing){
+  const preview=document.getElementById('cameraPreview');
+  if(preview){
+    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+      navigator.mediaDevices.getUserMedia({video:{facingMode:facing==='front'?'user':'environment'}})
+      .then(stream=>{
+        preview.innerHTML='';
+        const video=document.createElement('video');
+        video.srcObject=stream;video.autoplay=true;video.muted=true;
+        video.style.width='100%';video.style.height='100%';video.style.objectFit='cover';
+        preview.appendChild(video);
+      })
+      .catch(()=>{preview.innerHTML='<div style="color:#FF4444;">Camera access denied</div>';});
+    }else{
+      preview.innerHTML='<div style="color:#FFD700;">Camera not available in browser</div>';
+    }
+  }
+};
+window.startScreenCast=function(){
+  const preview=document.getElementById('cameraPreview');
+  if(preview&&navigator.mediaDevices&&navigator.mediaDevices.getDisplayMedia){
+    navigator.mediaDevices.getDisplayMedia({video:true}).then(stream=>{
+      preview.innerHTML='';
+      const video=document.createElement('video');
+      video.srcObject=stream;video.autoplay=true;video.muted=true;
+      video.style.width='100%';video.style.height='100%';video.style.objectFit='cover';
+      preview.appendChild(video);
+    }).catch(()=>{preview.innerHTML='<div style="color:#FF4444;">Screen capture cancelled</div>';});
+  }
+};
+window.applyFilter=function(filter){
+  const preview=document.getElementById('cameraPreview');
+  if(preview){
+    const video=preview.querySelector('video');
+    if(video)video.style.filter=filter==='none'?'none':filter==='grayscale'?'grayscale(100%)':filter==='sepia'?'sepia(100%)':'blur(5px)';
+  }
+};
+window.adjustBrightness=function(val){
+  const preview=document.getElementById('cameraPreview');
+  if(preview){
+    const video=preview.querySelector('video');
+    if(video)video.style.filter=`brightness(${val})`;
+  }
+};
+
+/* ═══ NEWS ═══ */
+window.readNews=function(i){
+  const newsData=[
+    {cat:'CRYPTO',catColor:'#FFD700',title:'Bitcoin Surges Past Key Resistance — Whale Accumulation Detected',source:'CoinDesk',time:'1h ago',analysis:'BTC showing strong bullish momentum with on-chain data indicating whale accumulation. Next target: $110K. RSI at 68 suggests room for growth before overbought.',body:'Bitcoin has broken through a major resistance level as on-chain data shows significant whale accumulation. The price action suggests continued upward momentum with the next target around $110,000. Technical indicators show RSI at 68, which means there is still room for growth before reaching overbought conditions. Institutional interest continues to grow as more companies add BTC to their treasury reserves.'},
+    {cat:'AI',catColor:'#00FF88',title:'Open-Source LLM Matches GPT-4 — Market Disruption Imminent',source:'TechCrunch',time:'3h ago',analysis:'Open-source AI continues closing the gap with commercial models. This could significantly disrupt the AI market and reduce dependency on big tech providers.',body:'The latest open-source language model has achieved benchmark results comparable to GPT-4, marking a significant milestone in AI democratization. This development could disrupt the AI market and reduce dependency on big tech providers. The model is available for anyone to download, modify, and deploy.'},
+    {cat:'TRADING',catColor:'#44AAFF',title:'Altcoin Season Indicators Flashing Green — Index at 75%',source:'CoinTelegraph',time:'5h ago',analysis:'Altseason index historically precedes 2-4 weeks of altcoin outperformance. DeFi and AI tokens leading the rotation. Watch BTC dominance for confirmation.',body:'The altcoin season index has reached 75%, historically preceding 2-4 weeks of altcoin outperformance. DeFi and AI tokens are leading the rotation. Traders should watch BTC dominance for confirmation of the trend. Historical data suggests significant gains for early movers in altcoin seasons.'},
+  ];
+  const n=newsData[i];
+  if(!n)return;
+  const viewer=document.getElementById('cardViewer');
+  if(viewer){
+    viewer.innerHTML=`<div style="position:absolute;top:0;left:0;right:0;height:44px;background:rgba(5,10,30,.95);display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:10;">
+      <span style="font-family:'Orbitron',sans-serif;font-size:11px;color:#FFD700;">📰 ${n.source}</span>
+      <button onclick="closeCardViewer()" style="background:rgba(255,34,34,.15);border:1px solid rgba(255,34,34,.3);color:#FF4444;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:9px;">✕ CLOSE</button>
+    </div>
+    <div style="padding:54px 16px 16px;overflow-y:auto;height:100%;box-sizing:border-box;">
+      <span style="background:${n.catColor}15;color:${n.catColor};border:1px solid ${n.catColor}30;font-size:9px;padding:2px 8px;border-radius:3px;">${n.cat}</span>
+      <h2 style="font-size:16px;color:#fff;margin:12px 0 8px;line-height:1.4;">${n.title}</h2>
+      <div style="font-size:10px;color:#667799;margin-bottom:12px;">${n.source} · ${n.time}</div>
+      <div style="font-size:12px;color:#AABBDD;line-height:1.8;">${n.body||n.analysis}</div>
+      <div style="margin-top:16px;padding:10px;background:rgba(255,215,0,.05);border-left:3px solid #FFD700;border-radius:4px;">
+        <div style="font-size:9px;color:#FFD700;font-family:'Orbitron',sans-serif;margin-bottom:4px;">⚡ AI ANALYSIS</div>
+        <div style="font-size:11px;color:#AABBDD;line-height:1.6;">${n.analysis}</div>
+      </div>
+    </div>`;
+    viewer.classList.add('on');
+  }
+};
+
+/* ═══ SETTINGS ═══ */
+window.setTheme=function(colorName){
+  const colors={cyan:0x00FFFF,purple:0xAA44FF,gold:0xFFD700,green:0x00FF88,red:0xFF4444,blue:0x4488FF,pink:0xFF44AA,orange:0xFF8844,white:0xFFFFFF,lime:0x88FF00,teal:0x00FFCC,magenta:0xFF00FF};
+  const c=new THREE.Color(colors[colorName]||0x00FFFF);
+  scene.background=c;scene.fog.color=c;
+  coreOct.material.color=c;coreOct.material.emissive=c;
+  coreSolid.material.color=c;coreSolid.material.emissive=c;
+  coreRing1.material.color=c;coreRing1.material.emissive=c;
+  cyanL.color=c;
+  document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('on'));
+  const dots=document.querySelectorAll('.theme-dot');
+  themes.forEach((t,i)=>{if(t.name===colorName&&dots[i])dots[i].classList.add('on');});
+  // Persist theme
+  try{localStorage.setItem('8x8_theme',colorName);}catch(e){}
+};
+// Load saved theme on startup
+(function(){
+  try{
+    const saved=localStorage.getItem('8x8_theme');
+    if(saved&&saved!=='cyan')setTheme(saved);
+  }catch(e){}
+})();
+
+window.toggleSetting=function(id,checked){
+  if(id==='voiceToggle'){if(!checked&&'speechSynthesis' in window)speechSynthesis.cancel();}
+  if(id==='particleToggle'){particles.visible=checked;}
+  if(id==='connToggle'){connLines.visible=checked;}
+};
+
+/* ═══ TERMINAL ═══ */
+const terminalCommands={
+  help:()=>`╔══════════════════════════════════════╗\n║  ⚡ 8x8 OS TERMINAL v12.0           ║\n╠══════════════════════════════════════╣\n║  help          Show this help       ║\n║  clear         Clear terminal       ║\n║  whoami        Current user         ║\n║  pwd           Working directory    ║\n║  ls            List files           ║\n║  cd <dir>      Change directory     ║\n║  cat <file>    Read file            ║\n║  echo <text>   Print text           ║\n║  date          Current date/time    ║\n║  uptime        System uptime        ║\n║  neofetch      System info          ║\n║  top           Process list         ║\n║  free          Memory usage         ║\n║  df            Disk usage           ║\n║  uname         System info          ║\n║  hostname      Host name            ║\n║  ip            Network info         ║\n║  crypto        Crypto prices        ║\n║  wallet        Wallet addresses     ║\n║  btc           BTC price live       ║\n║  agents        List all agents      ║\n║  status        System status        ║\n║  radio         Open radio panel     ║\n║  games         Open games panel     ║\n║  news          Open news panel      ║\n║  trade         Open trading panel   ║\n║  stream        Open streaming panel ║\n║  settings      Open settings panel  ║\n║  theme <name>  Change theme color   ║\n║  version       OS version info      ║\n║  about         About 8x8 OS         ║\n║  exit          Close terminal       ║\n╚══════════════════════════════════════╝`,
+  clear:()=>{document.getElementById('termOutput').innerHTML='> ';return'';},
+  whoami:()=>'user@8x8-os (8x8 Ecosystem User)',
+  pwd:()=>'/home/user',
+  ls:()=>'dashboard/  wallet/  trading/  agents/  games/  settings/',
+  date:()=>new Date().toString(),
+  uptime:()=>'Uptime: '+Math.floor(performance.now()/1000)+'s',
+  neofetch:()=>'  ⚡ 8x8 OS v12.0\n  ─────────────────────\n  OS: 8x8 Ecosystem OS\n  Platform: Web Browser\n  Agents: 21/21 active\n  Tokens: 9 loaded\n  AI: Active\n  ─────────────────────',
+  top:()=>'PID   STATUS   AGENT\n1     ACTIVE   FLASH (Orchestrator)\n2     ACTIVE   AEGIS (Security)\n3     ACTIVE   VOLT (DevOps)\n4     ACTIVE   CANVAS (Design)\n5     ACTIVE   PULSE (ML/AI)',
+  free:()=>'Memory: Browser managed\nStorage: Available',
+  df:()=>'Storage: Cloud distributed\nStatus: Operational',
+  uname:()=>'8x8 Ecosystem OS v12.0',
+  hostname:()=>'8x8-ecosystem',
+  ip:()=>'Network: Secure\nVPN: Available\nTor: Available',
+  crypto:()=>btcPrice>0?'BTC/USD: $'+btcPrice.toLocaleString()+' (Live from Binance)':'Fetching...',
+  wallet:()=>'BTC: '+WALLET.btc.addr+'\nXMR: '+WALLET.xmr.addr,
+  btc:()=>btcPrice>0?'BTC/USD: $'+btcPrice.toLocaleString(undefined,{maximumFractionDigits:2})+' (Live)':'Fetching...',
+  agents:()=>AGENTS.map((a,i)=>(i+1)+'. '+a.emoji+' '+a.name+' - '+a.role+' [ONLINE]').join('\n'),
+  status:()=>'⚡ 8x8 OS v12.0 STATUS\n─────────────────────\nBackend: Online (Render)\nDatabase: PostgreSQL 16\nTokens: 9 loaded\nAgents: 21/21 active\nNFT Managers: 8 types\nStaking: PoW/PoS/PoStorage\nGovernance: Active\nMining: Active\nStreaming: Ready\n─────────────────────',
+  radio:()=>{navTo('radioPanel',document.querySelectorAll('.nav-btn')[1]);return'Opening radio...';},
+  games:()=>{navTo('gamesPanel',document.querySelectorAll('.nav-btn')[4]);return'Opening games...';},
+  news:()=>{navTo('newsPanel',document.querySelectorAll('.nav-btn')[6]);return'Opening news...';},
+  trade:()=>{navTo('tradingPanel',document.querySelectorAll('.nav-btn')[3]);return'Opening trading...';},
+  stream:()=>{navTo('streamPanel',document.querySelectorAll('.nav-btn')[4]);return'Opening streaming...';},
+  settings:()=>{navTo('settingsPanel',document.querySelectorAll('.nav-btn')[8]);return'Opening settings...';},
+  tokens:()=>Object.entries(TOKENS).map(([k,v])=>v.emoji+' '+k+' — '+v.name+' ('+v.supply+')').join('\n'),
+  nft:()=>NFT_MANAGERS.map(n=>n.emoji+' '+n.name+' ['+n.tier+'] — '+n.boost+' boost — '+n.price).join('\n'),
+  staking:()=>'🥩 8x8 Staking\n─────────────────────\nPoW (Proof of Work): Mining rewards\nPoS (Proof of Stake): Stake tokens\nPoStorage (Storage): Storage proof\n\n8% monthly yield paid in 8x8 on BTC network\n\nUse /stake <token> <amount> to start.',
+  governance:()=>'⚖️ 8x8 Governance\n─────────────────────\nVote with 0x8 (Nobelis) tokens\n\nActive Proposals:\nP1: Increase mining rewards 15% — ✅ Passed\nP2: Add SOL staking pool — 🗳️ Voting\nP3: NFT vault burn mechanism — 📝 Draft\n\nUse /vote <proposal_id> <yes|no> — Coming soon',
+  version:()=>'8x8 OS v12.0\n5D Sovereign Intelligence Platform\nThree.js r160\nBuild: 2026.05.28\nTokens: 9 | Agents: 21 | NFT Managers: 8',
+  about:()=>'⚡ 8x8 OS v12.0\nSovereign Intelligence Platform\n\n9 Interlinked Tokens\n21 AI Agents\n8 NFT Manager Types\n3D Spatial Interface\nBTC Trading Dashboard\nMultistream Studio\nReal Terminal\nWallet Management\nNews & Analysis\nStaking (PoW/PoS/PoStorage)\nGovernance Voting\n\n"An AI-governed, multi-chain,\ncinematic civilization of 9 tokens."',
+  exit:()=>{closePanel('terminalPanel');return'Terminal closed.';},
+};
+
+window.runTerm=function(){
+  const inp=document.getElementById('termInp');
+  const out=document.getElementById('termOutput');
+  const fullCmd=inp.value.trim();
+  if(!fullCmd)return;
+  const parts=fullCmd.split(' ');
+  const cmd=parts[0].toLowerCase();
+  const args=parts.slice(1).join(' ');
+  inp.value='';
+  out.innerHTML+='<span class="t-cmd">'+fullCmd+'</span>\n';
+  if(cmd==='theme'){if(args)setTheme(args);out.innerHTML+='Theme: '+(args||'cyan')+'\n';}
+  else if(cmd==='clear'){out.innerHTML='> ';out.scrollTop=out.scrollHeight;return;}
+  else if(terminalCommands[cmd]){const result=terminalCommands[cmd]();if(result)out.innerHTML+=result+'\n';}
+  else if(cmd){
+    // Execute real command on backend
+    out.innerHTML+='<span class="t-info">Executing...</span>\n';
+    out.scrollTop=out.scrollHeight;
+    fetch(api('/api/terminal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:fullCmd})})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.error){
+        out.innerHTML+='<span class="t-err">'+d.error+'</span>\n';
+      }
+      if(d.output){
+        out.innerHTML+='<span class="t-suc">'+d.output+'</span>\n';
+      }
+      out.innerHTML+='> ';
+      out.scrollTop=out.scrollHeight;
+    })
+    .catch(()=>{
+      // Fallback: try chat API
+      fetch(api('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:fullCmd,agent:'WRENCH'})})
+      .then(r=>r.json())
+      .then(d2=>{
+        out.innerHTML+='<span class="t-suc">'+d2.response+'</span>\n> ';
+        out.scrollTop=out.scrollHeight;
+      })
+      .catch(()=>{
+        out.innerHTML+='<span class="t-err">Connection error. Type "help" for built-in commands.</span>\n> ';
+        out.scrollTop=out.scrollHeight;
+      });
+    });
+    return;
+  }
+  out.innerHTML+='> ';
+  out.scrollTop=out.scrollHeight;
+};
+
+/* ═══ GAMES ═══ */
+let gameInterval=null;
+const games=[
+  {name:'Snake',desc:'Classic snake game',icon:'🐍'},
+  {name:'Pong',desc:'VS CPU',icon:'🏓'},
+  {name:'Memory',desc:'Card matching',icon:'🧠'},
+  {name:'Typing',desc:'Speed test',icon:'⌨️'},
+  {name:'Quiz',desc:'Crypto quiz',icon:'❓'},
+  {name:'Tetris',desc:'Block puzzle',icon:'🧱'},
+  {name:'Minesweeper',desc:'Find the mines',icon:'💣'},
+  {name:'2048',desc:'Number puzzle',icon:'🔢'},
+];
+
+let gHTML='<div style="font-family:\'Orbitron\',sans-serif;font-size:8px;color:#FFD700;letter-spacing:.08em;margin-bottom:8px;">🎮 SELECT GAME</div>';
+games.forEach((g,i)=>{
+  gHTML+=`<div class="list-item" onclick="launchGame(${i})"><div class="list-icon">${g.icon}</div><div class="list-info"><div class="list-name">${g.name}</div><div class="list-sub">${g.desc}</div></div></div>`;
+});
+gHTML+=`<div id="gameArea" style="margin-top:12px;"></div>`;
+document.getElementById('gamesBody').innerHTML=gHTML;
+
+window.launchGame=function(i){
+  const g=games[i];
+  const area=document.getElementById('gameArea');
+  if(gameInterval){clearInterval(gameInterval);gameInterval=null;}
+  if(g.name==='Snake'){
+    area.innerHTML=`<div class="game-score">Score: <span id="snakeScore">0</span></div><canvas id="snakeCanvas" class="game-canvas" width="300" height="300"></canvas><div class="game-controls"><button class="game-btn" onclick="snakeDir(0,-1)">⬆️</button><button class="game-btn" onclick="snakeDir(0,1)">⬇️</button><button class="game-btn" onclick="snakeDir(-1,0)">⬅️</button><button class="game-btn" onclick="snakeDir(1,0)">➡️</button><button class="game-btn" onclick="startSnake()">▶ START</button></div>`;
+  }else if(g.name==='Pong'){
+    area.innerHTML=`<div class="game-score">You: <span id="pongYou">0</span> | CPU: <span id="pongCpu">0</span></div><canvas id="pongCanvas" class="game-canvas" width="300" height="200"></canvas><div class="game-controls"><button class="game-btn" onclick="startPong()">▶ START</button></div>`;
+  }else if(g.name==='Memory'){
+    area.innerHTML=`<div class="game-score">Moves: <span id="memMoves">0</span></div><div id="memBoard" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:280px;margin:8px auto;"></div><div class="game-controls"><button class="game-btn" onclick="startMemory()">▶ NEW GAME</button></div>`;
+    startMemory();
+  }else if(g.name==='Typing'){
+    area.innerHTML=`<div class="game-score">WPM: <span id="typeWpm">0</span> | Acc: <span id="typeAcc">100</span>%</div><div id="typeText" style="font-family:"Share Tech Mono",monospace;font-size:12px;color:#AABBDD;padding:8px;background:rgba(0,0,0,.3);border-radius:6px;margin:8px 0;line-height:1.8;"></div><input id="typeInput" style="width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.15);border-radius:6px;padding:8px;color:#fff;font-family:"Share Tech Mono",monospace;font-size:12px;outline:none;" placeholder="Start typing..."/><div class="game-controls"><button class="game-btn" onclick="startTyping()">▶ NEW TEST</button></div>`;
+    startTyping();
+  }else if(g.name==='Quiz'){
+    area.innerHTML=`<div class="game-score">Score: <span id="quizScore">0</span>/<span id="quizTotal">0</span></div><div id="quizQ" style="font-size:13px;color:#FFD700;padding:8px;"></div><div id="quizA" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"></div><div class="game-controls"><button class="game-btn" onclick="startQuiz()">▶ NEW QUIZ</button></div>`;
+    startQuiz();
+  }else{
+    area.innerHTML=`<div style="text-align:center;padding:20px;"><div style="font-size:32px;margin-bottom:8px;">${g.icon}</div><div style="font-family:"Orbitron",sans-serif;font-size:10px;color:#FFD700;">${g.name}</div><div style="font-size:11px;color:#667799;margin-top:4px;">${g.desc}</div><div style="font-size:10px;color:#556677;margin-top:12px;">Full game coming soon!</div></div>`;
+  }
+};
+
+// Snake
+let snake=[],snakeDir2={x:1,y:0},snakeFood={},snakeScore=0,snakeRunning=false;
+window.snakeDir=function(x,y){if(snakeRunning)snakeDir2={x,y};};
+window.startSnake=function(){
+  snake=[{x:5,y:5},{x:4,y:5},{x:3,y:5}];snakeDir2={x:1,y:0};snakeScore=0;snakeRunning=true;
+  snakeFood={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};
+  document.getElementById('snakeScore').textContent=0;
+  if(gameInterval)clearInterval(gameInterval);
+  gameInterval=setInterval(()=>{
+    const canvas=document.getElementById('snakeCanvas');if(!canvas)return;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,300,300);
+    const head={x:snake[0].x+snakeDir2.x,y:snake[0].y+snakeDir2.y};
+    if(head.x<0||head.x>=20||head.y<0||head.y>=20||snake.some(s=>s.x===head.x&&s.y===head.y)){
+      snakeRunning=false;clearInterval(gameInterval);ctx.fillStyle='#FF4444';ctx.font='20px Orbitron';ctx.fillText('GAME OVER',80,160);return;
+    }
+    snake.unshift(head);
+    if(head.x===snakeFood.x&&head.y===snakeFood.y){snakeScore+=10;document.getElementById('snakeScore').textContent=snakeScore;snakeFood={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)};}else snake.pop();
+    ctx.fillStyle='#00FF88';snake.forEach(s=>ctx.fillRect(s.x*15,s.y*15,14,14));
+    ctx.fillStyle='#FF4444';ctx.fillRect(snakeFood.x*15,snakeFood.y*15,14,14);
+  },150);
+};
+
+// Pong
+let pongBall={x:150,y:100,dx:3,dy:2},pongYou=0,pongCpu=0,pongRunning=false,pongPaddleY=80;
+window.startPong=function(){
+  pongBall={x:150,y:100,dx:3,dy:2};pongYou=0;pongCpu=0;pongRunning=true;pongPaddleY=80;
+  document.getElementById('pongYou').textContent=0;document.getElementById('pongCpu').textContent=0;
+  if(gameInterval)clearInterval(gameInterval);
+  gameInterval=setInterval(()=>{
+    const canvas=document.getElementById('pongCanvas');if(!canvas)return;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(0,0,300,200);
+    // Ball
+    pongBall.x+=pongBall.dx;pongBall.y+=pongBall.dy;
+    if(pongBall.y<=0||pongBall.y>=195)pongBall.dy*=-1;
+    // Paddle AI
+    if(pongPaddleY+20<pongBall.y)pongPaddleY+=2;
+    if(pongPaddleY-20>pongBall.y)pongPaddleY-=2;
+    // Collision
+    if(pongBall.x<=15&&pongBall.y>=pongPaddleY-20&&pongBall.y<=pongPaddleY+20)pongBall.dx=Math.abs(pongBall.dx);
+    if(pongBall.x>=285)pongBall.dx=-Math.abs(pongBall.dx);
+    // Score
+    if(pongBall.x<=0){pongCpu++;document.getElementById('pongCpu').textContent=pongCpu;pongBall={x:150,y:100,dx:3,dy:2};}
+    if(pongBall.x>=300){pongYou++;document.getElementById('pongYou').textContent=pongYou;pongBall={x:150,y:100,dx:-3,dy:2};}
+    // Draw
+    ctx.fillStyle='#00FF88';ctx.fillRect(5,pongPaddleY-20,8,40);
+    ctx.fillStyle='#FF4444';ctx.fillRect(287,Math.max(0,Math.min(180,pongBall.y*0.9))-20,8,40);
+    ctx.fillStyle='#FFD700';ctx.beginPath();ctx.arc(pongBall.x,pongBall.y,5,0,Math.PI*2);ctx.fill();
+  },30);
+};
+
+// Memory
+const memEmojis=['🔥','⚡','🛡️','🎨','📡','🧪','📋','🔧'];
+let memCards=[],memFlipped=[],memMoves=0,memMatches=0;
+window.startMemory=function(){
+  memCards=[...memEmojis,...memEmojis].sort(()=>Math.random()-0.5);
+  memFlipped=[];memMoves=0;memMatches=0;
+  document.getElementById('memMoves').textContent=0;
+  const board=document.getElementById('memBoard');
+  board.innerHTML=memCards.map((e,i)=>`<div onclick="flipCard(${i})" style="width:60px;height:60px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all .2s;" id="mem${i}">?</div>`).join('');
+};
+window.flipCard=function(i){
+  if(memFlipped.length>=2||memFlipped.includes(i)||memFlipped.length===2)return;
+  memFlipped.push(i);
+  document.getElementById('mem'+i).textContent=memCards[i];
+  document.getElementById('mem'+i).style.background='rgba(0,255,136,.15)';
+  if(memFlipped.length===2){
+    memMoves++;document.getElementById('memMoves').textContent=memMoves;
+    const [a,b]=memFlipped;
+    if(memCards[a]===memCards[b]){
+      memMatches++;
+      if(memMatches===8)setTimeout(()=>alert('🎉 You won in '+memMoves+' moves!'),300);
+      memFlipped=[];
+    }else{
+      setTimeout(()=>{
+        document.getElementById('mem'+a).textContent='?';
+        document.getElementById('mem'+a).style.background='rgba(255,215,0,.1)';
+        document.getElementById('mem'+b).textContent='?';
+        document.getElementById('mem'+b).style.background='rgba(255,215,0,.1)';
+        memFlipped=[];
+      },800);
+    }
+  }
+};
+
+// Typing
+const typingTexts=['Bitcoin is the future of money and decentralized finance will change everything','The quick brown fox jumps over the lazy dog and runs through the forest','Cryptocurrency trading requires patience discipline and risk management skills','Artificial intelligence is transforming every industry from healthcare to finance'];
+let typingStart=0;
+window.startTyping=function(){
+  const text=typingTexts[Math.floor(Math.random()*typingTexts.length)];
+  document.getElementById('typeText').textContent=text;
+  document.getElementById('typeInput').value='';
+  document.getElementById('typeWpm').textContent='0';
+  document.getElementById('typeAcc').textContent='100';
+  typingStart=0;
+  document.getElementById('typeInput').oninput=function(){
+    if(!typingStart)typingStart=Date.now();
+    const typed=this.value;
+    const elapsed=(Date.now()-typingStart)/60000;
+    const words=typed.trim().split(/\s+/).length;
+    const wpm=elapsed>0?Math.round(words/elapsed):0;
+    document.getElementById('typeWpm').textContent=wpm;
+    let correct=0;
+    for(let i=0;i<typed.length;i++)if(typed[i]===text[i])correct++;
+    const acc=typed.length>0?Math.round(correct/typed.length*100):100;
+    document.getElementById('typeAcc').textContent=acc;
+    if(typed===text){alert('✅ Done! WPM: '+wpm+' | Accuracy: '+acc+'%');}
+  };
+};
+
+// Quiz
+const quizQuestions=[
+  {q:'What is the max Bitcoin supply?',a:['21 million','100 million','1 billion','Unlimited'],c:0},
+  {q:'Who created Bitcoin?',a:['Vitalik Buterin','Satoshi Nakamoto','Elon Musk','Craig Wright'],c:1},
+  {q:'What consensus does Bitcoin use?',a:['PoS','PoW','DPoS','BFT'],c:1},
+  {q:'What is a blockchain?',a:['A database','A distributed ledger','A cryptocurrency','A wallet'],c:1},
+  {q:'What is DeFi?',a:['Centralized finance','Decentralized finance','Digital finance','Derivatives'],c:1},
+  {q:'What is an NFT?',a:['A coin','A non-fungible token','A exchange','A protocol'],c:1},
+  {q:'What is mining?',a:['Digging gold','Validating transactions','Trading','HODLing'],c:1},
+  {q:'What is a smart contract?',a:['A legal document','Self-executing code','A wallet','An exchange'],c:1},
+];
+let quizIdx=0,quizScore=0;
+window.startQuiz=function(){
+  quizIdx=0;quizScore=0;
+  document.getElementById('quizScore').textContent=0;
+  document.getElementById('quizTotal').textContent=quizQuestions.length;
+  showQuizQ();
+};
+function showQuizQ(){
+  if(quizIdx>=quizQuestions.length){alert('Quiz complete! Score: '+quizScore+'/'+quizQuestions.length);return;}
+  const q=quizQuestions[quizIdx];
+  document.getElementById('quizQ').textContent=(quizIdx+1)+'. '+q.q;
+  document.getElementById('quizA').innerHTML=q.a.map((ans,i)=>`<button class="game-btn" onclick="answerQuiz(${i})">${ans}</button>`).join('');
+}
+window.answerQuiz=function(i){
+  const q=quizQuestions[quizIdx];
+  if(i===q.c){quizScore++;document.getElementById('quizScore').textContent=quizScore;}
+  quizIdx++;showQuizQ();
+};
+
+
+/* ═══ WEBSOCKET CONNECTION ═══ */
+function connectWS(){
+  try{
+    const protocol=window.location.protocol==='https:'?'wss:':'ws:';
+    ws=new WebSocket(wsUrl('/ws'));
+    ws.onopen=()=>{wsConnected=true;showNotification('⚡ Connected to 8x8 OS','success');};
+    ws.onmessage=(e)=>{
+      try{
+        const data=JSON.parse(e.data);
+        if(data.type==='chat_response'&&data.data){
+          const msgs=document.getElementById('chatMsgs');
+          const thinking=msgs.querySelectorAll('.chat-msg');
+          const lastMsg=thinking[thinking.length-1];
+          if(lastMsg&&lastMsg.innerHTML.includes('thinking')){
+            lastMsg.innerHTML='<strong>'+data.data.agent+':</strong> '+data.data.response+'<span class="msg-time">'+new Date().toLocaleTimeString()+'</span>';
+          }else{
+            msgs.innerHTML+='<div class="chat-msg a"><strong>'+data.data.agent+':</strong> '+data.data.response+'<span class="msg-time">'+new Date().toLocaleTimeString()+'</span></div>';
+          }
+          msgs.scrollTop=msgs.scrollHeight;
+          // TTS
+          if('speechSynthesis' in window&&data.data.response){
+            speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(data.data.response.substring(0,500));
+            u.rate=0.95;speechSynthesis.speak(u);
+          }
+        }
+      }catch(err){}
+    };
+    ws.onclose=()=>{wsConnected=false;wsReconnectTimer=setTimeout(connectWS,3000);};
+    ws.onerror=()=>{ws.close();};
+  }catch(e){wsReconnectTimer=setTimeout(connectWS,5000);}
+}
+function sendWS(data){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(data));}
+// Connect on load
+setTimeout(connectWS,1000);
+
+/* ═══ NOTIFICATION SYSTEM ═══ */
+function showNotification(msg,type='info'){
+  const n={msg,type,time:Date.now()};
+  notifications.push(n);
+  // Create toast
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;top:50px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:8px;font-size:12px;font-family:Orbitron,sans-serif;letter-spacing:.05em;animation:toastIn .3s ease;max-width:80%;text-align:center;';
+  if(type==='success')toast.style.cssText+='background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.3);color:#00FF88;';
+  else if(type==='error')toast.style.cssText+='background:rgba(255,34,34,.15);border:1px solid rgba(255,34,34,.3);color:#FF4444;';
+  else if(type==='warning')toast.style.cssText+='background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:#FFD700;';
+  else toast.style.cssText+='background:rgba(0,255,255,.1);border:1px solid rgba(0,255,255,.2);color:#00FFFF;';
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.style.opacity='0';toast.style.transition='opacity .3s';setTimeout(()=>toast.remove(),300);},3000);
+}
+
+/* ═══ ONLINE/OFFLINE DETECTION ═══ */
+window.addEventListener('online',()=>{isOnline=true;showNotification('🟢 Online','success');});
+window.addEventListener('offline',()=>{isOnline=false;showNotification('🔴 Offline mode','warning');});
+
+/* ═══ KEYBOARD SHORTCUTS ═══ */
+document.addEventListener('keydown',e=>{
+  // Don't trigger if typing in input
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  const key=e.key.toLowerCase();
+  if(key==='h')navTo('homePanel',document.querySelectorAll('.nav-btn')[0]);
+  if(key==='r')navTo('radioPanel',document.querySelectorAll('.nav-btn')[1]);
+  if(key==='t'&&e.shiftKey)navTo('terminalPanel',document.querySelectorAll('.nav-btn')[8]);
+  if(key==='t')navTo('tradingPanel',document.querySelectorAll('.nav-btn')[3]);
+  if(key==='w')navTo('walletPanel',document.querySelectorAll('.nav-btn')[5]);
+  if(key==='n')navTo('newsPanel',document.querySelectorAll('.nav-btn')[6]);
+  if(key==='g')navTo('gamesPanel',document.querySelectorAll('.nav-btn')[4]);
+  if(key==='s')navTo('settingsPanel',document.querySelectorAll('.nav-btn')[8]);
+  if(key==='v')navTo('tvPanel',document.querySelectorAll('.nav-btn')[2]);
+  if(key==='m')document.getElementById('micBtn').click();
+  if(key==='escape'){closeAllPanels();closeChat();}
+  if(key==='/'&&!e.shiftKey){e.preventDefault();navTo('terminalPanel',document.querySelectorAll('.nav-btn')[8]);setTimeout(()=>document.getElementById('termInp').focus(),100);}
+});
+
+window.closeAllPanels=function(){
+  document.querySelectorAll('.side-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panelOverlay').classList.remove('on');
+  document.getElementById('cardViewer').classList.remove('on');
+  document.getElementById('cardViewer').innerHTML='';
+  document.getElementById('agentSelector').classList.remove('on');
+  document.getElementById('voiceChat').classList.remove('on');
+  closeChat();
+  currentPanel='';
+};
+
+/* ═══ INTRO ═══ */
+const starField=document.getElementById('starField');
+for(let i=0;i<150;i++){
+  const s=document.createElement('div');s.className='istar';
+  s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+  s.style.width=s.style.height=(Math.random()*2+1)+'px';
+  s.style.setProperty('--d',(Math.random()*3+2)+'s');
+  s.style.setProperty('--dl',(Math.random()*2)+'s');
+  starField.appendChild(s);
+}
+
+// ═══ GATE SYSTEM — must be in global scope ═══
+window._introDone=false;
+window._pct=0;
+window._pInt=null;
+window._fallback=null;
+
+window.skipIntro=function(){window.enterOS();};
+
+window.enterOS=function(){
+  if(window._introDone)return;
+  window._introDone=true;
+  try{
+    if(window._pInt)clearInterval(window._pInt);
+    if(window._fallback)clearTimeout(window._fallback);
+    const gL=document.getElementById('gL');
+    const gR=document.getElementById('gR');
+    const intro=document.getElementById('intro');
+    const hud=document.getElementById('hud');
+    if(!gL||!gR||!intro||!hud){console.error('[8x8 Gate] Missing elements');return;}
+    gL.classList.add('open');
+    gR.classList.add('open');
+    document.getElementById('enterBtn').style.display='none';
+    document.getElementById('skipIntro').style.display='none';
+    setTimeout(()=>{
+      intro.classList.add('gone');
+      setTimeout(()=>{intro.style.display='none';hud.classList.add('on');console.log('[8x8 Gate] Welcome, FlashTM8 ⚡');},1000);
+    },500);
+  }catch(e){console.error('[8x8 Gate] Error:',e);}
+
+window._pInt=setInterval(()=>{
+  try{
+    window._pct+=Math.random()*15+5;
+    if(window._pct>=100){window._pct=100;clearInterval(window._pInt);setTimeout(window.enterOS,400);}
+    const pf=document.getElementById('pFill');
+    const pp=document.getElementById('pPct');
+    const lm=document.getElementById('loadMsg');
+    if(pf)pf.style.width=window._pct+'%';
+    if(pp)pp.textContent=Math.round(window._pct)+'%';
+    if(lm)lm.textContent=['INITIALIZING...','LOADING AGENTS...','CONNECTING MESH...','SECURING CORE...','READY!'][Math.min(Math.floor(window._pct/22),4)];
+  }catch(e){console.error('[8x8 Progress] Error:',e);}
+},180);
+window._fallback=setTimeout(()=>{try{clearInterval(window._pInt);window.enterOS();}catch(e){console.error('[8x8 Fallback] Error:',e);}},8000);
+
+document.getElementById('enterBtn').addEventListener('click',()=>{clearInterval(window._pInt);clearTimeout(window._fallback);window.enterOS();});
+
+document.getElementById('intro').addEventListener('click',e=>{
+  const introEl=document.getElementById('intro');
+  if(e.target===introEl||e.target.classList.contains('intro-stars')||e.target.classList.contains('intro-logo')||e.target.classList.contains('x8')||e.target.classList.contains('sub')){
+    clearInterval(window._pInt);clearTimeout(window._fallback);window.enterOS();
+  }
+});
+
+/* ═══ ANIMATION LOOP ═══ */
+const clock=new THREE.Clock();let frame=0;
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock.elapsedTime;frame++;
+  coreOct.rotation.y=t*0.3;coreOct.rotation.x=t*0.1;
+  coreSolid.rotation.y=-t*0.5;coreSolid.rotation.z=t*0.2;
+  coreSolid.scale.setScalar(0.8+Math.sin(t*2)*0.2);
+  coreRing1.rotation.z=t*0.2;
+  agentMeshes.forEach((item,i)=>{
+    item.group.position.y=Math.sin(t*1.5+i*0.4)*0.12;
+    item.group.rotation.y=Math.sin(t*0.3+i)*0.05;
+    item.head.rotation.y=t*0.4;
+    item.body.rotation.y=t*0.3+i*0.1;
+    item.halo.rotation.z=t*0.3;
+    item.glow.scale.setScalar(1+Math.sin(t*2+i)*0.08);
+    item.light.intensity=0.5+Math.sin(t*3+i*0.5)*0.25;
+  });
+  connLines.children.forEach((line,i)=>{
+    line.material.opacity=0.04+Math.sin(t*2+i*0.3)*0.03;
+  });
+  particles.rotation.y=t*0.015;
+  const positions=particleGeo.attributes.position.array;
+  for(let i=0;i<particleCount;i++){positions[i*3+1]+=Math.sin(t+i)*0.002;if(positions[i*3+1]>15)positions[i*3+1]=0;}
+  particleGeo.attributes.position.needsUpdate=true;
+  cyanL.position.x=Math.sin(t*0.3)*6;cyanL.position.z=Math.cos(t*0.3)*6;
+  if(frame%30===0)document.getElementById('hud-time').textContent=new Date().toLocaleTimeString();
+  renderer.render(scene,camera);
+}
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+// animate is called below
+let logRefreshTimer=null, logLiveStream=false, logSourceEvt=null, logSearchTimer=null;
+
+const SEVERITY_COLORS={
+  TRACE:'#666666',DEBUG:'#888888',INFO:'#0088FF',NOTICE:'#00BBFF',
+  WARN:'#FF9900',ERROR:'#FF3333',CRITICAL:'#FF0000',ALERT:'#FF00FF'
+};
+
+const SOURCE_ICONS={
+  system:'⚙️',telegram:'✉️',hermes:'🧠',agent:'🤖',terminal:'💻',
+  file:'📁',device:'📱',cron:'⏰',api:'🔗',deploy:'🚀',git:'📦',
+  frontend:'🌐',security:'🛡️',error:'❌',battery:'🔋',wifi:'📶',
+  cellular:'📡',display:'🖥️',app:'📲',notification:'🔔',gps:'📍'
+};
+
+function renderLogEvent(ev){
+  const sev=(ev.severity||'INFO').toUpperCase();
+  const color=SEVERITY_COLORS[sev]||'#888888';
+  const icon=SOURCE_ICONS[ev.source]||SOURCE_ICONS[ev.category]||'📋';
+  const actor=ev.actor?`<span style="color:#FFD700;font-size:7px">[${ev.actor}]</span> `:'';
+  const time=(ev.log_time||ev.created_at||'').substring(0,12);
+  return `<div style="padding:5px 6px;border-bottom:1px solid rgba(255,255,255,.03);font-size:9px;line-height:1.4;font-family:'Share Tech Mono',monospace">
+    <div style="display:flex;align-items:flex-start;gap:4px">
+      <span style="flex-shrink:0">${icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:1px">
+          <span style="background:${color}20;color:${color};font-size:6px;font-weight:bold;padding:1px 4px;border-radius:3px;border:1px solid ${color}40">${sev}</span>
+          <span style="color:#556677;font-size:7px">${time}</span>
+          ${actor}
+        </div>
+        <div style="color:#AABBDD;word-break:break-word">${(ev.content||'').substring(0,250)}</div>
+        ${ev.error?`<div style="color:#FF4444;font-size:8px;margin-top:2px">${ev.error.substring(0,150)}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function loadLogEvents(){
+  const source=document.getElementById('logFilterSource').value;
+  const severity=document.getElementById('logFilterSeverity').value;
+  const hours=document.getElementById('logFilterHours').value;
+  const search=document.getElementById('logSearch').value.trim();
+  const el=document.getElementById('logEvents');
+  el.innerHTML='<div style="text-align:center;padding:20px;color:#556677;font-size:10px">Loading...</div>';
+  try{
+    let url=`/api/log/events?limit=200&hours=${hours}`;
+    if(source)url+=`&source=${encodeURIComponent(source)}`;
+    if(severity)url+=`&severity=${encodeURIComponent(severity)}`;
+    if(search)url+=`&search=${encodeURIComponent(search)}`;
+    const resp=await fetch(url);
+    const data=await resp.json();
+    const events=data.events||[];
+    document.getElementById('logEventCount').textContent=`${data.count||events.length} events`;
+    if(events.length===0){
+      el.innerHTML='<div style="text-align:center;padding:20px;color:#556677;font-size:10px">No events found</div>';
+      return;
+    }
+    el.innerHTML=events.map(renderLogEvent).join('');
+    // Update source filter dropdown
+    const sources=new Set();
+    events.forEach(e=>{if(e.source)sources.add(e.source);});
+    const srcSelect=document.getElementById('logFilterSource');
+    if(srcSelect){
+      const currentSrc=srcSelect.value;
+      srcSelect.innerHTML='<option value="">ALL SOURCES</option>';
+      Array.from(sources).sort().forEach(s=>{
+        srcSelect.innerHTML+=`<option value="${s}" ${s===currentSrc?'selected':''}>${SOURCE_ICONS[s]||'📋'} ${s.toUpperCase()}</option>`;
+      });
+    }
+  }catch(err){
+    el.innerHTML=`<div style="text-align:center;padding:20px;color:#FF4444;font-size:10px">Error: ${err.message}</div>`;
   }
 }
 
-// NFT
-function mintNFT(){
-  document.getElementById("nftCount").textContent=(parseInt(document.getElementById("nftCount").textContent)+1).toString();
-  addMsg("system","🖼️ NFT Vault minted! (simulated)");
+async function loadLogStats(){
+  try{
+    const resp=await fetch(api('/api/log/stats');
+    const data=await resp.json();
+    if(data.error)return;
+    const el=document.getElementById('logStats');
+    if(!el)return;
+    el.innerHTML=`
+      <div style="background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.15);border-radius:6px;padding:6px;text-align:center">
+        <div style="font-family:'Orbitron',sans-serif;font-size:13px;color:#FFD700">${data.total||0}</div>
+        <div style="font-size:7px;color:#8899BB">TOTAL</div>
+      </div>
+      <div style="background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:6px;padding:6px;text-align:center">
+        <div style="font-family:'Orbitron',sans-serif;font-size:13px;color:#00FF88">${data.today||0}</div>
+        <div style="font-size:7px;color:#8899BB">TODAY</div>
+      </div>
+      <div style="background:rgba(0,136,255,.05);border:1px solid rgba(0,136,255,.15);border-radius:6px;padding:6px;text-align:center">
+        <div style="font-family:'Orbitron',sans-serif;font-size:13px;color:#0088FF">${data.today||0}</div>
+        <div style="font-size:7px;color:#8899BB">24H</div>
+      </div>
+      <div style="background:rgba(255,51,51,.05);border:1px solid rgba(255,51,51,.15);border-radius:6px;padding:6px;text-align:center">
+        <div style="font-family:'Orbitron',sans-serif;font-size:13px;color:#FF3333">${data.errors_24h||0}</div>
+        <div style="font-size:7px;color:#8899BB">ERRORS</div>
+      </div>`;
+  }catch(err){}
 }
 
-// Referral
-function shareRef(){
-  const link=document.getElementById("refLink").textContent;
-  if(navigator.share) navigator.share({title:"8x8 Ecosystem",url:link});
-  else navigator.clipboard.writeText(link);
+function toggleLiveStream(){
+  logLiveStream=!logLiveStream;
+  const btn=document.getElementById('liveStreamBtn');
+  const ind=document.getElementById('logLiveIndicator');
+  if(logLiveStream){
+    btn.style.background='rgba(0,255,136,.25)';
+    btn.textContent='● LIVE';
+    if(ind)ind.textContent='● LIVE';
+    if(ind)ind.style.color='#00FF88';
+    // Start polling every 3 seconds
+    if(logRefreshTimer)clearInterval(logRefreshTimer);
+    logRefreshTimer=setInterval(()=>{loadLogEvents();loadLogStats();},3000);
+    loadLogEvents();
+    loadLogStats();
+  }else{
+    btn.style.background='rgba(0,255,136,.08)';
+    btn.textContent='○ PAUSED';
+    if(ind)ind.textContent='○ PAUSED';
+    if(ind)ind.style.color='#FFD700';
+    if(logRefreshTimer){clearInterval(logRefreshTimer);logRefreshTimer=null};
+  }
 }
+
+async function exportLog(format){
+  try{
+    const btn=event.target;
+    btn.textContent='⏳ EXPORTING...';
+    const resp=await fetch(`/api/log/export/${format}?days=30`);
+    const data=await resp.json();
+    if(data.error){
+      btn.textContent='❌ ERROR';
+      setTimeout(()=>{btn.textContent=format==='csv'?'📊 CSV':'📗 EXCEL';},2000);
+    }else{
+      btn.textContent='✅ DONE';
+      // Show download link
+      if(data.path){
+        const el=document.getElementById('logEvents');
+        const dlDiv=document.createElement('div');
+        dlDiv.style.cssText='padding:8px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:6px;margin:4px 0;font-size:10px;color:#00FF88';
+        dlDiv.innerHTML=`✅ Export ready: ${data.rows} rows (${data.file_size_human||''})<br><a href="/api/log/export/file?path=${encodeURIComponent(data.path)}" style="color:#FFD700;text-decoration:underline" download>📥 Download ${format.toUpperCase()}</a>`;
+        el.insertBefore(dlDiv,el.firstChild);
+        setTimeout(()=>{if(dlDiv.parentNode)dlDiv.remove();},10000);
+      }
+      setTimeout(()=>{btn.textContent=format==='csv'?'📊 CSV':'📗 EXCEL';},2000);
+    }
+  }catch(err){
+    const btn=event.target;
+    btn.textContent='❌ ERROR';
+    setTimeout(()=>{btn.textContent=format==='csv'?'📊 CSV':'📗 EXCEL';},2000);
+  }
+}
+
+// Auto-load when panel opens
+const _origNavToLog=window.navTo;
+window.navTo=function(panel,el){
+  _origNavToLog(panel,el);
+  if(panel==='logPanel'){
+    loadLogStats();
+    loadLogEvents();
+    // Auto-start live stream
+    if(!logLiveStream)toggleLiveStream();
+  }else{
+    if(logRefreshTimer&&!logLiveStream){clearInterval(logRefreshTimer);logRefreshTimer=null;}
+  }
+};
+
+// ═══ LIVE TICKER + PHONE TELEMETRY ═══
+let tickerEvents=[],tickerInterval=null,telemetryInterval=null;
+
+function initLiveTicker(){
+  const el=document.getElementById('ticker-content');
+  if(!el)return;
+  // Load initial events
+  fetch(api('/api/log/events?limit=20&hours=1').then(r=>r.json()).then(d=>{
+    tickerEvents=d.events||[];
+    renderTicker();
+    // Start polling for new events
+    if(!tickerInterval)tickerInterval=setInterval(pollNewEvents,5000);
+  }).catch(()=>{});
+}
+
+function renderTicker(){
+  const el=document.getElementById('ticker-content');
+  if(!el||!tickerEvents.length)return;
+  // Duplicate for seamless loop
+  const items=tickerEvents.slice(0,15);
+  let html='';
+  items.forEach(ev=>{
+    const sevClass=ev.severity==='ERROR'?'error':(ev.severity==='WARN'?'warn':(ev.source==='device'?'device':(ev.source==='agent'?'agent':'info')));
+    const time=(ev.log_time||ev.created_at||'').substring(0,8);
+    html+=`<div class="ticker-item"><span class="ticker-dot ${sevClass}"></span><span class="ticker-time">${time}</span><span class="ticker-source">${(ev.source||'').toUpperCase()}</span><span class="ticker-content">${(ev.content||'').substring(0,80)}</span></div>`;
+  });
+  // Double for seamless scroll
+  el.innerHTML=`<div class="ticker-item" style="display:flex;gap:30px">${html}</div><div class="ticker-item" style="display:flex;gap:30px">${html}</div>`;
+  el.parentElement.classList.add('ticker-anim');
+}
+
+function pollNewEvents(){
+  fetch(api('/api/log/events?limit=10&hours=1').then(r=>r.json()).then(d=>{
+    const newEvents=d.events||[];
+    if(newEvents.length>tickerEvents.length){
+      tickerEvents=newEvents;
+      renderTicker();
+    }
+  }).catch(()=>{});
+}
+
+async function updatePhoneTelemetry(){
+  try{
+    const r=await fetch(api('/api/phone/telemetry');
+    const d=await r.json();
+    if(d.error)return;
+    // Battery
+    const batEl=document.getElementById('hud-battery');
+    if(batEl&&d.battery){
+      const pct=d.battery.level||'--';
+      const isCharging=d.battery.status==='CHARGING';
+      batEl.textContent=`${isCharging?'⚡':'🔋'}${pct}%`;
+      batEl.style.color=parseInt(pct)<20?'#FF4444':(isCharging?'#FFD700':'#00FF88');
+    }
+    // WiFi
+    const wifiEl=document.getElementById('hud-wifi');
+    if(wifiEl&&d.wifi){
+      const ssid=d.wifi.ssid||'?';
+      wifiEl.textContent=`📶${ssid}`;
+      wifiEl.style.color=d.wifi.ssid?'#00FFFF':'#667799';
+    }
+  }catch(err){}
+}
+
+// Start ticker and telemetry when OS enters
+const _origEnterOS=(typeof enterOS!=='undefined')?enterOS:null;
+if(typeof enterOS==='function'){
+  // enterOS already defined — wrap it
+  const _orig=enterOS;
+  window.enterOS=function(){
+    _orig();
+    setTimeout(()=>{
+      initLiveTicker();
+      updatePhoneTelemetry();
+      if(!telemetryInterval)telemetryInterval=setInterval(updatePhoneTelemetry,30000);
+    },1000);
+  };
+}else{
+  // Not yet defined — just start after a delay
+  setTimeout(()=>{
+    initLiveTicker();
+    updatePhoneTelemetry();
+    if(!telemetryInterval)telemetryInterval=setInterval(updatePhoneTelemetry,30000);
+  },2000);
+}
+
+// Initial BTC price fetch
+refreshBalances();
+
+animate();
+})();
 </script>
 </body>
 </html>
