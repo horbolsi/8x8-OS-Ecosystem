@@ -1,0 +1,26 @@
+{
+  "name": "8x8-hub",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "NODE_ENV=production node --import tsx server/index.ts",
+    "dev": "NODE_ENV=development node --import tsx server/index.ts"
+  },
+  "dependencies": {
+    "express": "^5.0.1",
+    "pg": "^8.11.0",
+    "ws": "^8.16.0",
+    "dotenv": "^16.4.0",
+    "cors": "^2.8.5",
+    "zod": "^3.22.0",
+    "connect-pg-simple": "^10.0.0",
+    "express-session": "^1.18.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "drizzle-orm": "^0.30.0",
+    "grammy": "^1.21.0",
+    "crypto-js": "^4.2.0",
+    "uuid": "^9.0.0",
+    "date-fns": "^3.6.0"
+  }
+}

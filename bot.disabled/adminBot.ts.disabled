@@ -1,0 +1,104 @@
+import { Bot } from "grammy";
+import { getSetting, setSetting, addContributor, revokeContributor, isContributor } from '../hub-db.js';
+let adminBot: Bot | null = null;
+
+function getWebhookUrl(): string | undefined {
+  if (process.env.TG_ADMIN_BOT_WEBHOOK_URL?.trim()) {
+    return process.env.TG_ADMIN_BOT_WEBHOOK_URL.trim();
+  }
+  const external = process.env.RENDER_EXTERNAL_URL?.trim() || process.env.URL?.trim();
+  if (!external) return undefined;
+  const base = external.replace(/\/+$/, '');
+  return base.startsWith('http') ? `${base}/api/bot/admin/webhook` : `https://${base}/api/bot/admin/webhook`;
+}
+
+export async function startAdminBot(token: string) {
+  if (adminBot) return adminBot;
+  const bot = new Bot(token);
+  const ownerId = process.env.OWNER_TELEGRAM_ID ? parseInt(process.env.OWNER_TELEGRAM_ID, 10) : null;
+  const ADMIN_IDS = (process.env.TG_ADMIN_IDS || process.env.ADMIN_IDS || "").split(",").map(Number).filter(Boolean);
+  if (ownerId && !ADMIN_IDS.includes(ownerId)) {
+    ADMIN_IDS.push(ownerId);
+  }
+  bot.use(async (ctx, next) => {
+    const uid = ctx.from?.id;
+    if (!uid || !ADMIN_IDS.includes(uid)) {
+      await ctx.reply("⛔ Access denied.");
+      return;
+    }
+    await next();
+  });
+  bot.command("start", async (ctx) => { await ctx.reply("Admin Bot online. Use /help."); });
+  bot.command("help", async (ctx) => {
+    await ctx.reply("/status\n/set_free_minutes <minutes>\n/set_quarter_price <price>\n/add_contributor <id>\n/revoke_contributor <id>");
+  });
+  bot.command("status", async (ctx) => {
+    const uptime = Math.floor(process.uptime());
+    const mem = process.memoryUsage();
+    await ctx.reply(`Uptime: ${Math.floor(uptime/3600)}h ${Math.floor((uptime%3600)/60)}m\nMemory: ${Math.round(mem.heapUsed/1024/1024)}MB / ${Math.round(mem.heapTotal/1024/1024)}MB`);
+  });
+  bot.command("set_free_minutes", async (ctx) => {
+    const minutes = parseInt(ctx.message?.text?.split(" ")[1] || "0");
+    if (!minutes || minutes < 1 || minutes > 1440) {
+      return ctx.reply("Usage: /set_free_minutes <1-1440>");
+    }
+    const adminId = ctx.from?.id;
+    if (!adminId) return ctx.reply("Unable to identify your Telegram admin ID.");
+    await setSetting("free_daily_minutes", { minutes }, adminId);
+    await ctx.reply(`✅ Free minutes set to ${minutes} minutes/day.`);
+  });
+  bot.command("set_quarter_price", async (ctx) => {
+    const price = parseFloat(ctx.message?.text?.split(" ")[1] || "0");
+    if (!price || price <= 0) {
+      return ctx.reply("Usage: /set_quarter_price <price>");
+    }
+    const adminId = ctx.from?.id;
+    if (!adminId) return ctx.reply("Unable to identify your Telegram admin ID.");
+    await setSetting("quarterly_plan", { price, currency: "USD" }, adminId);
+    await ctx.reply(`✅ Quarterly plan price set to $${price}.`);
+  });
+  bot.command("add_contributor", async (ctx) => {
+    const tgId = parseInt(ctx.message?.text?.split(" ")[1] || "0");
+    if (!tgId) return ctx.reply("Usage: /add_contributor <telegram_id>");
+    const adminId = ctx.from?.id;
+    if (!adminId) return ctx.reply("Unable to identify your Telegram admin ID.");
+    try {
+      const userExists = await isContributor(tgId);
+      if (userExists) return ctx.reply("⚠️ Already a contributor.");
+      await addContributor(tgId, adminId);
+      await ctx.reply(`✅ Contributor ${tgId} added.`);
+    } catch (err: any) {
+      await ctx.reply(`❌ Error: ${err.message}`);
+    }
+  });
+  bot.command("revoke_contributor", async (ctx) => {
+    const tgId = parseInt(ctx.message?.text?.split(" ")[1] || "0");
+    if (!tgId) return ctx.reply("Usage: /revoke_contributor <telegram_id>");
+    try {
+      await revokeContributor(tgId);
+      await ctx.reply(`✅ Contributor ${tgId} revoked.`);
+    } catch (err: any) {
+      await ctx.reply(`❌ Error: ${err.message}`);
+    }
+  });
+
+  const webhookUrl = getWebhookUrl();
+  if (webhookUrl) {
+    try {
+      await bot.api.setWebhook(webhookUrl, { drop_pending_updates: true });
+      console.log(`[AdminBot] Webhook registered: ${webhookUrl}`);
+    } catch (err: any) {
+      console.error('[AdminBot] Failed to register webhook:', err?.message || err);
+    }
+  } else {
+    console.log('[AdminBot] No webhook URL configured. Set TG_ADMIN_BOT_WEBHOOK_URL or RENDER_EXTERNAL_URL.');
+  }
+
+  // No bot.start() – webhook mode
+  adminBot = bot;
+  console.log("[AdminBot] Ready (webhook mode)");
+  return bot;
+}
+
+export function stopAdminBot() { if (adminBot) adminBot.stop(); }
+export { adminBot };

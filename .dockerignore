@@ -1,0 +1,50 @@
+# Version control
+.git
+.gitignore
+
+# Node modules (rebuilt in container)
+node_modules
+npm-debug.log*
+
+# Environment files (secrets — inject via Docker env instead)
+.env
+.env.*
+!.env.example
+
+# IDE / editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist
+build
+*.tsbuildinfo
+
+# Docker files (not needed inside image)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github
+
+# Tests
+**/*.test.ts
+**/*.spec.ts
+__tests__
+
+# Documentation
+*.md
+LICENSE
+
+# Temporary files
+tmp
+temp
+.cache

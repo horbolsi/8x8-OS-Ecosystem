@@ -1,0 +1,25 @@
+# Secrets
+.env
+*.env
+*.key
+*pem
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Build
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Python
+venv/
+.venv/
