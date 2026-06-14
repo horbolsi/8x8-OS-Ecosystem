@@ -1,11 +1,10 @@
 services:
   - type: web
-    name: 8x8-hub-server
-    runtime: node
+    name: 8x8-hub-v2
+    runtime: docker
     plan: starter
     region: oregon
-    buildCommand: npm install
-    startCommand: node server/index.js
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV

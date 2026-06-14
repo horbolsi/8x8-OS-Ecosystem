@@ -1,16 +1,16 @@
-# 8x8 Hub Server - Dockerfile (Simplified)
+# 8x8 Hub Server - Dockerfile
 FROM node:22-alpine
 
 WORKDIR /app
 
-# Copy all files
-COPY . .
+# Copy dependency manifests first (layer caching)
+COPY package.json ./
 
-# Install ALL dependencies including dev deps (needed for tsx)
+# Install all dependencies (including tsx for TypeScript execution)
 RUN npm install
 
-# Build TypeScript to JavaScript
-RUN npx tsc --outDir dist --declaration false --sourceMap false 2>/dev/null || echo "tsc not available, using tsx"
+# Copy source code
+COPY . .
 
 EXPOSE 3000
 
