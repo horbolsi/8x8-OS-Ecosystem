@@ -21,6 +21,7 @@
     "grammy": "^1.21.0",
     "crypto-js": "^4.2.0",
     "uuid": "^9.0.0",
-    "date-fns": "^3.6.0"
+    "date-fns": "^3.6.0",
+    "express-rate-limit": "^7.1.0"
   }
 }
