@@ -17,10 +17,10 @@
     "express-session": "^1.18.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "drizzle-orm": "^0.30.0",
+    "drizzle-orm": "^0.45.2",
     "grammy": "^1.21.0",
     "crypto-js": "^4.2.0",
-    "uuid": "^9.0.0",
+    "uuid": "^14.0.0",
     "date-fns": "^3.6.0",
     "express-rate-limit": "^7.1.0"
   }
