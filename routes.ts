@@ -1,242 +1,128 @@
-import { registerImageRoutes } from "./image-routes.js";
-import type { Express } from "express";
+import type { Express, Response } from "express";
 import type { Server } from "http";
 import crypto from "crypto";
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 
-const liveClients = new Set<any>();
+const GATES = [
+  "FINANCIAL_EXECUTION",
+  "WALLET_OR_ASSET_MOVEMENT",
+  "PUBLIC_CONTENT_PUBLISH",
+  "EXTERNAL_MESSAGE_SEND",
+  "CREDENTIAL_CHANGE",
+  "PRODUCTION_MUTATION",
+  "DESTRUCTIVE_FILE_ACTION",
+  "AGENT_PERMISSION_ESCALATION",
+];
 
-function genTxHash() {
-  return "0x" + crypto.randomBytes(32).toString("hex");
+const AGENTS = [
+  { id: "research", authority: "read-only" },
+  { id: "code", authority: "proposal-only" },
+  { id: "security", authority: "read-only" },
+  { id: "operations", authority: "proposal-only" },
+  { id: "web3", authority: "simulation-only" },
+];
+
+function gate(res: Response, action: string) {
+  return res.status(403).json({
+    success: false,
+    code: "PUBLIC_DEMO_GATED",
+    action,
+    truth_class: "LIVE",
+    message: "This public companion route is read-only and cannot execute sensitive actions.",
+  });
+}
+
+function plan(goal: string) {
+  const sensitive = /trade|buy|sell|transfer|wallet|withdraw|publish|post|message|email|credential|password|token|delete|deploy|restart|production/i.test(goal);
+  return {
+    summary: "A bounded compatibility plan was generated without external execution.",
+    classification: sensitive ? "GATED" : "SAFE_TO_PLAN",
+    selected_agents: sensitive ? ["research", "security", "operations"] : ["research", "code"],
+    safe_actions: ["collect read-only evidence", "prepare a reviewable plan", "generate an audit receipt"],
+    gated_actions: sensitive ? ["sensitive execution requires exact human approval in a private runtime"] : [],
+    blocked_actions: ["no financial, publishing, credential, destructive, or production action was executed"],
+  };
 }
 
 export async function registerRoutes(httpServer: Server, app: Express | null): Promise<Server> {
   if (!app) return httpServer;
 
-  // Setup WebSocket server
   const wss = new WebSocketServer({ server: httpServer, path: "/ws/live" });
-  wss.on("connection", (ws) => {
-    liveClients.add(ws);
-    ws.on("close", () => liveClients.delete(ws));
-    ws.on("error", () => liveClients.delete(ws));
-    ws.send(JSON.stringify({ event: "connected", timestamp: new Date().toISOString() }));
+  wss.on("connection", (socket) => {
+    socket.send(JSON.stringify({
+      event: "connected",
+      mode: "public-demo",
+      truth_class: "LIVE",
+      sensitive_execution_enabled: false,
+      timestamp: new Date().toISOString(),
+    }));
   });
 
-  // Auth routes
-  app.post("/api/hub/auth/telegram", async (req, res) => {
-    const { initData } = req.body;
-    if (!initData) return res.status(400).json({ error: "initData required" });
-    const token = crypto.randomBytes(32).toString("hex");
-    res.json({ token, user: { telegram_id: 1950324763, username: "FlashTM8", role: "owner" }, permissions: { role: "owner", permissions: ["all"] } });
-  });
+  app.get("/api/health", (_req, res) => res.json({
+    status: "ok",
+    service: "8x8-os-ecosystem-public-routes",
+    canonical_repository: "https://github.com/horbolsi/8x8",
+    mode: "public-demo",
+    truth_class: "LIVE",
+    sensitive_execution_enabled: false,
+  }));
+  app.get("/api/judge/info", (_req, res) => res.json({ agents: AGENTS, gates: GATES, sensitive_execution_enabled: false, truth_class: "LIVE" }));
+  app.get("/api/gates", (_req, res) => res.json({ gates: GATES.map((name) => ({ name, state: "CLOSED" })), truth_class: "LIVE" }));
+  app.get("/api/agents", (_req, res) => res.json({ agents: AGENTS, truth_class: "SIMULATED" }));
+  app.get("/api/platforms/status", (_req, res) => res.json({
+    platforms: {
+      trading: { status: "simulation-only", truth_class: "LIVE" },
+      telegram: { status: "not-connected", truth_class: "UNKNOWN" },
+      discord: { status: "not-connected", truth_class: "UNKNOWN" },
+      production: { status: "not-exposed", truth_class: "LIVE" },
+    },
+  }));
+  app.get("/api/system/stats", (_req, res) => res.json({ system: {}, truth_class: "UNKNOWN", message: "Private device metrics are not exposed." }));
 
-  app.post("/api/hub/auth/manual", async (req, res) => {
-    const { telegram_id, username } = req.body;
-    if (!telegram_id) return res.status(400).json({ error: "telegram_id required" });
-    const token = crypto.randomBytes(32).toString("hex");
-    res.json({ token, user: { telegram_id, username: username || `user_${telegram_id}`, role: "user" } });
-  });
-
-  // AI chat route (simplified - uses our model_config)
-  app.post("/api/ai/chat", async (req, res) => {
-    const { messages } = req.body;
-    const lastMsg = messages?.[messages.length - 1]?.content || "";
-    // Simple fallback response
-    const reply = `Pioneer AI received: "${lastMsg.substring(0, 100)}". Full AI integration available via 8x8 OS model_config.`;
-    res.json({ reply, source: "hub-fallback" });
-  });
-
-  // Staking routes
-  app.get("/api/staking", async (req, res) => {
-    res.json({ pools: [{ id: "default", name: "Default Pool", apy: 12, minStake: 0.001 }] });
-  });
-
-  app.post("/api/staking", async (req, res) => {
-    res.json({ success: true, txHash: genTxHash() });
-  });
-
-  // NFT routes
-  app.get("/api/nfts", async (req, res) => {
-    res.json({ nfts: [], count: 0, max: 8888888 });
-  });
-
-  app.post("/api/nfts/mint", async (req, res) => {
-    const count = 0;
-    if (count >= 8888888) return res.status(400).json({ error: "Max supply reached" });
-    const tokenId = `TM8-${Date.now()}-${Math.floor(Math.random() * 9999)}`;
-    res.json({ tokenId, name: `Vault #${count + 1}`, rarity: "Common", power: 5 });
-  });
-
-  // Wallet routes
-  app.get("/api/wallet/status", async (req, res) => {
-    res.json({ connected: false, address: null, balance: 0 });
-  });
-
-  // Governance routes
-  app.get("/api/governance", async (req, res) => {
-    res.json({ proposals: [] });
-  });
-
-  app.post("/api/governance", async (req, res) => {
-    res.json({ id: Date.now(), ...req.body, status: "active" });
-  });
-
-  // Tokenomics
-  app.get("/api/tokenomics", async (req, res) => {
-    res.json({
-      totalSupply: 888888888,
-      circulatingSupply: 88888888,
-      burnRate: 0.08,
-      stakingAPY: 12,
-      holders: 8888,
+  app.post("/api/judge/plan", (req, res) => {
+    const goal = typeof req.body?.goal === "string" ? req.body.goal.trim() : "";
+    if (!goal) return res.status(400).json({ error: "goal is required" });
+    if (goal.length > 4000) return res.status(413).json({ error: "goal is too long" });
+    return res.json({
+      plan: plan(goal),
+      audit: {
+        receipt_id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        input_sha256: crypto.createHash("sha256").update(goal).digest("hex"),
+        truth_class: "SIMULATED",
+        executed_actions: [],
+        sensitive_actions_executed: false,
+      },
+      executed: false,
     });
   });
 
-  // Platform status
-  app.get("/api/platforms/status", async (req, res) => {
-    res.json({
-      trading: { status: "online", pairs: 22 },
-      staking: { status: "online", pools: 3 },
-      nft: { status: "online", totalMinted: 0 },
-      governance: { status: "online", proposals: 0 },
-    });
+  app.post("/api/ai/chat", (req, res) => {
+    const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
+    const goal = String(messages.at(-1)?.content || "").trim();
+    if (!goal) return res.status(400).json({ error: "message content is required" });
+    const result = plan(goal);
+    return res.json({ reply: result.summary, plan: result, truth_class: "SIMULATED", source: "public-fixture" });
   });
 
-  // Leaderboard
-  app.get("/api/leaderboard", async (req, res) => {
-    res.json({ leaderboard: [] });
-  });
+  const gatedPostRoutes = [
+    "/api/hub/auth/telegram", "/api/hub/auth/manual", "/api/hub/auth/verify", "/api/hub/auth/claim-owner",
+    "/api/admin/verify", "/api/trade", "/api/stake", "/api/staking", "/api/nfts/mint",
+    "/api/governance", "/api/blockchain/transactions", "/api/social/posts", "/api/notes",
+    "/api/bubbles", "/api/hub/subscribe", "/api/referral", "/api/game", "/api/wallet-addresses",
+    "/api/admin/wallet-addresses",
+  ];
+  for (const route of gatedPostRoutes) app.post(route, (_req, res) => gate(res, route));
+  app.delete("/api/notes/:id", (_req, res) => gate(res, "DELETE_NOTE"));
+  app.delete("/api/wallet-addresses/:id", (_req, res) => gate(res, "DELETE_WALLET_ADDRESS"));
 
-  // Activity feed
-  app.get("/api/activity", async (req, res) => {
-    res.json({ activities: [] });
-  });
+  app.get("/api/staking", (_req, res) => res.json({ pools: [], truth_class: "SIMULATED" }));
+  app.get("/api/nfts", (_req, res) => res.json({ nfts: [], count: 0, truth_class: "SIMULATED" }));
+  app.get("/api/governance", (_req, res) => res.json({ proposals: [], truth_class: "SIMULATED" }));
+  app.get("/api/blockchain/transactions", (_req, res) => res.json({ transactions: [], truth_class: "SIMULATED" }));
+  app.get("/api/social/posts", (_req, res) => res.json({ posts: [], truth_class: "SIMULATED" }));
+  app.get("/api/notes", (_req, res) => res.json({ notes: [], truth_class: "SIMULATED" }));
+  app.get("/api/wallet/status", (_req, res) => res.json({ connected: false, balance: null, truth_class: "UNKNOWN" }));
 
-  // Hub settings
-  app.get("/api/hub/settings", async (req, res) => {
-    res.json({
-      freeMinutes: { minutes: 60 },
-      quarterlyPlan: { price: 8.88, currency: "USD" },
-    });
-  });
-
-  // Plans
-  app.get("/api/hub/plans", async (req, res) => {
-    res.json({
-      plans: [
-        { id: "basic", name: "Basic", price: 4.99, currency: "USDT", duration_days: 30 },
-        { id: "pro", name: "Pro", price: 9.99, currency: "USDT", duration_days: 30 },
-        { id: "quarterly", name: "Quarterly", price: 8.88, currency: "USDT", duration_days: 90 },
-      ],
-    });
-  });
-
-  // System stats
-  app.get("/api/system/stats", async (req, res) => {
-    const os = await import("os");
-    res.json({
-      system: { cpu: "8%", memory: "45%", disk: "20%", uptime: "2h 15m", timestamp: Date.now() },
-      errors: [],
-    });
-  });
-
-  // Blockchain transactions
-  app.get("/api/blockchain/transactions", async (req, res) => {
-    res.json({ transactions: [] });
-  });
-
-  app.post("/api/blockchain/transactions", async (req, res) => {
-    res.json({ txHash: genTxHash(), status: "confirmed" });
-  });
-
-  // Social posts
-  app.get("/api/social/posts", async (req, res) => {
-    res.json({ posts: [] });
-  });
-
-  app.post("/api/social/posts", async (req, res) => {
-    res.json({ id: Date.now(), ...req.body });
-  });
-
-  // Referrals
-  app.get("/api/referrals", async (req, res) => {
-    res.json({ referrals: [], total: 0, earnings: 0 });
-  });
-
-  // Admin
-  app.post("/api/admin/verify", async (req, res) => {
-    const { secret } = req.body;
-    if (secret === "8x8.FlashTM8.015392@X8") return res.json({ success: true, role: "admin" });
-    res.status(403).json({ error: "Invalid admin secret" });
-  });
-
-  // Trade
-  app.post("/api/trade", async (req, res) => {
-    res.json({ success: true, txHash: genTxHash(), status: "confirmed" });
-  });
-
-  // Game
-  app.post("/api/game", async (req, res) => {
-    res.json({ success: true, won: Math.random() > 0.5, score: Math.floor(Math.random() * 100) });
-  });
-
-  // Stake
-  app.post("/api/stake", async (req, res) => {
-    res.json({ success: true, txHash: genTxHash() });
-  });
-
-  // Referral
-  app.post("/api/referral", async (req, res) => {
-    res.json({ success: true });
-  });
-
-  // Notes
-  app.get("/api/notes", async (req, res) => { res.json({ notes: [] }); });
-  app.post("/api/notes", async (req, res) => { res.json({ id: Date.now(), ...req.body }); });
-  app.delete("/api/notes/:id", async (req, res) => { res.json({ success: true }); });
-
-  // Bubbles
-  app.get("/api/bubbles", async (req, res) => {
-    res.json({
-      bubbles: [
-        { id: "workspace", name: "Files", icon: "folder", color: "#3b82f6", x: 20, y: 20, width: 400, height: 500, isOpen: true },
-        { id: "terminal", name: "Terminal", icon: "terminal", color: "#10b981", x: 440, y: 20, width: 600, height: 400, isOpen: false },
-        { id: "chat", name: "AI Chat", icon: "message-square", color: "#8b5cf6", x: 340, y: 540, width: 400, height: 500, isOpen: false },
-      ],
-    });
-  });
-  app.post("/api/bubbles", async (req, res) => { res.json({ id: Date.now(), ...req.body }); });
-
-  // Events
-  app.get("/api/hub/events", async (req, res) => { res.json({ events: [] }); });
-
-  // Subscribe
-  app.post("/api/hub/subscribe", async (req, res) => {
-    res.json({ success: true, plan_id: req.body.plan_id, status: "active" });
-  });
-
-  // Session heartbeat
-  app.post("/api/hub/session/heartbeat", async (req, res) => {
-    res.json({ usageSeconds: 0, subscription: null, blocked: false, remainingFreeSeconds: 3600 });
-  });
-
-  // Auth verify
-  app.post("/api/hub/auth/verify", async (req, res) => {
-    const token = req.headers["x-hub-token"] as string || req.body.token;
-    if (!token) return res.status(401).json({ error: "No token" });
-    res.json({ user: { id: 1, telegram_id: 1950324763, username: "FlashTM8", role: "owner" } });
-  });
-
-  // Claim owner
-  app.post("/api/hub/auth/claim-owner", async (req, res) => {
-    const token = req.headers["x-hub-token"] as string;
-    if (!token) return res.status(401).json({ error: "No token" });
-    if (req.body.secret !== "8x8.FlashTM8.015392@X8") return res.status(403).json({ error: "Invalid secret" });
-    res.json({ success: true, user: { id: 1, role: "owner" } });
-  });
-
-  
-  // Register image generation routes
-  registerImageRoutes(app);
   return httpServer;
 }
