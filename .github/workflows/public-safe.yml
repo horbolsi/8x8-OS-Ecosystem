@@ -18,9 +18,21 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Reject known dangerous source patterns
+      - name: Reject credentials and fake sensitive success paths
         run: |
-          ! git grep -nE '8x8\.FlashTM8\.|flashtm8-admin-|role:[[:space:]]*["'"']owner["'"']|status:[[:space:]]*["'"']confirmed["'"']' -- '*.js' '*.ts'
+          set -euo pipefail
+          if git grep -nE '8x8\.FlashTM8\.|flashtm8-admin-|[0-9]{8,12}:[A-Za-z0-9_-]{30,}|gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9_-]{20,}|0x[0-9a-fA-F]{64}([^0-9a-fA-F]|$)' -- '*.js' '*.ts' '*.json' '*.md'; then
+            echo 'Credential-like value detected in public companion.' >&2
+            exit 1
+          fi
+          if git grep -nE 'process\.env\.(ADMIN_SECRET|BOT_TOKEN|TELEGRAM_BOT_TOKEN|DATABASE_URL)[[:space:]]*\|\|[[:space:]]*["'"'][^"'"']+["'"']' -- '*.js' '*.ts'; then
+            echo 'Credential fallback detected in public companion.' >&2
+            exit 1
+          fi
+          if git grep -nE 'res\.json\([^\n]*(txHash|transactionHash)[^\n]*(confirmed|success)' -- '*.js' '*.ts'; then
+            echo 'Route appears to claim successful sensitive execution.' >&2
+            exit 1
+          fi
       - name: Start compatibility server
         env:
           HUB_PORT: "3300"
