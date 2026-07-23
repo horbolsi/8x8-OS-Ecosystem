@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: 8x8-dual-monitor-beta
+    runtime: node
+    plan: starter
+    region: oregon
+    branch: beta/8x8-dual-monitor-v0.1
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGINS
+        sync: false
