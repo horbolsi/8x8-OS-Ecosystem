@@ -29,11 +29,10 @@ function stableIntegrity() {
 }
 
 function allowedOrigins() {
-  const configured = (process.env.ALLOWED_ORIGINS || "")
+  return (process.env.ALLOWED_ORIGINS || "")
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
-  return configured.length ? configured : [];
 }
 
 const app = express();
@@ -119,7 +118,21 @@ app.get("/api/v1/public/state", (_req, res) => {
   });
 });
 
-app.all(["/api/v1/private/*", "/api/admin/*", "/api/trade", "/api/stake", "/api/nfts/mint", "/api/social/posts"], (_req, res) => {
+const blockedExactPaths = new Set([
+  "/api/trade",
+  "/api/stake",
+  "/api/nfts/mint",
+  "/api/social/posts",
+  "/api/governance",
+  "/api/blockchain/transactions",
+]);
+
+app.use((req, res, next) => {
+  const pathBlocked = req.path.startsWith("/api/v1/private/") || req.path.startsWith("/api/admin/") || blockedExactPaths.has(req.path);
+  if (!pathBlocked) {
+    next();
+    return;
+  }
   res.status(404).json({
     error: "not_available_in_public_beta",
     release_id: RELEASE.release_id,
@@ -133,7 +146,7 @@ app.use(express.static(publicRoot, {
   maxAge: process.env.NODE_ENV === "production" ? "5m" : 0,
 }));
 
-app.get("*", (_req, res) => {
+app.get(/.*/, (_req, res) => {
   res.sendFile(path.join(publicRoot, "index.html"));
 });
 
