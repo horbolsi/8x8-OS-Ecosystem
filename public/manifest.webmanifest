@@ -1,0 +1,11 @@
+{
+  "name": "8x8 OS Dual Monitor Beta",
+  "short_name": "8x8 OS",
+  "description": "Public-safe spatial command cockpit beta for FlashTM8 / 8x8 OS.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#02040b",
+  "theme_color": "#030712",
+  "orientation": "any",
+  "categories": ["productivity", "utilities", "developer"]
+}
