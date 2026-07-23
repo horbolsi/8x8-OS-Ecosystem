@@ -1,0 +1,52 @@
+name: Validate Dual Monitor Beta
+
+on:
+  push:
+    branches:
+      - beta/8x8-dual-monitor-v0.1
+  pull_request:
+    paths:
+      - "public/**"
+      - "server/**"
+      - "api/**"
+      - "test/**"
+      - "package.json"
+      - "deployment/8x8-beta-manifest.json"
+      - "render-beta.yaml"
+      - ".github/workflows/dual-monitor-beta.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+      - name: Smoke test
+        run: npm test
+      - name: Public boundary scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -RInE --exclude-dir=.git --exclude='*.md' \
+            '(BEGIN [A-Z ]*PRIVATE KEY|github_pat_|gh[pousr]_|sk-(proj-)?[A-Za-z0-9_-]{20,}|[0-9]{8,12}:[A-Za-z0-9_-]{25,})' .
+          ! grep -RInE --exclude-dir=.git \
+            '(ADMIN_SECRET[[:space:]]*\|\||success:[[:space:]]*true,[[:space:]]*txHash|mutation_routes_enabled:[[:space:]]*true)' \
+            server api public deployment test
+      - name: Verify release identity
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const manifest = JSON.parse(fs.readFileSync('deployment/8x8-beta-manifest.json', 'utf8'));
+          if (manifest.release_id !== '8X8-BETA-DUAL-MONITOR-V0.1') process.exit(1);
+          if (!manifest.security.public_private_separation) process.exit(1);
+          if (manifest.security.public_mutation_routes_enabled) process.exit(1);
+          console.log(JSON.stringify({status:'PASS', release_id:manifest.release_id}));
+          NODE
