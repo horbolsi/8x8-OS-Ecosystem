@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "release_id": "8X8-BETA-DUAL-MONITOR-V0.1",
+  "release_name": "8x8 OS Dual Monitor Beta",
+  "owner": "FlashTM8 ⚡ / Meher Trabelsi",
+  "system": "8x8 OS",
+  "canonical_repo": "horbolsi/8x8-OS-Ecosystem",
+  "source_branch": "beta/8x8-dual-monitor-v0.1",
+  "surfaces": {
+    "public_monitor": {
+      "id": "8X8-PUBLIC-WORLD-V0.1",
+      "data_class": "PUBLIC_SANITIZED",
+      "mutations": false
+    },
+    "private_monitor": {
+      "id": "8X8-PRIVATE-OWNER-V0.1",
+      "data_class": "PRIVATE_NOT_MOUNTED_IN_PUBLIC_BUILD",
+      "mutations": false
+    }
+  },
+  "platform_bindings": {
+    "github": "horbolsi/8x8-OS-Ecosystem",
+    "replit_app": "8x8",
+    "vercel_project_primary": "8x8-os-ecosystem",
+    "vercel_project_legacy": "8x8-ecosystem",
+    "render_service": "8x8-hub-server",
+    "neon_project": "8x8-hub",
+    "telegram": "PUBLIC_LINK_PENDING_GATE",
+    "discord": "PUBLIC_LINK_PENDING_GATE"
+  },
+  "security": {
+    "public_private_separation": true,
+    "private_records_exposed": false,
+    "credentials_accessed": false,
+    "database_writes_enabled": false,
+    "financial_actions_enabled": false,
+    "public_mutation_routes_enabled": false
+  },
+  "promotion_policy": {
+    "preview_first": true,
+    "backup_previous_production": true,
+    "require_smoke_test": true,
+    "require_public_private_boundary_test": true,
+    "require_exact_production_gate": true
+  }
+}
