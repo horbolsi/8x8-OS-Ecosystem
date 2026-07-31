@@ -3,6 +3,10 @@ import cors from "cors";
 import crypto from "crypto";
 import path from "path";
 import { fileURLToPath } from "url";
+import {
+  createTelegramWebhookHandler,
+  telegramConfiguration,
+} from "./telegram.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,12 +16,13 @@ export const RELEASE = Object.freeze({
   release_id: "8X8-BETA-DUAL-MONITOR-V0.1",
   release_name: "8x8 OS Dual Monitor Beta",
   canonical_repo: "horbolsi/8x8-OS-Ecosystem",
-  source_branch: "beta/8x8-dual-monitor-v0.1",
+  source_branch: "feature/cloud-telegram-relay-v1",
   public_mode: true,
   private_data_mounted: false,
   mutation_routes_enabled: false,
   database_writes_enabled: false,
   credential_access_enabled: false,
+  cloud_telegram_relay: "BOUNDED_V1",
 });
 
 function stableIntegrity() {
@@ -48,8 +53,13 @@ app.use(cors({
     }
     callback(new Error("origin not allowed"));
   },
-  methods: ["GET", "HEAD", "OPTIONS"],
-  allowedHeaders: ["Accept", "Content-Type", "If-None-Match"],
+  methods: ["GET", "HEAD", "POST", "OPTIONS"],
+  allowedHeaders: [
+    "Accept",
+    "Content-Type",
+    "If-None-Match",
+    "X-Telegram-Bot-Api-Secret-Token",
+  ],
   maxAge: 86400,
 }));
 
@@ -86,6 +96,7 @@ app.get("/api/health", (_req, res) => {
     public_mode: true,
     private_data_mounted: false,
     mutation_routes_enabled: false,
+    cloud_telegram_relay: "BOUNDED_V1",
     timestamp: new Date().toISOString(),
   });
 });
@@ -93,6 +104,25 @@ app.get("/api/health", (_req, res) => {
 app.get("/api/v1/release", (_req, res) => {
   res.json({ ...RELEASE, integrity: stableIntegrity() });
 });
+
+app.get("/api/v1/cloud-relay", (_req, res) => {
+  res.json({
+    schema_version: "1.0.0",
+    release_id: RELEASE.release_id,
+    state: "CLOUD_RELAY_CODE_DEPLOYED",
+    ...telegramConfiguration(),
+  });
+});
+
+app.post(
+  "/api/telegram/owner",
+  createTelegramWebhookHandler("owner"),
+);
+
+app.post(
+  "/api/telegram/seraphim",
+  createTelegramWebhookHandler("seraphim"),
+);
 
 app.get("/api/v1/public/state", (_req, res) => {
   res.json({
