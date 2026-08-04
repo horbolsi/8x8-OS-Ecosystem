@@ -13,16 +13,17 @@ const __dirname = path.dirname(__filename);
 const publicRoot = path.resolve(__dirname, "../public");
 
 export const RELEASE = Object.freeze({
-  release_id: "8X8-BETA-DUAL-MONITOR-V0.1",
-  release_name: "8x8 OS Dual Monitor Beta",
+  release_id: "8X8-BETA-WORLD-V0.1",
+  release_name: "8x8 World Public Browser Beta",
   canonical_repo: "horbolsi/8x8-OS-Ecosystem",
-  source_branch: "feature/cloud-telegram-relay-v1",
+  source_branch: "feature/msg219-public-8x8-world-v1",
   public_mode: true,
   private_data_mounted: false,
   mutation_routes_enabled: false,
   database_writes_enabled: false,
   credential_access_enabled: false,
   cloud_telegram_relay: "BOUNDED_V1",
+  public_world_preview: "LOCAL_ONLY_V1",
 });
 
 function stableIntegrity() {
@@ -66,11 +67,16 @@ app.use(cors({
 app.use(express.json({ limit: "64kb", strict: true }));
 app.use((req, res, next) => {
   const requestId = req.get("x-request-id") || crypto.randomUUID();
+  const worldRoute = req.path === "/world" || req.path.startsWith("/world/");
+  const permissionsPolicy = worldRoute
+    ? "camera=(), microphone=(), geolocation=(self), accelerometer=(self), gyroscope=(self), magnetometer=(self), payment=(), usb=(), bluetooth=()"
+    : "camera=(), microphone=(), geolocation=(), accelerometer=(), gyroscope=(), magnetometer=(), payment=(), usb=(), bluetooth=()";
+
   res.setHeader("X-Request-ID", requestId);
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "no-referrer");
-  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+  res.setHeader("Permissions-Policy", permissionsPolicy);
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
   res.setHeader("Content-Security-Policy", [
@@ -97,6 +103,7 @@ app.get("/api/health", (_req, res) => {
     private_data_mounted: false,
     mutation_routes_enabled: false,
     cloud_telegram_relay: "BOUNDED_V1",
+    public_world_preview: "LOCAL_ONLY_V1",
     timestamp: new Date().toISOString(),
   });
 });
@@ -111,6 +118,27 @@ app.get("/api/v1/cloud-relay", (_req, res) => {
     release_id: RELEASE.release_id,
     state: "CLOUD_RELAY_CODE_DEPLOYED",
     ...telegramConfiguration(),
+  });
+});
+
+app.get("/api/v1/world/capabilities", (_req, res) => {
+  res.json({
+    schema_version: "8x8.public-world-capabilities.v1",
+    release_id: RELEASE.release_id,
+    state: "PUBLIC_BROWSER_LOCAL_ONLY",
+    movement: "ENABLED",
+    device_orientation: "USER_PERMISSION_ON_WORLD_ROUTE",
+    geolocation: "USER_PERMISSION_ON_WORLD_ROUTE",
+    location_upload: false,
+    live_users: 0,
+    live_presence_backend: false,
+    chat_calls: false,
+    bluetooth_scan: false,
+    wifi_peer_mesh: false,
+    payments: false,
+    wallet_signing: false,
+    private_core: false,
+    remote_device_control: false,
   });
 });
 
