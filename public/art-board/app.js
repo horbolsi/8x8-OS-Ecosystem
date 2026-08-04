@@ -34,7 +34,23 @@ const colors = {
 };
 
 function escapeText(value) {
-  return String(value ?? "").replace(/[<>]/g, "");
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[character]));
+}
+
+function safeToken(value) {
+  return String(value ?? "").replace(/[^A-Za-z0-9_-]/g, "") || "UNKNOWN";
+}
+
+function boundedPercent(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return 0;
+  return Math.min(100, Math.max(0, numeric));
 }
 
 function applyTransform() {
@@ -45,14 +61,16 @@ function applyTransform() {
 }
 
 function setZoom(value) {
-  state.zoom = Math.max(0.55, Math.min(1.8, Number(value.toFixed(2))));
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return;
+  state.zoom = Math.max(0.55, Math.min(1.8, Number(numeric.toFixed(2))));
   applyTransform();
 }
 
 function inspect(item, type) {
-  if (!item) return;
+  if (!item || typeof item !== "object") return;
   state.selected = { item, type };
-  $("#title").textContent = item.label || item.id;
+  $("#title").textContent = item.label || item.id || "Unknown record";
   $("#summary").textContent = item.summary || item.description || "Public-safe record.";
 
   const rows = [];
@@ -68,21 +86,29 @@ function render() {
   const data = state.data;
   $("#truth").textContent = data.truth_banner;
   $("#legend").innerHTML = Object.entries(colors)
-    .map(([color, description]) => `<div class="legend"><i class="${color}"></i><span><b>${color}</b><br>${escapeText(description)}</span></div>`)
+    .map(([color, description]) => `<div class="legend"><i class="${safeToken(color)}"></i><span><b>${escapeText(color)}</b><br>${escapeText(description)}</span></div>`)
     .join("");
 
   $("#worlds").innerHTML = data.worlds.map((world, index) => {
-    const [x, y] = worldPositions[index];
-    return `<button class="world ${world.status}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-world="${escapeText(world.id)}"><b>${escapeText(world.label)}</b><small>${world.score}/100 • ${escapeText(world.evidence)}</small></button>`;
+    const [rawX, rawY] = worldPositions[index] || [50, 50];
+    const x = boundedPercent(rawX);
+    const y = boundedPercent(rawY);
+    return `<button class="world ${safeToken(world.status)}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-world="${escapeText(world.id)}"><b>${escapeText(world.label)}</b><small>${escapeText(world.score)}/100 • ${escapeText(world.evidence)}</small></button>`;
   }).join("");
 
   $("#nodes").innerHTML = data.nodes.map((node, index) => {
-    const [x, y] = nodePositions[index];
-    return `<button class="node ${node.status}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-node="${escapeText(node.id)}" title="${escapeText(node.label)}">${escapeText(node.label.slice(0, 2).toUpperCase())}</button>`;
+    const [rawX, rawY] = nodePositions[index % nodePositions.length] || [50, 50];
+    const x = boundedPercent(rawX);
+    const y = boundedPercent(rawY);
+    return `<button class="node ${safeToken(node.status)}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-node="${escapeText(node.id)}" title="${escapeText(node.label)}">${escapeText(node.label.slice(0, 2).toUpperCase())}</button>`;
   }).join("");
 
   $("#clusters").innerHTML = data.presence_clusters
-    .map((cluster) => `<button class="cluster" style="left:${cluster.x}%;top:${cluster.y}%" data-cluster="${escapeText(cluster.label)}" data-label="${escapeText(cluster.label)}" aria-label="${escapeText(cluster.label)}, simulated, zero users"></button>`)
+    .map((cluster) => {
+      const x = boundedPercent(cluster.x);
+      const y = boundedPercent(cluster.y);
+      return `<button class="cluster" style="left:${x}%;top:${y}%" data-cluster="${escapeText(cluster.label)}" data-label="${escapeText(cluster.label)}" aria-label="${escapeText(cluster.label)}, simulated, zero users"></button>`;
+    })
     .join("");
 
   $("#treasury").innerHTML = `<p><b>Status:</b> ${escapeText(data.treasury.status)}</p><p><b>Networks:</b> ${data.treasury.networks.map(escapeText).join(", ")}</p><p>Balances: hidden / unavailable<br>Addresses: hidden / unavailable<br>Signing: disabled</p>`;
@@ -123,14 +149,14 @@ function bindEvents() {
     $("#modal").showModal();
   });
   $("#filter").addEventListener("input", (event) => {
-    const query = event.target.value.toLowerCase().trim();
+    const query = String(event.target.value ?? "").toLowerCase().trim();
     $$(".world").forEach((element) => {
       const record = state.data.worlds.find((world) => world.id === element.dataset.world);
-      element.hidden = Boolean(query && !JSON.stringify(record).toLowerCase().includes(query));
+      element.hidden = Boolean(query && !JSON.stringify(record ?? {}).toLowerCase().includes(query));
     });
     $$(".node").forEach((element) => {
       const record = state.data.nodes.find((node) => node.id === element.dataset.node);
-      element.hidden = Boolean(query && !JSON.stringify(record).toLowerCase().includes(query));
+      element.hidden = Boolean(query && !JSON.stringify(record ?? {}).toLowerCase().includes(query));
     });
   });
 
@@ -144,6 +170,7 @@ function bindEvents() {
   });
 
   const viewport = $("#viewport");
+  const stopDragging = () => { state.dragging = false; };
   viewport.addEventListener("pointerdown", (event) => {
     state.dragging = true;
     state.pointerX = event.clientX;
@@ -158,9 +185,9 @@ function bindEvents() {
     state.pointerY = event.clientY;
     applyTransform();
   });
-  viewport.addEventListener("pointerup", () => {
-    state.dragging = false;
-  });
+  viewport.addEventListener("pointerup", stopDragging);
+  viewport.addEventListener("pointercancel", stopDragging);
+  viewport.addEventListener("lostpointercapture", stopDragging);
   viewport.addEventListener("wheel", (event) => {
     event.preventDefault();
     setZoom(state.zoom + (event.deltaY < 0 ? 0.08 : -0.08));
