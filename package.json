@@ -1,13 +1,13 @@
 {
   "name": "8x8-os-dual-monitor-beta",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "private": false,
-  "description": "Public-safe dual-monitor spatial cockpit beta for 8x8 OS.",
+  "description": "Public-safe dual-monitor cockpit and Global Art Board preview for 8x8 OS.",
   "type": "module",
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test": "node test/beta-smoke.mjs",
+    "test": "node test/beta-smoke.mjs && node test/art-board-smoke.mjs",
     "check": "npm test"
   },
   "dependencies": {

@@ -1,0 +1,45 @@
+#viewport { overflow: auto; touch-action: none; overscroll-behavior: contain; }
+#board[data-zoom="55"] { zoom: .55; }
+#board[data-zoom="65"] { zoom: .65; }
+#board[data-zoom="75"] { zoom: .75; }
+#board[data-zoom="88"] { zoom: .88; }
+#board[data-zoom="100"] { zoom: 1; }
+#board[data-zoom="110"] { zoom: 1.1; }
+#board[data-zoom="120"] { zoom: 1.2; }
+#board[data-zoom="135"] { zoom: 1.35; }
+#board[data-zoom="150"] { zoom: 1.5; }
+#board[data-zoom="165"] { zoom: 1.65; }
+#board[data-zoom="180"] { zoom: 1.8; }
+.world[data-position="0"] { left:50%; top:12%; transform:translate(-50%,-50%); }
+.world[data-position="1"] { left:77%; top:25%; transform:translate(-50%,-50%); }
+.world[data-position="2"] { left:87%; top:51%; transform:translate(-50%,-50%); }
+.world[data-position="3"] { left:74%; top:77%; transform:translate(-50%,-50%); }
+.world[data-position="4"] { left:50%; top:87%; transform:translate(-50%,-50%); }
+.world[data-position="5"] { left:26%; top:77%; transform:translate(-50%,-50%); }
+.world[data-position="6"] { left:13%; top:51%; transform:translate(-50%,-50%); }
+.world[data-position="7"] { left:23%; top:25%; transform:translate(-50%,-50%); }
+.node[data-position="0"] { left:50%; top:31%; transform:translate(-50%,-50%); }
+.node[data-position="1"] { left:64%; top:41%; transform:translate(-50%,-50%); }
+.node[data-position="2"] { left:64%; top:60%; transform:translate(-50%,-50%); }
+.node[data-position="3"] { left:50%; top:69%; transform:translate(-50%,-50%); }
+.node[data-position="4"] { left:36%; top:60%; transform:translate(-50%,-50%); }
+.node[data-position="5"] { left:36%; top:41%; transform:translate(-50%,-50%); }
+.cluster[data-position="0"] { left:24%; top:35%; }
+.cluster[data-position="1"] { left:49%; top:28%; }
+.cluster[data-position="2"] { left:68%; top:52%; }
+.cluster[data-position="3"] { left:34%; top:67%; }
+.failure-panel { margin:2rem; min-height:0; }
+@supports not (zoom:1) {
+  #board[data-zoom] { transform-origin:top left; }
+  #board[data-zoom="55"] { transform:scale(.55); }
+  #board[data-zoom="65"] { transform:scale(.65); }
+  #board[data-zoom="75"] { transform:scale(.75); }
+  #board[data-zoom="88"] { transform:scale(.88); }
+  #board[data-zoom="100"] { transform:scale(1); }
+  #board[data-zoom="110"] { transform:scale(1.1); }
+  #board[data-zoom="120"] { transform:scale(1.2); }
+  #board[data-zoom="135"] { transform:scale(1.35); }
+  #board[data-zoom="150"] { transform:scale(1.5); }
+  #board[data-zoom="165"] { transform:scale(1.65); }
+  #board[data-zoom="180"] { transform:scale(1.8); }
+}

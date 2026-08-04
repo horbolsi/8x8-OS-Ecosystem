@@ -1,0 +1,88 @@
+name: MSG218 Art Board Preview
+
+on:
+  pull_request:
+    paths:
+      - "public/art-board/**"
+      - "test/art-board-smoke.mjs"
+      - "test/beta-smoke.mjs"
+      - "server/**"
+      - "package.json"
+      - ".github/workflows/msg218-art-board-preview.yml"
+  push:
+    branches:
+      - "feature/msg218-public-art-board-preview-v1"
+    paths:
+      - "public/art-board/**"
+      - "test/art-board-smoke.mjs"
+      - "test/beta-smoke.mjs"
+      - "server/**"
+      - "package.json"
+      - ".github/workflows/msg218-art-board-preview.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install exact declared runtime dependencies without scripts
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate syntax and state
+        run: |
+          python3 -m json.tool public/art-board/state.json >/dev/null
+          node --check public/art-board/app.js
+          node --check test/art-board-smoke.mjs
+      - name: Run beta and Art Board smoke suites
+        run: npm test
+      - name: Scan Art Board public boundary
+        run: |
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|seed phrase|private key|wallet address|/root/|127\.0\.0\.1|localhost:|gho_|sk-[A-Za-z0-9])' public/art-board; then
+            echo 'Art Board public-boundary scan failed'
+            exit 1
+          fi
+          if grep -RIn "unsafe-inline" public/art-board server/app.js; then
+            echo 'Unsafe inline CSP exception detected'
+            exit 1
+          fi
+          echo 'ART_BOARD_PUBLIC_BOUNDARY=PASS'
+      - name: Verify exact strict-CSP canonical User Edition source
+        env:
+          USER_EDITION_COMMIT: fd6296e8ce29e95738e8c000280dbde6b6a5c7f5
+        run: |
+          git init -q /tmp/8x8-user-edition
+          git -C /tmp/8x8-user-edition remote add origin https://github.com/8x8org/8x8-user-edition.git
+          git -C /tmp/8x8-user-edition fetch --depth 1 origin "$USER_EDITION_COMMIT"
+          git -C /tmp/8x8-user-edition checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/8x8-user-edition rev-parse HEAD)" = "$USER_EDITION_COMMIT"
+          python3 -m unittest discover -s /tmp/8x8-user-edition/tests -p 'test_art_board.py' -v
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('/tmp/8x8-user-edition/art-board')
+          release = json.loads((root / 'release-unit.json').read_text())
+          html = (root / 'index.html').read_text()
+          script = (root / 'app.js').read_text()
+          positions = (root / 'positions.css').read_text()
+          assert release['truth_state'] == 'PROTECTED_PREVIEW_DEPLOYED'
+          assert release['score']['earned'] == 100
+          assert release['score']['possible'] == 100
+          assert release['gates']['public_production_release'] is False
+          assert release['whole_system_completion_inferred'] is False
+          assert 'unsafe-inline' not in html
+          assert '.innerHTML' not in script
+          assert '.style' not in script
+          for token in ('document.createElement', 'document.createTextNode', 'replaceChildren', 'boundedPercent', 'dataset.zoom', 'pointercancel', 'lostpointercapture'):
+              assert token in script
+          assert 'data-zoom="100"' in positions
+          print('CANONICAL_USER_EDITION_ART_BOARD=PASS')
+          PY
