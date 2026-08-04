@@ -1,1 +1,206 @@
-const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>[...r.querySelectorAll(s)];const S={data:null,zoom:1,x:0,y:0,map:false,drag:false,px:0,py:0,selected:null};const W=[[50,12],[77,25],[87,51],[74,77],[50,87],[26,77],[13,51],[23,25]],N=[[50,31],[64,41],[64,60],[50,69],[36,60],[36,41]],COLORS={GREEN:'Healthy or release-ready in scope',CYAN:'Verified information or read-only',YELLOW:'Incomplete dependency',ORANGE:'Degraded or review required',RED:'Down or blocked',BLACK:'Unknown, stale or hidden',PURPLE:'Planned or experimental'};const esc=v=>String(v??'').replace(/[<>]/g,'');function transform(){ $('#board').style.transform=`translate(${S.x}px,${S.y}px) scale(${S.zoom})`;$('#zoom').textContent=$('#reset').textContent=`${Math.round(S.zoom*100)}%`}function zoom(v){S.zoom=Math.max(.55,Math.min(1.8,Number(v.toFixed(2))));transform()}function inspect(item,type){S.selected={item,type};$('#title').textContent=item.label||item.id;$('#summary').textContent=item.summary||item.description||'Public-safe record.';const rows=[];for(const [k,v] of Object.entries(item)){if(['id','label','summary','description'].includes(k)||typeof v==='object')continue;rows.push(`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`)}$('#facts').innerHTML=rows.join('');$('#evidence').disabled=false}function render(){const d=S.data;$('#truth').textContent=d.truth_banner;$('#legend').innerHTML=Object.entries(COLORS).map(([c,t])=>`<div class="legend"><i class="${c}"></i><span><b>${c}</b><br>${esc(t)}</span></div>`).join('');$('#worlds').innerHTML=d.worlds.map((w,i)=>{const[x,y]=W[i];return`<button class="world ${w.status}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-world="${w.id}"><b>${esc(w.label)}</b><small>${w.score}/100 • ${esc(w.evidence)}</small></button>`}).join('');$('#nodes').innerHTML=d.nodes.map((n,i)=>{const[x,y]=N[i];return`<button class="node ${n.status}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-node="${n.id}" title="${esc(n.label)}">${esc(n.label.slice(0,2).toUpperCase())}</button>`}).join('');$('#clusters').innerHTML=d.presence_clusters.map(c=>`<button class="cluster" style="left:${c.x}%;top:${c.y}%" data-cluster="${esc(c.label)}" data-label="${esc(c.label)}" aria-label="${esc(c.label)}, simulated, zero users"></button>`).join('');$('#treasury').innerHTML=`<p><b>Status:</b> ${esc(d.treasury.status)}</p><p><b>Networks:</b> ${d.treasury.networks.map(esc).join(', ')}</p><p>Balances: hidden / unavailable<br>Addresses: hidden / unavailable<br>Signing: disabled</p>`;transform()}function toggleMap(){S.map=!S.map;$('#mapLayer').hidden=!S.map;$('#worlds').hidden=S.map;$('#nodes').hidden=S.map;$('#map').setAttribute('aria-pressed',String(S.map));$('#mode').textContent=S.map?'GLOBAL MAP':'ART BOARD';S.x=S.y=0;zoom(S.map?.88:1)}function bind(){ $('#plus').onclick=()=>zoom(S.zoom+.1);$('#minus').onclick=()=>zoom(S.zoom-.1);$('#reset').onclick=()=>{S.x=S.y=0;zoom(1)};$('#map').onclick=toggleMap;$('#help').onclick=()=>{ $('#modalTitle').textContent='How to read the Art Board';$('#modalBody').textContent='Green means complete only inside the displayed release unit. Red is down or blocked. Orange is degraded. Yellow is incomplete. Black is unknown or hidden. The map contains simulated regions with zero users and no tracking.';$('#modal').showModal()};$('#close').onclick=()=>$('#modal').close();$('#evidence').onclick=()=>{if(!S.selected)return;$('#modalTitle').textContent='Public evidence record';$('#modalBody').textContent=JSON.stringify(S.selected,null,2);$('#modal').showModal()};$('#filter').oninput=e=>{const q=e.target.value.toLowerCase().trim();$$('.world').forEach(el=>{const r=S.data.worlds.find(w=>w.id===el.dataset.world);el.hidden=q&&!JSON.stringify(r).toLowerCase().includes(q)});$$('.node').forEach(el=>{const r=S.data.nodes.find(n=>n.id===el.dataset.node);el.hidden=q&&!JSON.stringify(r).toLowerCase().includes(q)})};$('#board').onclick=e=>{const w=e.target.closest('[data-world]'),n=e.target.closest('[data-node]'),c=e.target.closest('[data-cluster]');if(w)inspect(S.data.worlds.find(x=>x.id===w.dataset.world),'world');if(n)inspect(S.data.nodes.find(x=>x.id===n.dataset.node),'node');if(c)inspect({label:c.dataset.cluster,status:'CYAN',count:0,mode:'SIMULATED_REGION_ONLY'},'presence')};const v=$('#viewport');v.onpointerdown=e=>{S.drag=true;S.px=e.clientX;S.py=e.clientY;v.setPointerCapture(e.pointerId)};v.onpointermove=e=>{if(!S.drag)return;S.x+=e.clientX-S.px;S.y+=e.clientY-S.py;S.px=e.clientX;S.py=e.clientY;transform()};v.onpointerup=()=>S.drag=false;v.addEventListener('wheel',e=>{e.preventDefault();zoom(S.zoom+(e.deltaY<0?.08:-.08))},{passive:false});window.onkeydown=e=>{if(e.target instanceof HTMLInputElement)return;if(e.key==='+'||e.key==='=')zoom(S.zoom+.1);if(e.key==='-')zoom(S.zoom-.1);if(e.key==='0'){S.x=S.y=0;zoom(1)};if(e.key.toLowerCase()==='m')toggleMap();if(e.key==='Escape'&&$('#modal').open)$('#modal').close()}}async function start(){try{const r=await fetch('/art-board/state.json',{cache:'no-store',credentials:'same-origin',redirect:'error'});if(!r.ok)throw new Error(`state ${r.status}`);if(!(r.headers.get('content-type')||'').includes('json'))throw new Error('state is not JSON');S.data=await r.json();if(S.data.schema_version!=='8x8.public-art-board.v1'||S.data.mode!=='PUBLIC_SAFE_FIXTURE')throw new Error('invalid public state');if(S.data.score.earned!==100||S.data.score.possible!==100||S.data.score.whole_system_score!=='NOT_INFERRED')throw new Error('invalid release score');render();bind()}catch(e){document.body.innerHTML=`<main class="glass panel" style="margin:2rem"><h1>Art Board blocked</h1><p>Public state validation failed. Nothing was rendered.</p><pre>${esc(e.message)}</pre></main>`}}start();
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+const state = {
+  data: null,
+  zoom: 1,
+  x: 0,
+  y: 0,
+  map: false,
+  dragging: false,
+  pointerX: 0,
+  pointerY: 0,
+  selected: null,
+};
+
+const worldPositions = [
+  [50, 12], [77, 25], [87, 51], [74, 77],
+  [50, 87], [26, 77], [13, 51], [23, 25],
+];
+
+const nodePositions = [
+  [50, 31], [64, 41], [64, 60],
+  [50, 69], [36, 60], [36, 41],
+];
+
+const colors = {
+  GREEN: "Healthy or release-ready in scope",
+  CYAN: "Verified information or read-only",
+  YELLOW: "Incomplete dependency",
+  ORANGE: "Degraded or review required",
+  RED: "Down or blocked",
+  BLACK: "Unknown, stale or hidden",
+  PURPLE: "Planned or experimental",
+};
+
+function escapeText(value) {
+  return String(value ?? "").replace(/[<>]/g, "");
+}
+
+function applyTransform() {
+  $("#board").style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.zoom})`;
+  const percentage = `${Math.round(state.zoom * 100)}%`;
+  $("#zoom").textContent = percentage;
+  $("#reset").textContent = percentage;
+}
+
+function setZoom(value) {
+  state.zoom = Math.max(0.55, Math.min(1.8, Number(value.toFixed(2))));
+  applyTransform();
+}
+
+function inspect(item, type) {
+  if (!item) return;
+  state.selected = { item, type };
+  $("#title").textContent = item.label || item.id;
+  $("#summary").textContent = item.summary || item.description || "Public-safe record.";
+
+  const rows = [];
+  for (const [key, value] of Object.entries(item)) {
+    if (["id", "label", "summary", "description"].includes(key) || typeof value === "object") continue;
+    rows.push(`<dt>${escapeText(key)}</dt><dd>${escapeText(value)}</dd>`);
+  }
+  $("#facts").innerHTML = rows.join("");
+  $("#evidence").disabled = false;
+}
+
+function render() {
+  const data = state.data;
+  $("#truth").textContent = data.truth_banner;
+  $("#legend").innerHTML = Object.entries(colors)
+    .map(([color, description]) => `<div class="legend"><i class="${color}"></i><span><b>${color}</b><br>${escapeText(description)}</span></div>`)
+    .join("");
+
+  $("#worlds").innerHTML = data.worlds.map((world, index) => {
+    const [x, y] = worldPositions[index];
+    return `<button class="world ${world.status}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-world="${escapeText(world.id)}"><b>${escapeText(world.label)}</b><small>${world.score}/100 • ${escapeText(world.evidence)}</small></button>`;
+  }).join("");
+
+  $("#nodes").innerHTML = data.nodes.map((node, index) => {
+    const [x, y] = nodePositions[index];
+    return `<button class="node ${node.status}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-node="${escapeText(node.id)}" title="${escapeText(node.label)}">${escapeText(node.label.slice(0, 2).toUpperCase())}</button>`;
+  }).join("");
+
+  $("#clusters").innerHTML = data.presence_clusters
+    .map((cluster) => `<button class="cluster" style="left:${cluster.x}%;top:${cluster.y}%" data-cluster="${escapeText(cluster.label)}" data-label="${escapeText(cluster.label)}" aria-label="${escapeText(cluster.label)}, simulated, zero users"></button>`)
+    .join("");
+
+  $("#treasury").innerHTML = `<p><b>Status:</b> ${escapeText(data.treasury.status)}</p><p><b>Networks:</b> ${data.treasury.networks.map(escapeText).join(", ")}</p><p>Balances: hidden / unavailable<br>Addresses: hidden / unavailable<br>Signing: disabled</p>`;
+  applyTransform();
+}
+
+function toggleMap() {
+  state.map = !state.map;
+  $("#mapLayer").hidden = !state.map;
+  $("#worlds").hidden = state.map;
+  $("#nodes").hidden = state.map;
+  $("#map").setAttribute("aria-pressed", String(state.map));
+  $("#mode").textContent = state.map ? "GLOBAL MAP" : "ART BOARD";
+  state.x = 0;
+  state.y = 0;
+  setZoom(state.map ? 0.88 : 1);
+}
+
+function bindEvents() {
+  $("#plus").addEventListener("click", () => setZoom(state.zoom + 0.1));
+  $("#minus").addEventListener("click", () => setZoom(state.zoom - 0.1));
+  $("#reset").addEventListener("click", () => {
+    state.x = 0;
+    state.y = 0;
+    setZoom(1);
+  });
+  $("#map").addEventListener("click", toggleMap);
+  $("#help").addEventListener("click", () => {
+    $("#modalTitle").textContent = "How to read the Art Board";
+    $("#modalBody").textContent = "Green means complete only inside the displayed release unit. Red is down or blocked. Orange is degraded. Yellow is incomplete. Black is unknown or hidden. The map contains simulated regions with zero users and no tracking.";
+    $("#modal").showModal();
+  });
+  $("#close").addEventListener("click", () => $("#modal").close());
+  $("#evidence").addEventListener("click", () => {
+    if (!state.selected) return;
+    $("#modalTitle").textContent = "Public evidence record";
+    $("#modalBody").textContent = JSON.stringify(state.selected, null, 2);
+    $("#modal").showModal();
+  });
+  $("#filter").addEventListener("input", (event) => {
+    const query = event.target.value.toLowerCase().trim();
+    $$(".world").forEach((element) => {
+      const record = state.data.worlds.find((world) => world.id === element.dataset.world);
+      element.hidden = Boolean(query && !JSON.stringify(record).toLowerCase().includes(query));
+    });
+    $$(".node").forEach((element) => {
+      const record = state.data.nodes.find((node) => node.id === element.dataset.node);
+      element.hidden = Boolean(query && !JSON.stringify(record).toLowerCase().includes(query));
+    });
+  });
+
+  $("#board").addEventListener("click", (event) => {
+    const worldButton = event.target.closest("[data-world]");
+    const nodeButton = event.target.closest("[data-node]");
+    const clusterButton = event.target.closest("[data-cluster]");
+    if (worldButton) inspect(state.data.worlds.find((world) => world.id === worldButton.dataset.world), "world");
+    if (nodeButton) inspect(state.data.nodes.find((node) => node.id === nodeButton.dataset.node), "node");
+    if (clusterButton) inspect({ label: clusterButton.dataset.cluster, status: "CYAN", count: 0, mode: "SIMULATED_REGION_ONLY" }, "presence");
+  });
+
+  const viewport = $("#viewport");
+  viewport.addEventListener("pointerdown", (event) => {
+    state.dragging = true;
+    state.pointerX = event.clientX;
+    state.pointerY = event.clientY;
+    viewport.setPointerCapture(event.pointerId);
+  });
+  viewport.addEventListener("pointermove", (event) => {
+    if (!state.dragging) return;
+    state.x += event.clientX - state.pointerX;
+    state.y += event.clientY - state.pointerY;
+    state.pointerX = event.clientX;
+    state.pointerY = event.clientY;
+    applyTransform();
+  });
+  viewport.addEventListener("pointerup", () => {
+    state.dragging = false;
+  });
+  viewport.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    setZoom(state.zoom + (event.deltaY < 0 ? 0.08 : -0.08));
+  }, { passive: false });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.target instanceof HTMLInputElement) return;
+    if (event.key === "+" || event.key === "=") setZoom(state.zoom + 0.1);
+    if (event.key === "-") setZoom(state.zoom - 0.1);
+    if (event.key === "0") {
+      state.x = 0;
+      state.y = 0;
+      setZoom(1);
+    }
+    if (event.key.toLowerCase() === "m") toggleMap();
+    if (event.key === "Escape" && $("#modal").open) $("#modal").close();
+  });
+}
+
+async function start() {
+  try {
+    const response = await fetch("/art-board/state.json", {
+      cache: "no-store",
+      credentials: "same-origin",
+      redirect: "error",
+    });
+    if (!response.ok) throw new Error(`state ${response.status}`);
+    if (!(response.headers.get("content-type") || "").includes("json")) throw new Error("state is not JSON");
+
+    state.data = await response.json();
+    if (state.data.schema_version !== "8x8.public-art-board.v1") throw new Error("unsupported schema");
+    if (state.data.mode !== "PUBLIC_SAFE_FIXTURE") throw new Error("invalid public state mode");
+    if (state.data.score.earned !== 100 || state.data.score.possible !== 100) throw new Error("invalid release score");
+    if (state.data.score.whole_system_score !== "NOT_INFERRED") throw new Error("whole-system score must remain uninferred");
+
+    render();
+    bindEvents();
+  } catch (error) {
+    document.body.innerHTML = `<main class="glass panel" style="margin:2rem"><h1>Art Board blocked</h1><p>Public state validation failed. Nothing was rendered.</p><pre>${escapeText(error.message)}</pre></main>`;
+  }
+}
+
+start();
