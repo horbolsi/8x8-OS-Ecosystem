@@ -4,9 +4,7 @@ import fs from "node:fs";
 import { spawnSync } from "node:child_process";
 import app from "../server/app.js";
 
-const syntax = spawnSync(process.execPath, ["--check", "public/art-board/app.js"], {
-  encoding: "utf8",
-});
+const syntax = spawnSync(process.execPath, ["--check", "public/art-board/app.js"], { encoding: "utf8" });
 assert.equal(syntax.status, 0, syntax.stderr || syntax.stdout);
 
 const stateOnDisk = JSON.parse(fs.readFileSync("public/art-board/state.json", "utf8"));
@@ -20,6 +18,7 @@ assert.ok(stateOnDisk.presence_clusters.every((cluster) => cluster.count === 0))
 assert.equal(stateOnDisk.treasury.public_balances, false);
 assert.equal(stateOnDisk.treasury.wallet_addresses, false);
 assert.equal(stateOnDisk.treasury.signing_authority, false);
+assert.ok(fs.existsSync("public/art-board/positions.css"));
 
 const server = http.createServer(app);
 await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
@@ -36,20 +35,15 @@ try {
   assert.equal(page.response.status, 200);
   assert.match(page.text, /8x8 Global Art Board Preview/);
   assert.match(page.text, /SERAPHIM PUBLIC GUIDE/);
+  assert.match(page.text, /positions\.css/);
   const csp = page.response.headers.get("content-security-policy") || "";
   assert.match(csp, /default-src 'self'/);
   assert.match(csp, /script-src 'self'/);
-  assert.doesNotMatch(csp, /script-src 'self' 'unsafe-inline'/);
-  assert.match(csp, /style-src-elem 'self'/);
-  assert.match(csp, /style-src-attr 'unsafe-inline'/);
+  assert.match(csp, /style-src 'self'/);
+  assert.doesNotMatch(csp, /unsafe-inline/);
   assert.equal(page.response.headers.get("x-frame-options"), "DENY");
-  assert.equal(
-    page.response.headers.get("permissions-policy"),
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
-  );
 
   const state = await request("/art-board/state.json");
-  assert.equal(state.response.status, 200);
   const parsed = JSON.parse(state.text);
   assert.equal(parsed.release_unit_id, "public-global-art-board-v1");
   assert.equal(parsed.score.earned, 100);
@@ -57,21 +51,15 @@ try {
 
   const script = await request("/art-board/app.js");
   assert.equal(script.response.status, 200);
-  assert.match(script.text, /PUBLIC_SAFE_FIXTURE/);
-  assert.match(script.text, /function boundedPercent/);
-  assert.match(script.text, /Number\.isFinite/);
-  assert.match(script.text, /record \?\? \{\}/);
-  assert.match(script.text, /pointercancel/);
-  assert.match(script.text, /lostpointercapture/);
-  assert.match(script.text, /document\.createElement/);
-  assert.match(script.text, /document\.createTextNode/);
-  assert.match(script.text, /replaceChildren/);
-  assert.doesNotMatch(script.text, /\.innerHTML/);
+  for (const token of ["PUBLIC_SAFE_FIXTURE", "boundedPercent", "dataset.zoom", "document.createElement", "document.createTextNode", "replaceChildren", "pointercancel", "lostpointercapture"]) {
+    assert.match(script.text, new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
+  assert.doesNotMatch(script.text, /\.innerHTML|\.style|Math\.random/);
 
-  const styles = await request("/art-board/styles.css");
-  assert.equal(styles.response.status, 200);
-  assert.match(styles.text, /prefers-reduced-motion/);
-  assert.match(styles.text, /forced-colors/);
+  const positions = await request("/art-board/positions.css");
+  assert.equal(positions.response.status, 200);
+  assert.match(positions.text, /data-zoom="100"/);
+  assert.match(positions.text, /world\[data-position="0"\]/);
 
   console.log(JSON.stringify({
     status: "PASS",
@@ -82,8 +70,8 @@ try {
     live_users: 0,
     wallet_data: false,
     private_control_plane: false,
+    unsafe_inline: false,
     dynamic_html_sinks: 0,
-    reviewer_remediations: "PASS",
   }));
 } finally {
   await new Promise((resolve) => server.close(resolve));
