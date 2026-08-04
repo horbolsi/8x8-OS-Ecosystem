@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050815">
+  <meta name="description" content="8x8 World public browser beta with local-only movement, location and orientation controls.">
+  <title>8x8 World Public Browser Beta</title>
+  <link rel="manifest" href="/world/manifest.webmanifest">
+  <link rel="stylesheet" href="/world/styles.css">
+</head>
+<body>
+  <header class="topbar glass">
+    <a class="brand" href="/world/" aria-label="8x8 World home"><b>8×8</b><span>WORLD</span></a>
+    <strong id="truth">PUBLIC BROWSER WORLD</strong>
+    <nav aria-label="World navigation">
+      <a href="/art-board/">Art Board</a>
+      <button id="helpButton" type="button">Truth & Help</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="welcome glass">
+      <div class="seraphim" aria-hidden="true">✦</div>
+      <div>
+        <p class="eyebrow">SERAPHIM PUBLIC GUIDE</p>
+        <h1>Enter the first live-shaped 8x8 World.</h1>
+        <p>Move, turn, jump, crouch, explore service bubbles and link your current position to Google Maps or Apple Maps. Sensor data stays inside this browser session.</p>
+      </div>
+      <div class="scope-score"><b>100/100</b><span>DECLARED BROWSER SLICE</span></div>
+    </section>
+
+    <section class="status-strip glass" aria-label="Current world truth">
+      <div><span>LIVE USERS</span><b id="liveUsers">0</b></div>
+      <div><span>PRESENCE</span><b id="presenceState">HIDDEN</b></div>
+      <div><span>LOCATION UPLOAD</span><b>OFF</b></div>
+      <div><span>WALLET SIGNING</span><b>OFF</b></div>
+      <div><span>PRIVATE CORE</span><b>DISCONNECTED</b></div>
+    </section>
+
+    <section class="world-layout">
+      <aside class="glass panel controls-panel">
+        <p class="eyebrow">MOTION & PRIVACY</p>
+        <h2>Traveler controls</h2>
+
+        <div class="mode-row" role="group" aria-label="Movement mode">
+          <button type="button" data-mode="WALK" aria-pressed="true">Walk</button>
+          <button type="button" data-mode="DRIVE" aria-pressed="false">Drive</button>
+          <button type="button" data-mode="PRONE" aria-pressed="false">Prone</button>
+        </div>
+
+        <div class="movement-pad" aria-label="Movement pad">
+          <button type="button" data-move="UP" aria-label="Move forward">▲</button>
+          <button type="button" data-move="LEFT" aria-label="Move left">◀</button>
+          <button type="button" id="jumpButton" aria-label="Jump">JUMP</button>
+          <button type="button" data-move="RIGHT" aria-label="Move right">▶</button>
+          <button type="button" data-move="DOWN" aria-label="Move backward">▼</button>
+        </div>
+        <p class="shortcut">Keyboard: WASD or arrows · Space to jump · P prone · V drive</p>
+
+        <label for="presenceMode">Presence privacy</label>
+        <select id="presenceMode">
+          <option value="HIDDEN">Hidden</option>
+          <option value="REGION_APPROXIMATE">Region approximate</option>
+          <option value="PRECISE_TEMPORARY">Precise temporary, 10 minutes</option>
+        </select>
+
+        <button id="locationButton" type="button">Enable local location</button>
+        <button id="orientationButton" type="button">Enable gyroscope</button>
+        <button id="nearbyButton" type="button">Check nearby capability</button>
+
+        <p class="boundary">Nothing here uploads coordinates, scans people or accesses Bluetooth/Wi-Fi. Real nearby networking requires an installed native client and explicit runtime permissions.</p>
+      </aside>
+
+      <section class="glass world-stage" aria-label="Interactive 8x8 World">
+        <header class="stage-head">
+          <div><span>ZONE</span><b id="zoneName">GENESIS PLAZA</b></div>
+          <div><span>MODE</span><b id="movementMode">WALK</b></div>
+          <div><span>HEADING</span><b id="heading">0°</b></div>
+          <div><span>POSITION</span><b id="position">50, 54</b></div>
+        </header>
+
+        <div id="worldViewport" tabindex="0" aria-label="8x8 World movement field">
+          <div id="worldField">
+            <div class="road horizontal"></div>
+            <div class="road vertical"></div>
+            <div class="plaza-ring one"></div>
+            <div class="plaza-ring two"></div>
+            <div id="serviceLayer" aria-label="World services"></div>
+            <div id="avatar" data-mode="WALK" data-jump="false" role="img" aria-label="Local traveler avatar">
+              <div class="avatar-arrow">▲</div>
+              <div class="avatar-core">8×8</div>
+            </div>
+            <div id="locationPulse" hidden aria-label="Local device location enabled"></div>
+          </div>
+        </div>
+
+        <footer class="stage-foot">
+          <span>SYNTHETIC SERVICES</span>
+          <span>ZERO REMOTE PLAYERS</span>
+          <span>NO NETWORK POSITION STREAM</span>
+        </footer>
+      </section>
+
+      <aside class="glass panel inspector-panel" aria-live="polite">
+        <p class="eyebrow">WORLD INSPECTOR</p>
+        <h2 id="inspectorTitle">Select a service bubble</h2>
+        <p id="inspectorSummary">Services are previews until their exact backend, identity, payment and safety gates pass.</p>
+        <dl id="inspectorFacts"></dl>
+        <button id="missionButton" type="button" disabled>Draft agent mission</button>
+
+        <section class="nearby-panel">
+          <h3>Nearby</h3>
+          <p><b>0</b> verified live users</p>
+          <p><b>5</b> synthetic service beacons</p>
+          <p id="nearbyStatus">Scan not requested</p>
+        </section>
+      </aside>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="glass card">
+        <p class="eyebrow">REAL-WORLD LINK</p>
+        <h2>Local location</h2>
+        <p id="locationText">Permission not requested. Default presence remains hidden.</p>
+        <div class="link-row">
+          <a id="googleMapsLink" href="#" aria-disabled="true">Google Maps</a>
+          <a id="appleMapsLink" href="#" aria-disabled="true">Apple Maps</a>
+        </div>
+      </article>
+
+      <article class="glass card">
+        <p class="eyebrow">8x8 ID</p>
+        <h2>Owner preview</h2>
+        <p><b>0000000001</b> · FlashTM8</p>
+        <p>Public identity preview only. Face, passkey, voice, fingerprint and authenticator enrollment are not connected to this route.</p>
+        <button id="identityButton" type="button">View identity requirements</button>
+      </article>
+
+      <article class="glass card">
+        <p class="eyebrow">COMMUNICATIONS</p>
+        <h2>Chat and calls</h2>
+        <p>8x8-ID chat, voice, video and agent-to-agent missions require verified identities, abuse controls and a communication backend.</p>
+        <div class="disabled-actions"><button type="button" disabled>Chat</button><button type="button" disabled>Call</button></div>
+      </article>
+
+      <article class="glass card">
+        <p class="eyebrow">ECONOMY</p>
+        <h2>Testnet-first commerce</h2>
+        <p>Marketplace, NFTs, vaults and creator shops are catalog previews. Payment and signing remain disabled.</p>
+        <a href="/art-board/">Open public economy map</a>
+      </article>
+
+      <article class="glass card">
+        <p class="eyebrow">DEVELOPER PORT</p>
+        <h2>Bring your intelligence</h2>
+        <p>Tools, dashboards, agents and operating systems can appear as governed bubbles after provenance, permission, security, compatibility and rollback review.</p>
+        <button id="pluginButton" type="button">Open plugin gate</button>
+      </article>
+
+      <article class="glass card">
+        <p class="eyebrow">ARENA</p>
+        <h2>Competition worlds</h2>
+        <p>1v1, 5v5 and large-player modes are design previews. Fair matchmaking, moderation, anti-cheat, age controls and server authority come before public matches.</p>
+        <button id="arenaButton" type="button">View arena roadmap</button>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="modal">
+    <button id="closeModal" type="button" aria-label="Close">×</button>
+    <p class="eyebrow" id="modalEyebrow">8x8 WORLD</p>
+    <h2 id="modalTitle">Information</h2>
+    <div id="modalBody"></div>
+  </dialog>
+
+  <script type="module" src="/world/app.js"></script>
+</body>
+</html>
