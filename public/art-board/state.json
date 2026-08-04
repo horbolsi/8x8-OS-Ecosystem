@@ -1,0 +1,44 @@
+{
+  "schema_version": "8x8.public-art-board.v1",
+  "release_unit_id": "public-global-art-board-v1",
+  "mode": "PUBLIC_SAFE_FIXTURE",
+  "truth_banner": "PUBLIC-SAFE PREVIEW FIXTURE — NO PRIVATE CONTROL PLANE — NO LIVE USER TRACKING",
+  "observed_at": "2026-08-04T19:45:00Z",
+  "score": {
+    "earned": 100,
+    "possible": 100,
+    "scope": "Static public Global Art Board preview only",
+    "whole_system_score": "NOT_INFERRED"
+  },
+  "worlds": [
+    {"id":"core","label":"Core & Governance","status":"GREEN","evidence":"TESTED","score":100,"summary":"Public truth, release and permission contracts."},
+    {"id":"agents","label":"Agents & Personas","status":"YELLOW","evidence":"DESIGNED","score":42,"summary":"Public archetypes exist; full fleet truth remains private and incomplete."},
+    {"id":"models","label":"Models & Intelligence","status":"BLACK","evidence":"UNKNOWN","score":0,"summary":"No public claim of the private model pool."},
+    {"id":"public-product","label":"Public Product","status":"GREEN","evidence":"TESTED","score":100,"summary":"This static Art Board preview is implemented and tested."},
+    {"id":"connectors","label":"Connectors & Platforms","status":"ORANGE","evidence":"IMPLEMENTED","score":58,"summary":"Contracts exist; live canaries remain separate."},
+    {"id":"creation","label":"Studio & Creation","status":"PURPLE","evidence":"DESIGNED","score":30,"summary":"Creation surfaces are planned; publishing is not active here."},
+    {"id":"markets","label":"Markets & Treasury","status":"BLACK","evidence":"NOT_CONNECTED","score":0,"summary":"No addresses, balances, signing or payments are exposed."},
+    {"id":"worlds","label":"Maps, Worlds & Simulation","status":"CYAN","evidence":"IMPLEMENTED","score":64,"summary":"Interactive public-safe world topology and simulated regions."}
+  ],
+  "nodes": [
+    {"id":"user-edition","world":"public-product","label":"8x8 User Edition","status":"GREEN","type":"REPOSITORY","description":"Canonical public source for the static client."},
+    {"id":"protocol","world":"core","label":"8x8 Protocol","status":"CYAN","type":"REPOSITORY","description":"Public release, plugin, privacy and world contracts."},
+    {"id":"seraphim","world":"agents","label":"Seraphim","status":"PURPLE","type":"GUIDE","description":"Public onboarding guide archetype; no private runtime claim."},
+    {"id":"plugins","world":"connectors","label":"8x8-Compatible Plugins","status":"CYAN","type":"PLUGIN","description":"Deny-by-default capability-scoped developer extensions."},
+    {"id":"presence","world":"worlds","label":"Global Presence","status":"CYAN","type":"MAP","description":"Opt-in approximate presence; this preview contains zero users."},
+    {"id":"treasury","world":"markets","label":"Treasury Public View","status":"BLACK","type":"TREASURY","description":"Network policy only; balances and wallet data are disabled."}
+  ],
+  "presence_clusters": [
+    {"label":"West Africa demo region","x":48,"y":57,"count":0},
+    {"label":"France demo region","x":51,"y":35,"count":0},
+    {"label":"India demo region","x":68,"y":52,"count":0},
+    {"label":"North America demo region","x":25,"y":38,"count":0}
+  ],
+  "treasury": {
+    "status": "NOT_CONNECTED",
+    "public_balances": false,
+    "wallet_addresses": false,
+    "signing_authority": false,
+    "networks": ["Bitcoin","Monero","Ethereum","BNB Smart Chain","Solana","TON","Pi Network"]
+  }
+}
