@@ -26,12 +26,15 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Install exact declared runtime dependencies without scripts
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Validate JSON and JavaScript syntax
@@ -48,3 +51,28 @@ jobs:
             exit 1
           fi
           echo 'ART_BOARD_PUBLIC_BOUNDARY=PASS'
+      - name: Verify exact canonical User Edition source
+        env:
+          USER_EDITION_COMMIT: 5f7ad54047a4074d2da8db140d5e45345e6d5990
+        run: |
+          git init -q /tmp/8x8-user-edition
+          git -C /tmp/8x8-user-edition remote add origin https://github.com/8x8org/8x8-user-edition.git
+          git -C /tmp/8x8-user-edition fetch --depth 1 origin "$USER_EDITION_COMMIT"
+          git -C /tmp/8x8-user-edition checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/8x8-user-edition rev-parse HEAD)" = "$USER_EDITION_COMMIT"
+          python3 -m unittest discover -s /tmp/8x8-user-edition/tests -p 'test_art_board.py' -v
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('/tmp/8x8-user-edition/art-board')
+          release = json.loads((root / 'release-unit.json').read_text())
+          assert release['truth_state'] == 'PROTECTED_PREVIEW_DEPLOYED'
+          assert release['score']['earned'] == 100
+          assert release['score']['possible'] == 100
+          assert release['gates']['public_production_release'] is False
+          assert release['deployment']['commit'] == 'dba1ec6ce6ccb729e4c1d71b9d604f21aa767beb'
+          assert release['validation']['github_actions_conclusion'] == 'SUCCESS'
+          assert release['validation']['vercel_build'] == 'READY'
+          assert release['whole_system_completion_inferred'] is False
+          print('CANONICAL_USER_EDITION_ART_BOARD=PASS')
+          PY
