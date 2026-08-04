@@ -36,7 +36,12 @@ try {
   assert.equal(page.response.status, 200);
   assert.match(page.text, /8x8 Global Art Board Preview/);
   assert.match(page.text, /SERAPHIM PUBLIC GUIDE/);
-  assert.match(page.response.headers.get("content-security-policy") || "", /default-src 'self'/);
+  const csp = page.response.headers.get("content-security-policy") || "";
+  assert.match(csp, /default-src 'self'/);
+  assert.match(csp, /script-src 'self'/);
+  assert.doesNotMatch(csp, /script-src 'self' 'unsafe-inline'/);
+  assert.match(csp, /style-src-elem 'self'/);
+  assert.match(csp, /style-src-attr 'unsafe-inline'/);
   assert.equal(page.response.headers.get("x-frame-options"), "DENY");
   assert.equal(
     page.response.headers.get("permissions-policy"),
@@ -54,6 +59,14 @@ try {
   assert.equal(script.response.status, 200);
   assert.doesNotMatch(script.text, /navigator\.geolocation|WebSocket\(|EventSource\(|document\.cookie|localStorage\.setItem/);
   assert.match(script.text, /PUBLIC_SAFE_FIXTURE/);
+  assert.match(script.text, /function boundedPercent/);
+  assert.match(script.text, /Number\.isFinite/);
+  assert.match(script.text, /record \?\? \{\}/);
+  assert.match(script.text, /pointercancel/);
+  assert.match(script.text, /lostpointercapture/);
+  for (const escaped of ["&amp;", "&lt;", "&gt;", "&quot;", "&#39;"]) {
+    assert.match(script.text, new RegExp(escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  }
 
   const styles = await request("/art-board/styles.css");
   assert.equal(styles.response.status, 200);
@@ -72,6 +85,7 @@ try {
     live_users: 0,
     wallet_data: false,
     private_control_plane: false,
+    reviewer_remediations: "PASS",
   }));
 } finally {
   await new Promise((resolve) => server.close(resolve));
