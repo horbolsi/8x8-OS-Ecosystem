@@ -1,0 +1,50 @@
+name: MSG218 Art Board Preview
+
+on:
+  pull_request:
+    paths:
+      - "public/art-board/**"
+      - "test/art-board-smoke.mjs"
+      - "test/beta-smoke.mjs"
+      - "server/**"
+      - "package.json"
+      - ".github/workflows/msg218-art-board-preview.yml"
+  push:
+    branches:
+      - "feature/msg218-public-art-board-preview-v1"
+    paths:
+      - "public/art-board/**"
+      - "test/art-board-smoke.mjs"
+      - "test/beta-smoke.mjs"
+      - "server/**"
+      - "package.json"
+      - ".github/workflows/msg218-art-board-preview.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install exact declared runtime dependencies without scripts
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate JSON and JavaScript syntax
+        run: |
+          python3 -m json.tool public/art-board/state.json >/dev/null
+          node --check public/art-board/app.js
+          node --check test/art-board-smoke.mjs
+      - name: Run existing beta and Art Board smoke suites
+        run: npm test
+      - name: Scan Art Board for private or active-finance material
+        run: |
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|seed phrase|private key|wallet address|/root/|127\.0\.0\.1|localhost:|gho_|sk-[A-Za-z0-9])' public/art-board; then
+            echo 'Art Board public-boundary scan failed'
+            exit 1
+          fi
+          echo 'ART_BOARD_PUBLIC_BOUNDARY=PASS'
