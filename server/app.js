@@ -77,8 +77,6 @@ app.use((req, res, next) => {
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self'",
-    "style-src-elem 'self'",
-    "style-src-attr 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",
     "connect-src 'self'",
@@ -116,15 +114,8 @@ app.get("/api/v1/cloud-relay", (_req, res) => {
   });
 });
 
-app.post(
-  "/api/telegram/owner",
-  createTelegramWebhookHandler("owner"),
-);
-
-app.post(
-  "/api/telegram/seraphim",
-  createTelegramWebhookHandler("seraphim"),
-);
+app.post("/api/telegram/owner", createTelegramWebhookHandler("owner"));
+app.post("/api/telegram/seraphim", createTelegramWebhookHandler("seraphim"));
 
 app.get("/api/v1/public/state", (_req, res) => {
   res.json({
@@ -160,7 +151,9 @@ const blockedExactPaths = new Set([
 ]);
 
 app.use((req, res, next) => {
-  const pathBlocked = req.path.startsWith("/api/v1/private/") || req.path.startsWith("/api/admin/") || blockedExactPaths.has(req.path);
+  const pathBlocked = req.path.startsWith("/api/v1/private/")
+    || req.path.startsWith("/api/admin/")
+    || blockedExactPaths.has(req.path);
   if (!pathBlocked) {
     next();
     return;
