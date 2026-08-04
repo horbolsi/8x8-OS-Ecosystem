@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050816">
+  <meta name="description" content="8x8 Global Art Board public-safe preview.">
+  <title>8x8 Global Art Board Preview</title>
+  <link rel="stylesheet" href="/art-board/styles.css">
+</head>
+<body>
+  <header class="topbar glass">
+    <a href="/" class="brand">8×8 <small>GLOBAL ART BOARD</small></a>
+    <strong id="truth">PUBLIC-SAFE PREVIEW</strong>
+    <nav aria-label="Art Board controls">
+      <button id="minus" aria-label="Zoom out">−</button>
+      <button id="reset" aria-label="Reset zoom">100%</button>
+      <button id="plus" aria-label="Zoom in">+</button>
+      <button id="map" aria-pressed="false">Map</button>
+      <button id="help">Help</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="welcome glass">
+      <div class="guide">✦</div>
+      <div><p>SERAPHIM PUBLIC GUIDE</p><h1>Explore the 8x8 public universe.</h1><span>Every color is tied to public evidence. Green is complete only inside the displayed slice.</span></div>
+      <div class="score"><b>100/100</b><small>STATIC PREVIEW SLICE</small></div>
+    </section>
+
+    <section class="shell">
+      <aside class="glass panel"><h2>Status</h2><div id="legend"></div><input id="filter" type="search" placeholder="Filter worlds and nodes" aria-label="Filter worlds and nodes"><p class="boundary">No private core, users, precise locations, balances or wallet authority are connected.</p></aside>
+      <section class="glass stage">
+        <div id="viewport" tabindex="0" aria-label="Zoomable Art Board">
+          <div id="board">
+            <div class="orbit a"></div><div class="orbit b"></div>
+            <button class="core" data-node="user-edition"><b>8×8</b><small>PUBLIC CORE</small></button>
+            <div id="worlds"></div><div id="nodes"></div>
+            <div id="mapLayer" hidden><div class="grid"></div><div id="clusters"></div><p>SIMULATED REGIONS • ZERO USERS • NO TRACKING</p></div>
+          </div>
+        </div>
+        <footer><span>ZOOM <b id="zoom">100%</b></span><span>MODE <b id="mode">ART BOARD</b></span><span>PRIVATE CORE <b>DISCONNECTED</b></span></footer>
+      </section>
+      <aside class="glass panel inspector" aria-live="polite"><p>INSPECTOR</p><h2 id="title">Select a bubble</h2><span id="summary">Inspect public evidence and status.</span><dl id="facts"></dl><button id="evidence" disabled>Show evidence</button></aside>
+    </section>
+
+    <section class="widgets">
+      <article class="glass"><h2>Release unit</h2><p>This preview slice is 100/100 inside its static public scope. It does not claim the whole system is finished.</p></article>
+      <article class="glass"><h2>Treasury view</h2><div id="treasury"></div></article>
+      <article class="glass"><h2>Developer extensions</h2><p>8x8-compatible plugins require deny-by-default permissions, capabilities, limits, provenance, tests and rollback.</p></article>
+      <article class="glass"><h2>Presence privacy</h2><p>Future maps are opt-in and approximate by default. Precise temporary presence requires explicit consent and expiry.</p></article>
+    </section>
+  </main>
+
+  <dialog id="modal"><button id="close" aria-label="Close">×</button><h2 id="modalTitle">Evidence</h2><pre id="modalBody"></pre></dialog>
+  <script type="module" src="/art-board/app.js"></script>
+</body>
+</html>
