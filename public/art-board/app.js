@@ -17,12 +17,10 @@ const worldPositions = [
   [50, 12], [77, 25], [87, 51], [74, 77],
   [50, 87], [26, 77], [13, 51], [23, 25],
 ];
-
 const nodePositions = [
   [50, 31], [64, 41], [64, 60],
   [50, 69], [36, 60], [36, 41],
 ];
-
 const colors = {
   GREEN: "Healthy or release-ready in scope",
   CYAN: "Verified information or read-only",
@@ -33,16 +31,6 @@ const colors = {
   PURPLE: "Planned or experimental",
 };
 
-function escapeText(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  }[character]));
-}
-
 function safeToken(value) {
   return String(value ?? "").replace(/[^A-Za-z0-9_-]/g, "") || "UNKNOWN";
 }
@@ -51,6 +39,39 @@ function boundedPercent(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return 0;
   return Math.min(100, Math.max(0, numeric));
+}
+
+function createNode(tag, options = {}) {
+  const element = document.createElement(tag);
+  if (options.className) element.className = options.className;
+  if (options.text !== undefined) element.textContent = String(options.text);
+  if (options.title !== undefined) element.title = String(options.title);
+  for (const [name, value] of Object.entries(options.attributes || {})) {
+    element.setAttribute(name, String(value));
+  }
+  for (const child of options.children || []) {
+    if (child) element.append(child);
+  }
+  return element;
+}
+
+function replaceChildren(target, children) {
+  target.replaceChildren(...children.filter(Boolean));
+}
+
+function position(element, x, y, centered = false) {
+  element.style.left = `${boundedPercent(x)}%`;
+  element.style.top = `${boundedPercent(y)}%`;
+  if (centered) element.style.transform = "translate(-50%,-50%)";
+}
+
+function labelledParagraph(label, value) {
+  return createNode("p", {
+    children: [
+      createNode("b", { text: `${label}: ` }),
+      document.createTextNode(String(value ?? "")),
+    ],
+  });
 }
 
 function applyTransform() {
@@ -67,51 +88,113 @@ function setZoom(value) {
   applyTransform();
 }
 
+function addFact(fragment, label, value) {
+  if (value === undefined || value === null || value === "") return;
+  fragment.append(
+    createNode("dt", { text: label }),
+    createNode("dd", { text: value }),
+  );
+}
+
 function inspect(item, type) {
   if (!item || typeof item !== "object") return;
   state.selected = { item, type };
   $("#title").textContent = item.label || item.id || "Unknown record";
   $("#summary").textContent = item.summary || item.description || "Public-safe record.";
-
-  const rows = [];
+  const fragment = document.createDocumentFragment();
   for (const [key, value] of Object.entries(item)) {
     if (["id", "label", "summary", "description"].includes(key) || typeof value === "object") continue;
-    rows.push(`<dt>${escapeText(key)}</dt><dd>${escapeText(value)}</dd>`);
+    addFact(fragment, key, value);
   }
-  $("#facts").innerHTML = rows.join("");
+  $("#facts").replaceChildren(fragment);
   $("#evidence").disabled = false;
 }
 
+function renderLegend() {
+  const entries = Object.entries(colors).map(([color, description]) => {
+    const marker = createNode("i", { className: safeToken(color) });
+    const text = createNode("span", {
+      children: [
+        createNode("b", { text: color }),
+        createNode("br"),
+        document.createTextNode(description),
+      ],
+    });
+    return createNode("div", { className: "legend", children: [marker, text] });
+  });
+  replaceChildren($("#legend"), entries);
+}
+
+function renderWorlds() {
+  const elements = state.data.worlds.map((world, index) => {
+    const [x, y] = worldPositions[index] || [50, 50];
+    const button = createNode("button", {
+      className: `world ${safeToken(world.status)}`,
+      attributes: { "data-world": world.id },
+      children: [
+        createNode("b", { text: world.label }),
+        createNode("small", { text: `${world.score}/100 • ${world.evidence}` }),
+      ],
+    });
+    position(button, x, y, true);
+    return button;
+  });
+  replaceChildren($("#worlds"), elements);
+}
+
+function renderNodes() {
+  const elements = state.data.nodes.map((record, index) => {
+    const [x, y] = nodePositions[index % nodePositions.length] || [50, 50];
+    const button = createNode("button", {
+      className: `node ${safeToken(record.status)}`,
+      text: record.label.slice(0, 2).toUpperCase(),
+      title: record.label,
+      attributes: { "data-node": record.id },
+    });
+    position(button, x, y, true);
+    return button;
+  });
+  replaceChildren($("#nodes"), elements);
+}
+
+function renderClusters() {
+  const elements = state.data.presence_clusters.map((cluster) => {
+    const button = createNode("button", {
+      className: "cluster",
+      attributes: {
+        "data-cluster": cluster.label,
+        "data-label": cluster.label,
+        "aria-label": `${cluster.label}, simulated, zero users`,
+      },
+    });
+    position(button, cluster.x, cluster.y);
+    return button;
+  });
+  replaceChildren($("#clusters"), elements);
+}
+
+function renderTreasury() {
+  const treasury = state.data.treasury;
+  replaceChildren($("#treasury"), [
+    labelledParagraph("Status", treasury.status),
+    labelledParagraph("Networks", treasury.networks.join(", ")),
+    createNode("p", {
+      children: [
+        document.createTextNode("Balances: hidden / unavailable"), createNode("br"),
+        document.createTextNode("Addresses: hidden / unavailable"), createNode("br"),
+        document.createTextNode("Signing: disabled"),
+      ],
+    }),
+  ]);
+}
+
 function render() {
-  const data = state.data;
-  $("#truth").textContent = data.truth_banner;
-  $("#legend").innerHTML = Object.entries(colors)
-    .map(([color, description]) => `<div class="legend"><i class="${safeToken(color)}"></i><span><b>${escapeText(color)}</b><br>${escapeText(description)}</span></div>`)
-    .join("");
-
-  $("#worlds").innerHTML = data.worlds.map((world, index) => {
-    const [rawX, rawY] = worldPositions[index] || [50, 50];
-    const x = boundedPercent(rawX);
-    const y = boundedPercent(rawY);
-    return `<button class="world ${safeToken(world.status)}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-world="${escapeText(world.id)}"><b>${escapeText(world.label)}</b><small>${escapeText(world.score)}/100 • ${escapeText(world.evidence)}</small></button>`;
-  }).join("");
-
-  $("#nodes").innerHTML = data.nodes.map((node, index) => {
-    const [rawX, rawY] = nodePositions[index % nodePositions.length] || [50, 50];
-    const x = boundedPercent(rawX);
-    const y = boundedPercent(rawY);
-    return `<button class="node ${safeToken(node.status)}" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)" data-node="${escapeText(node.id)}" title="${escapeText(node.label)}">${escapeText(node.label.slice(0, 2).toUpperCase())}</button>`;
-  }).join("");
-
-  $("#clusters").innerHTML = data.presence_clusters
-    .map((cluster) => {
-      const x = boundedPercent(cluster.x);
-      const y = boundedPercent(cluster.y);
-      return `<button class="cluster" style="left:${x}%;top:${y}%" data-cluster="${escapeText(cluster.label)}" data-label="${escapeText(cluster.label)}" aria-label="${escapeText(cluster.label)}, simulated, zero users"></button>`;
-    })
-    .join("");
-
-  $("#treasury").innerHTML = `<p><b>Status:</b> ${escapeText(data.treasury.status)}</p><p><b>Networks:</b> ${data.treasury.networks.map(escapeText).join(", ")}</p><p>Balances: hidden / unavailable<br>Addresses: hidden / unavailable<br>Signing: disabled</p>`;
+  $("#truth").textContent = state.data.truth_banner;
+  renderLegend();
+  renderWorlds();
+  renderNodes();
+  renderClusters();
+  renderTreasury();
   applyTransform();
 }
 
@@ -155,17 +238,16 @@ function bindEvents() {
       element.hidden = Boolean(query && !JSON.stringify(record ?? {}).toLowerCase().includes(query));
     });
     $$(".node").forEach((element) => {
-      const record = state.data.nodes.find((node) => node.id === element.dataset.node);
+      const record = state.data.nodes.find((entry) => entry.id === element.dataset.node);
       element.hidden = Boolean(query && !JSON.stringify(record ?? {}).toLowerCase().includes(query));
     });
   });
-
   $("#board").addEventListener("click", (event) => {
     const worldButton = event.target.closest("[data-world]");
     const nodeButton = event.target.closest("[data-node]");
     const clusterButton = event.target.closest("[data-cluster]");
     if (worldButton) inspect(state.data.worlds.find((world) => world.id === worldButton.dataset.world), "world");
-    if (nodeButton) inspect(state.data.nodes.find((node) => node.id === nodeButton.dataset.node), "node");
+    if (nodeButton) inspect(state.data.nodes.find((entry) => entry.id === nodeButton.dataset.node), "node");
     if (clusterButton) inspect({ label: clusterButton.dataset.cluster, status: "CYAN", count: 0, mode: "SIMULATED_REGION_ONLY" }, "presence");
   });
 
@@ -207,6 +289,19 @@ function bindEvents() {
   });
 }
 
+function renderFailure(error) {
+  const panel = createNode("main", {
+    className: "glass panel",
+    children: [
+      createNode("h1", { text: "Art Board blocked" }),
+      createNode("p", { text: "Public state validation failed. Nothing was rendered." }),
+      createNode("pre", { text: error instanceof Error ? error.message : "Unknown error" }),
+    ],
+  });
+  panel.style.margin = "2rem";
+  document.body.replaceChildren(panel);
+}
+
 async function start() {
   try {
     const response = await fetch("/art-board/state.json", {
@@ -216,17 +311,15 @@ async function start() {
     });
     if (!response.ok) throw new Error(`state ${response.status}`);
     if (!(response.headers.get("content-type") || "").includes("json")) throw new Error("state is not JSON");
-
     state.data = await response.json();
     if (state.data.schema_version !== "8x8.public-art-board.v1") throw new Error("unsupported schema");
     if (state.data.mode !== "PUBLIC_SAFE_FIXTURE") throw new Error("invalid public state mode");
     if (state.data.score.earned !== 100 || state.data.score.possible !== 100) throw new Error("invalid release score");
     if (state.data.score.whole_system_score !== "NOT_INFERRED") throw new Error("whole-system score must remain uninferred");
-
     render();
     bindEvents();
   } catch (error) {
-    document.body.innerHTML = `<main class="glass panel" style="margin:2rem"><h1>Art Board blocked</h1><p>Public state validation failed. Nothing was rendered.</p><pre>${escapeText(error.message)}</pre></main>`;
+    renderFailure(error);
   }
 }
 
