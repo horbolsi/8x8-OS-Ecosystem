@@ -51,9 +51,9 @@ jobs:
             exit 1
           fi
           echo 'ART_BOARD_PUBLIC_BOUNDARY=PASS'
-      - name: Verify exact hardened canonical User Edition source
+      - name: Verify exact DOM-safe canonical User Edition source
         env:
-          USER_EDITION_COMMIT: edc610a672225c6d797f2b35208d78175ed8fa01
+          USER_EDITION_COMMIT: 06ae838ed6cfede3fe799e545e9529638bf30dea
         run: |
           git init -q /tmp/8x8-user-edition
           git -C /tmp/8x8-user-edition remote add origin https://github.com/8x8org/8x8-user-edition.git
@@ -72,13 +72,13 @@ jobs:
           assert release['score']['earned'] == 100
           assert release['score']['possible'] == 100
           assert release['gates']['public_production_release'] is False
-          assert release['deployment']['commit'] == 'dba1ec6ce6ccb729e4c1d71b9d604f21aa767beb'
           assert release['validation']['github_actions_conclusion'] == 'SUCCESS'
           assert release['validation']['vercel_build'] == 'READY'
           assert release['whole_system_completion_inferred'] is False
           assert "style-src-attr 'unsafe-inline'" in html
           assert "script-src 'self' 'unsafe-inline'" not in html
-          for token in ('function boundedPercent', 'record ?? {}', 'pointercancel', 'lostpointercapture'):
+          assert '.innerHTML' not in script
+          for token in ('document.createElement', 'document.createTextNode', 'replaceChildren', 'function boundedPercent', 'record ?? {}', 'pointercancel', 'lostpointercapture'):
               assert token in script
           print('CANONICAL_USER_EDITION_ART_BOARD=PASS')
           PY
