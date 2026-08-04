@@ -53,7 +53,7 @@ jobs:
           echo 'ART_BOARD_PUBLIC_BOUNDARY=PASS'
       - name: Verify exact DOM-safe canonical User Edition source
         env:
-          USER_EDITION_COMMIT: 54cd39363d512e7a4506883793a33a5696a1a21a
+          USER_EDITION_COMMIT: 6f8062b3d16711bbe31abe766276273eed28136f
         run: |
           git init -q /tmp/8x8-user-edition
           git -C /tmp/8x8-user-edition remote add origin https://github.com/8x8org/8x8-user-edition.git
