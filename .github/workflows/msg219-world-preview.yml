@@ -6,6 +6,7 @@ on:
       - "public/world/**"
       - "test/world-smoke.mjs"
       - "server/app.js"
+      - "vercel.json"
       - ".github/workflows/msg219-world-preview.yml"
   push:
     branches:
@@ -14,6 +15,7 @@ on:
       - "public/world/**"
       - "test/world-smoke.mjs"
       - "server/app.js"
+      - "vercel.json"
       - ".github/workflows/msg219-world-preview.yml"
 
 permissions:
@@ -37,13 +39,31 @@ jobs:
       - name: Install exact declared dependencies without scripts
         run: npm install --ignore-scripts --no-audit --no-fund
 
-      - name: Validate world syntax and fixtures
+      - name: Validate world syntax, fixtures and deployment configuration
         run: |
           set -Eeuo pipefail
           node --check public/world/app.js
           node --check test/world-smoke.mjs
           python3 -m json.tool public/world/state.json >/dev/null
           python3 -m json.tool public/world/manifest.webmanifest >/dev/null
+          python3 -m json.tool vercel.json >/dev/null
+          python3 - <<'PY'
+          import json
+          data = json.load(open('vercel.json', encoding='utf-8'))
+          rules = [item for item in data['headers'] if item['source'] == '/world/:path*']
+          assert len(rules) == 1
+          headers = {item['key'].lower(): item['value'] for item in rules[0]['headers']}
+          assert "default-src 'self'" in headers['content-security-policy']
+          assert "unsafe-inline" not in headers['content-security-policy']
+          assert 'geolocation=(self)' in headers['permissions-policy']
+          assert 'gyroscope=(self)' in headers['permissions-policy']
+          assert 'microphone=()' in headers['permissions-policy']
+          assert 'camera=()' in headers['permissions-policy']
+          assert 'bluetooth=()' in headers['permissions-policy']
+          assert headers['x-frame-options'] == 'DENY'
+          assert headers['referrer-policy'] == 'no-referrer'
+          print('VERCEL_WORLD_HEADERS=PASS')
+          PY
 
       - name: Run existing beta tests
         run: npm test
@@ -62,8 +82,8 @@ jobs:
             echo 'Unsafe browser-world capability detected'
             exit 1
           fi
-          grep -F 'geolocation=(self)' server/app.js
-          grep -F 'gyroscope=(self)' server/app.js
-          grep -F 'bluetooth=()' server/app.js
+          grep -F 'geolocation=(self)' server/app.js vercel.json
+          grep -F 'gyroscope=(self)' server/app.js vercel.json
+          grep -F 'bluetooth=()' server/app.js vercel.json
           grep -F 'live_users: 0' server/app.js
           echo 'PUBLIC_8X8_WORLD_BOUNDARY=PASS'
