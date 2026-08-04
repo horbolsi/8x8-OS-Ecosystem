@@ -77,6 +77,8 @@ app.use((req, res, next) => {
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self'",
+    "style-src-elem 'self'",
+    "style-src-attr 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",
     "connect-src 'self'",
