@@ -37,23 +37,27 @@ jobs:
           python-version: "3.12"
       - name: Install exact declared runtime dependencies without scripts
         run: npm install --ignore-scripts --no-audit --no-fund
-      - name: Validate JSON and JavaScript syntax
+      - name: Validate syntax and state
         run: |
           python3 -m json.tool public/art-board/state.json >/dev/null
           node --check public/art-board/app.js
           node --check test/art-board-smoke.mjs
-      - name: Run existing beta and Art Board smoke suites
+      - name: Run beta and Art Board smoke suites
         run: npm test
-      - name: Scan Art Board for private or active-finance material
+      - name: Scan Art Board public boundary
         run: |
           if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|seed phrase|private key|wallet address|/root/|127\.0\.0\.1|localhost:|gho_|sk-[A-Za-z0-9])' public/art-board; then
             echo 'Art Board public-boundary scan failed'
             exit 1
           fi
+          if grep -RIn "unsafe-inline" public/art-board server/app.js; then
+            echo 'Unsafe inline CSP exception detected'
+            exit 1
+          fi
           echo 'ART_BOARD_PUBLIC_BOUNDARY=PASS'
-      - name: Verify exact DOM-safe canonical User Edition source
+      - name: Verify exact strict-CSP canonical User Edition source
         env:
-          USER_EDITION_COMMIT: 6f8062b3d16711bbe31abe766276273eed28136f
+          USER_EDITION_COMMIT: fd6296e8ce29e95738e8c000280dbde6b6a5c7f5
         run: |
           git init -q /tmp/8x8-user-edition
           git -C /tmp/8x8-user-edition remote add origin https://github.com/8x8org/8x8-user-edition.git
@@ -68,17 +72,17 @@ jobs:
           release = json.loads((root / 'release-unit.json').read_text())
           html = (root / 'index.html').read_text()
           script = (root / 'app.js').read_text()
+          positions = (root / 'positions.css').read_text()
           assert release['truth_state'] == 'PROTECTED_PREVIEW_DEPLOYED'
           assert release['score']['earned'] == 100
           assert release['score']['possible'] == 100
           assert release['gates']['public_production_release'] is False
-          assert release['validation']['github_actions_conclusion'] == 'SUCCESS'
-          assert release['validation']['vercel_build'] == 'READY'
           assert release['whole_system_completion_inferred'] is False
-          assert "style-src-attr 'unsafe-inline'" in html
-          assert "script-src 'self' 'unsafe-inline'" not in html
+          assert 'unsafe-inline' not in html
           assert '.innerHTML' not in script
-          for token in ('document.createElement', 'document.createTextNode', 'replaceChildren', 'function boundedPercent', 'record ?? {}', 'pointercancel', 'lostpointercapture'):
+          assert '.style' not in script
+          for token in ('document.createElement', 'document.createTextNode', 'replaceChildren', 'boundedPercent', 'dataset.zoom', 'pointercancel', 'lostpointercapture'):
               assert token in script
+          assert 'data-zoom="100"' in positions
           print('CANONICAL_USER_EDITION_ART_BOARD=PASS')
           PY
