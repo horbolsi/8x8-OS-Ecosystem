@@ -7,6 +7,7 @@
   <meta name="description" content="8x8 Global Art Board public-safe preview.">
   <title>8x8 Global Art Board Preview</title>
   <link rel="stylesheet" href="/art-board/styles.css">
+  <link rel="stylesheet" href="/art-board/positions.css">
 </head>
 <body>
   <header class="topbar glass">
@@ -32,7 +33,7 @@
       <aside class="glass panel"><h2>Status</h2><div id="legend"></div><input id="filter" type="search" placeholder="Filter worlds and nodes" aria-label="Filter worlds and nodes"><p class="boundary">No private core, users, precise locations, balances or wallet authority are connected.</p></aside>
       <section class="glass stage">
         <div id="viewport" tabindex="0" aria-label="Zoomable Art Board">
-          <div id="board">
+          <div id="board" data-zoom="100">
             <div class="orbit a"></div><div class="orbit b"></div>
             <button class="core" data-node="user-edition"><b>8×8</b><small>PUBLIC CORE</small></button>
             <div id="worlds"></div><div id="nodes"></div>
