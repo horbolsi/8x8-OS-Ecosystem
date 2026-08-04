@@ -35,12 +35,14 @@ try {
   assert.equal(health.json.release_id, RELEASE.release_id);
   assert.equal(health.json.mutation_routes_enabled, false);
   assert.equal(health.json.cloud_telegram_relay, "BOUNDED_V1");
+  assert.equal(health.json.public_world_preview, "LOCAL_ONLY_V1");
 
   const release = await request("/api/v1/release");
   assert.equal(release.response.status, 200);
   assert.equal(release.json.public_mode, true);
   assert.equal(release.json.private_data_mounted, false);
   assert.equal(release.json.credential_access_enabled, false);
+  assert.equal(release.json.public_world_preview, "LOCAL_ONLY_V1");
   assert.match(release.json.integrity, /^[a-f0-9]{24}$/);
 
   const relay = await request("/api/v1/cloud-relay");
@@ -127,14 +129,19 @@ try {
   assert.match(root.text, /8x8 OS — Dual Monitor Beta/);
   assert.match(root.response.headers.get("content-security-policy") || "", /default-src 'self'/);
   assert.equal(root.response.headers.get("x-frame-options"), "DENY");
-  assert.equal(root.response.headers.get("permissions-policy"), "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+  assert.equal(
+    root.response.headers.get("permissions-policy"),
+    "camera=(), microphone=(), geolocation=(), accelerometer=(), gyroscope=(), magnetometer=(), payment=(), usb=(), bluetooth=()",
+  );
 
   console.log(JSON.stringify({
     status: "PASS",
     release_id: RELEASE.release_id,
-    tests: 38,
+    tests: 41,
     public_private_boundary: "PASS",
     cloud_telegram_relay: "BOUNDED_NOT_CONFIGURED",
+    public_world_preview: "LOCAL_ONLY_V1",
+    root_sensor_permissions: "DENIED",
     mutation_routes: "DISABLED",
     credential_access: "DISABLED",
   }));
