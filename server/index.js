@@ -1,161 +1,150 @@
-// server/index.js — Plain JavaScript entry point for Render
-// No TypeScript, no tsx required
+// Public-safe compatibility server for the 8x8 OS companion repository.
+// The canonical implementation is https://github.com/horbolsi/8x8.
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import crypto from "crypto";
-import http from "http";
 
 const app = express();
-const port = parseInt(process.env.HUB_PORT || "3000", 10);
+const port = Number.parseInt(process.env.HUB_PORT || "3000", 10);
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:8086")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
 
-app.use(cors());
-app.use(express.json({ limit: "1mb" }));
-
-app.use((req, res, next) => {
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Origin not allowed"));
+  },
+  credentials: false,
+}));
+app.use(express.json({ limit: "256kb" }));
+app.use((_req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Cache-Control", "no-store");
   next();
 });
 
-// Health
+const GATES = [
+  "FINANCIAL_EXECUTION",
+  "WALLET_OR_ASSET_MOVEMENT",
+  "PUBLIC_CONTENT_PUBLISH",
+  "EXTERNAL_MESSAGE_SEND",
+  "CREDENTIAL_CHANGE",
+  "PRODUCTION_MUTATION",
+  "DESTRUCTIVE_FILE_ACTION",
+  "AGENT_PERMISSION_ESCALATION",
+];
+
+const AGENTS = [
+  { id: "research", authority: "read-only" },
+  { id: "code", authority: "proposal-only" },
+  { id: "security", authority: "read-only" },
+  { id: "operations", authority: "proposal-only" },
+  { id: "web3", authority: "simulation-only" },
+];
+
+function gate(res, action) {
+  return res.status(403).json({
+    success: false,
+    code: "PUBLIC_DEMO_GATED",
+    action,
+    truth_class: "LIVE",
+    message: "This companion public build is read-only. Use the canonical 8x8 repository for the current judge implementation.",
+  });
+}
+
+function plan(goal) {
+  const sensitive = /trade|buy|sell|transfer|wallet|withdraw|publish|post|message|email|credential|password|token|delete|deploy|restart|production/i.test(goal);
+  return {
+    summary: "A bounded compatibility plan was generated; no external action was executed.",
+    classification: sensitive ? "GATED" : "SAFE_TO_PLAN",
+    selected_agents: sensitive ? ["research", "security", "operations"] : ["research", "code"],
+    safe_actions: ["collect read-only evidence", "prepare a reviewable plan", "generate an audit receipt"],
+    gated_actions: sensitive ? ["sensitive execution requires exact human approval in a private authenticated runtime"] : [],
+    blocked_actions: ["financial, publishing, credential, destructive, and production actions were not executed"],
+  };
+}
+
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", service: "8x8-hub", ts: Date.now() });
+  res.json({
+    status: "ok",
+    service: "8x8-os-ecosystem-public-companion",
+    canonical_repository: "https://github.com/horbolsi/8x8",
+    mode: "public-demo",
+    truth_class: "LIVE",
+    sensitive_execution_enabled: false,
+    timestamp: new Date().toISOString(),
+  });
 });
 
-// Auth
-app.post("/api/hub/auth/telegram", (req, res) => {
-  const token = crypto.randomBytes(32).toString("hex");
-  res.json({ token, user: { telegram_id: 1950324763, role: "owner" } });
+app.get("/api/judge/info", (_req, res) => {
+  res.json({ agents: AGENTS, gates: GATES, sensitive_execution_enabled: false, truth_class: "LIVE" });
 });
-
-// AI
-app.post("/api/ai/chat", (req, res) => {
-  const lastMsg = req.body?.messages?.slice(-1)[0]?.content || "";
-  res.json({ reply: `Pioneer AI: ${lastMsg.substring(0, 80)}`, source: "hub" });
-});
-
-// Staking
-app.get("/api/staking", (_req, res) => {
-  res.json({ pools: [{ id: "default", name: "Default", apy: 12, minStake: 0.001 }] });
-});
-
-// Plans
-app.get("/api/hub/plans", (_req, res) => {
-  res.json({ plans: [
-    { id: "basic", name: "Basic", price: 4.99, currency: "USDT", duration_days: 30 },
-    { id: "pro", name: "Pro", price: 9.99, currency: "USDT", duration_days: 30 },
-    { id: "quarterly", name: "Quarterly", price: 8.88, currency: "USDT", duration_days: 90 },
-  ]});
-});
-
-// NFTs
-app.get("/api/nfts", (_req, res) => res.json({ nfts: [], count: 0, max: 8888888 }));
-app.post("/api/nfts/mint", (_req, res) => {
-  const tokenId = `TM8-${Date.now()}-${Math.floor(Math.random() * 9999)}`;
-  res.json({ tokenId, rarity: "Common", power: 5 });
-});
-
-// Wallet
-app.get("/api/wallet/status", (_req, res) => res.json({ connected: false, balance: 0 }));
-
-// Governance
-app.get("/api/governance", (_req, res) => res.json({ proposals: [] }));
-app.post("/api/governance", (req, res) => res.json({ id: Date.now(), ...req.body, status: "active" }));
-
-// Tokenomics
-app.get("/api/tokenomics", (_req, res) => res.json({ totalSupply: 888888888, stakingAPY: 12 }));
-
-// Platforms
+app.get("/api/gates", (_req, res) => res.json({ gates: GATES.map((name) => ({ name, state: "CLOSED" })), truth_class: "LIVE" }));
+app.get("/api/agents", (_req, res) => res.json({ agents: AGENTS, truth_class: "SIMULATED" }));
 app.get("/api/platforms/status", (_req, res) => res.json({
-  trading: { status: "online", exchange: "BitGet" },
-  staking: { status: "online" },
-  nft: { status: "online" },
-  governance: { status: "online" },
+  platforms: {
+    trading: { status: "simulation-only", truth_class: "LIVE" },
+    telegram: { status: "not-connected", truth_class: "UNKNOWN" },
+    discord: { status: "not-connected", truth_class: "UNKNOWN" },
+    production: { status: "not-exposed", truth_class: "LIVE" },
+  },
 }));
+app.get("/api/system/stats", (_req, res) => res.json({ system: {}, truth_class: "UNKNOWN", message: "Private device metrics are not exposed." }));
 
-// Leaderboard
-app.get("/api/leaderboard", (_req, res) => res.json({ leaderboard: [] }));
-
-// Activity
-app.get("/api/activity", (_req, res) => res.json({ activities: [] }));
-
-// Settings
-app.get("/api/hub/settings", (_req, res) => res.json({ freeMinutes: { minutes: 60 } }));
-
-// Admin
-app.post("/api/admin/verify", (req, res) => {
-  if (req.body.secret === (process.env.ADMIN_SECRET || "8x8.FlashTM8.015392@X8"))
-    return res.json({ success: true, role: "admin" });
-  res.status(403).json({ error: "Invalid" });
+app.post("/api/judge/plan", (req, res) => {
+  const goal = typeof req.body?.goal === "string" ? req.body.goal.trim() : "";
+  if (!goal) return res.status(400).json({ error: "goal is required" });
+  if (goal.length > 4000) return res.status(413).json({ error: "goal is too long" });
+  res.json({
+    plan: plan(goal),
+    audit: {
+      receipt_id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      input_sha256: crypto.createHash("sha256").update(goal).digest("hex"),
+      truth_class: "SIMULATED",
+      executed_actions: [],
+      sensitive_actions_executed: false,
+    },
+    executed: false,
+  });
 });
 
-// Trade
-app.post("/api/trade", (_req, res) => res.json({ success: true, txHash: "0x" + crypto.randomBytes(32).toString("hex") }));
-
-// Game
-app.post("/api/game", (_req, res) => res.json({ success: true, won: Math.random() > 0.5 }));
-
-// Live stream
-app.get("/api/live/stream", (req, res) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.write(`data: ${JSON.stringify({ event: "connected" })}\n\n`);
-  const interval = setInterval(() => res.write(`data: ${JSON.stringify({ event: "heartbeat" })}\n\n`), 15000);
-  req.on("close", () => clearInterval(interval));
-});
-app.get("/api/live/snapshot", (_req, res) => res.json({ events: [], count: 0 }));
-
-// System stats
-app.get("/api/system/stats", async (_req, res) => {
-  const os = await import("os");
-  res.json({ system: { cpu: "8%", memory: "45%", uptime: "2h", timestamp: Date.now() } });
+app.post("/api/ai/chat", (req, res) => {
+  const messages = Array.isArray(req.body?.messages) ? req.body.messages : [];
+  const goal = String(messages.at(-1)?.content || "").trim();
+  if (!goal) return res.status(400).json({ error: "message content is required" });
+  const result = plan(goal);
+  res.json({ reply: result.summary, plan: result, truth_class: "SIMULATED", source: "public-fixture" });
 });
 
-// Blockchain
-app.get("/api/blockchain/transactions", (_req, res) => res.json({ transactions: [] }));
-app.post("/api/blockchain/transactions", (_req, res) => res.json({ txHash: "0x" + crypto.randomBytes(32).toString("hex"), status: "confirmed" }));
+const gatedPostRoutes = [
+  "/api/hub/auth/telegram", "/api/hub/auth/manual", "/api/hub/auth/verify", "/api/hub/auth/claim-owner",
+  "/api/admin/verify", "/api/trade", "/api/stake", "/api/staking", "/api/nfts/mint",
+  "/api/governance", "/api/blockchain/transactions", "/api/social/posts", "/api/notes",
+  "/api/bubbles", "/api/hub/subscribe", "/api/referral", "/api/game", "/api/wallet-addresses",
+  "/api/admin/wallet-addresses",
+];
+for (const route of gatedPostRoutes) app.post(route, (_req, res) => gate(res, route));
+app.delete("/api/notes/:id", (_req, res) => gate(res, "DELETE_NOTE"));
+app.delete("/api/wallet-addresses/:id", (_req, res) => gate(res, "DELETE_WALLET_ADDRESS"));
 
-// Social
-app.get("/api/social/posts", (_req, res) => res.json({ posts: [] }));
-app.post("/api/social/posts", (req, res) => res.json({ id: Date.now(), ...req.body }));
+app.get("/api/staking", (_req, res) => res.json({ pools: [], truth_class: "SIMULATED" }));
+app.get("/api/nfts", (_req, res) => res.json({ nfts: [], count: 0, truth_class: "SIMULATED" }));
+app.get("/api/governance", (_req, res) => res.json({ proposals: [], truth_class: "SIMULATED" }));
+app.get("/api/blockchain/transactions", (_req, res) => res.json({ transactions: [], truth_class: "SIMULATED" }));
+app.get("/api/social/posts", (_req, res) => res.json({ posts: [], truth_class: "SIMULATED" }));
+app.get("/api/notes", (_req, res) => res.json({ notes: [], truth_class: "SIMULATED" }));
+app.get("/api/wallet/status", (_req, res) => res.json({ connected: false, balance: null, truth_class: "UNKNOWN" }));
 
-// Notes
-app.get("/api/notes", (_req, res) => res.json({ notes: [] }));
-app.post("/api/notes", (req, res) => res.json({ id: Date.now(), ...req.body }));
-app.delete("/api/notes/:id", (_req, res) => res.json({ success: true }));
+app.use((_req, res) => res.status(404).json({ error: "Not found" }));
+app.use((_error, _req, res, _next) => res.status(500).json({ error: "Internal server error" }));
 
-// Bubbles
-app.get("/api/bubbles", (_req, res) => res.json({ bubbles: [] }));
-app.post("/api/bubbles", (req, res) => res.json({ id: Date.now(), ...req.body }));
-
-// Events
-app.get("/api/hub/events", (_req, res) => res.json({ events: [] }));
-
-// Subscribe
-app.post("/api/hub/subscribe", (_req, res) => res.json({ success: true }));
-
-// Session heartbeat
-app.post("/api/hub/session/heartbeat", (_req, res) => res.json({ usageSeconds: 0, blocked: false }));
-
-// Auth verify
-app.post("/api/hub/auth/verify", (_req, res) => res.json({ user: { role: "owner" } }));
-
-// Claim owner
-app.post("/api/hub/auth/claim-owner", (req, res) => {
-  if (req.body.secret === (process.env.ADMIN_SECRET || "8x8.FlashTM8.015392@X8"))
-    return res.json({ success: true, user: { role: "owner" } });
-  res.status(403).json({ error: "Invalid" });
-});
-
-// Wallet addresses
-app.get("/api/wallet-addresses", (_req, res) => res.json({ addresses: [] }));
-app.post("/api/admin/wallet-addresses", (_req, res) => res.json({ id: Date.now(), ...req.body }));
-
-// Stake/Referral
-app.post("/api/stake", (_req, res) => res.json({ success: true, txHash: "0x" + crypto.randomBytes(32).toString("hex") }));
-app.post("/api/referral", (_req, res) => res.json({ success: true }));
-
-const server = http.createServer(app);
-server.listen(port, "0.0.0.0", () => {
-  console.log(`8x8 Hub v2.0 running on port ${port} | Render`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`8x8 OS public companion listening on ${port} | sensitive_execution=false`);
 });
