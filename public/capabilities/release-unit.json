@@ -1,0 +1,48 @@
+{
+  "release_id": "MSG231-CAPABILITIES-OBSERVATORY-PREVIEW-V1",
+  "schema_version": "1.0.0",
+  "route": "/capabilities/",
+  "scope": "STATIC_PUBLIC_SAFE_MSG197_PROJECTION",
+  "score": {
+    "earned": 0,
+    "possible": 100,
+    "state": "PENDING_EXACT_HEAD_CI_AND_DEPLOYMENT",
+    "whole_system_score": "NOT_INFERRED"
+  },
+  "canonical_source": {
+    "repository": "8x8org/8x8-user-edition",
+    "commit": "52fbb2f4a4c19e1384e6c8a000f260ac54495750",
+    "path": "research/external-capabilities/CANDIDATE_STATUS_LEDGER_V3.json",
+    "blob_sha": "5b65b82dac605d83790edd0071ff5931a4b29f88"
+  },
+  "boundaries": {
+    "read_only": true,
+    "runtime_installation": false,
+    "production_alias_change": false,
+    "private_core_connection": false,
+    "credential_access": false,
+    "private_data": false,
+    "service_control": false,
+    "database_write": false,
+    "model_download": false,
+    "wallet_or_financial_action": false
+  },
+  "promotion_gates": {
+    "exact_head_ci": false,
+    "codeql": false,
+    "state_contract": false,
+    "privacy_and_security": false,
+    "accessibility": false,
+    "vercel_ready": false,
+    "route_http_200": false,
+    "exact_head_binding": false,
+    "rollback_recorded": true,
+    "owner_production_authorization": false
+  },
+  "rollback": {
+    "baseline_branch": "integration/public-8x8-v1",
+    "baseline_commit": "767f6a0d49f390dab71ec403be381699603bbcce",
+    "method": "close or revert the release PR; production alias remains unchanged"
+  },
+  "truth_state": "IMPLEMENTED_BRANCH_AWAITING_VALIDATION"
+}

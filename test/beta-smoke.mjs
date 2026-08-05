@@ -126,7 +126,8 @@ try {
 
   const root = await request("/");
   assert.equal(root.response.status, 200);
-  assert.match(root.text, /8x8 OS — Dual Monitor Beta/);
+  assert.match(root.text, /8x8 OS — Three-Monitor Public V1/);
+  assert.doesNotMatch(root.text, /8x8 OS — Dual Monitor Beta/);
   assert.match(root.response.headers.get("content-security-policy") || "", /default-src 'self'/);
   assert.equal(root.response.headers.get("x-frame-options"), "DENY");
   assert.equal(
@@ -137,7 +138,8 @@ try {
   console.log(JSON.stringify({
     status: "PASS",
     release_id: RELEASE.release_id,
-    tests: 41,
+    tests: 42,
+    public_identity: "THREE_MONITOR_PUBLIC_V1",
     public_private_boundary: "PASS",
     cloud_telegram_relay: "BOUNDED_NOT_CONFIGURED",
     public_world_preview: "LOCAL_ONLY_V1",
