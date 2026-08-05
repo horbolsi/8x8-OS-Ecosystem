@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test": "node test/beta-smoke.mjs && node test/art-board-smoke.mjs && node test/world-accessibility-smoke.mjs && node test/world-presence-consent-smoke.mjs && node test/scan-smoke.mjs && node test/plugins-smoke.mjs && node test/spatial-client-benchmark-smoke.mjs",
+    "test": "node test/beta-smoke.mjs && node test/art-board-smoke.mjs && node test/world-accessibility-smoke.mjs && node test/world-presence-consent-smoke.mjs && node test/seraphim-world-tour-smoke.mjs && node test/scan-smoke.mjs && node test/plugins-smoke.mjs && node test/spatial-client-benchmark-smoke.mjs",
     "check": "npm test"
   },
   "dependencies": {
