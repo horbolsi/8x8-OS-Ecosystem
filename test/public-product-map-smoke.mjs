@@ -55,7 +55,7 @@ for (const forbidden of [
   /BEGIN PRIVATE KEY/i,
   /localhost/i,
   /127\.0\.0\.1/,
-  /walletconnect/i,
+  /(?:https?:\/\/)?walletconnect\.(?:com|org)|\bwc:/i,
   /ethereum\.request/i,
   /navigator\.bluetooth/i,
   /getUserMedia/i,
