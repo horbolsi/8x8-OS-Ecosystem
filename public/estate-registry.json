@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "registryId": "8x8-public-estate-v1",
-  "generatedAt": "2026-08-05T21:24:00Z",
+  "generatedAt": "2026-08-05T21:56:00Z",
   "branch": "integration/public-8x8-v1",
   "truthBoundary": "PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY",
   "productLanes": [
@@ -19,6 +19,7 @@
     {"id":"world","path":"/world/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_PRESENCE"},
     {"id":"art-board","path":"/art-board/","status":"DEPLOYED_BETA","truth":"EVIDENCE_AND_PRODUCT_MAP"},
     {"id":"visual-council","path":"/visual-council/","status":"DEPLOYED_BETA","truth":"VISION_REGISTRY_NOT_TELEMETRY"},
+    {"id":"capabilities","path":"/capabilities/","status":"INTEGRATION_PREVIEW","truth":"THIRTEEN_PINNED_CANDIDATES_ZERO_RUNTIME_INSTALLATIONS"},
     {"id":"missions","path":"/missions/","status":"DEPLOYED_BETA","truth":"LOCAL_ONLY_NO_REMOTE_EXECUTION"},
     {"id":"plugins","path":"/plugins/","status":"DEPLOYED_BETA","truth":"FIXTURE_ONLY_ZERO_EXECUTION"},
     {"id":"scan","path":"/scan/","status":"DEPLOYED_BETA","truth":"TESTNET_ONLY_NO_WALLET"},
@@ -44,6 +45,7 @@
     {"id":"missions-control","maturity":"PARTIAL_VERIFIED","publicTarget":"BOUNDED_DRAFTING_AND_STATUS"},
     {"id":"memory-context","maturity":"PRIVATE_IMPLEMENTED_PUBLIC_SANITIZATION_REQUIRED","publicTarget":"PROVENANCE_AND_CONTEXT_DIGESTS"},
     {"id":"connectors","maturity":"MIXED_VERIFICATION","publicTarget":"SANITIZED_AUTHORITY_AND_FRESHNESS_MAP"},
+    {"id":"external-capabilities","maturity":"THIRTEEN_PACKETS_MERGED_ONE_OF_TWO_EXTERNAL_BENCHMARKS_COMPLETE","publicTarget":"SOURCE_PINNED_DECISIONS_AND_BLOCKERS"},
     {"id":"studio-media","maturity":"PARTIAL_VERIFIED","publicTarget":"ARTIFACT_REGISTRY_AND_DEMOS"},
     {"id":"worlds-interfaces","maturity":"PUBLIC_BETA_EXPANDING","publicTarget":"ACCESSIBLE_PUBLIC_CLIENTS"},
     {"id":"markets","maturity":"SIMULATION_SIGNAL_ONLY","publicTarget":"DELAYED_SYNTHETIC_ANALYTICS"},
