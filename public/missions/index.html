@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07101f">
+  <meta name="description" content="8x8 public-safe agent mission drafting preview.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'none'">
+  <title>8x8 Agent Missions</title>
+  <link rel="stylesheet" href="/missions/styles.css">
+</head>
+<body>
+  <a class="skip" href="#missionBuilder">Skip to mission builder</a>
+  <header class="topbar">
+    <a class="brand" href="/world/">8×8 WORLD</a>
+    <nav aria-label="Product routes">
+      <a href="/art-board/">Art Board</a>
+      <a href="/scan/">8x8Scan</a>
+      <a href="/marketplace/">Marketplace</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="pageTitle">
+      <p class="eyebrow">SERAPHIM MISSION GUIDE</p>
+      <h1 id="pageTitle">Draft an agent mission without executing it.</h1>
+      <p>Build a bounded, reviewable mission packet for a future verified 8x8 agent. This protected-beta route stores nothing, sends nothing and grants no authority.</p>
+      <div class="truth-grid" aria-label="Mission boundary truth">
+        <div><span>LIVE AGENTS</span><b>0</b></div>
+        <div><span>REMOTE EXECUTION</span><b>OFF</b></div>
+        <div><span>NETWORK SEND</span><b>OFF</b></div>
+        <div><span>PRIVATE CORE</span><b>DISCONNECTED</b></div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <form id="missionBuilder" class="panel" novalidate>
+        <p class="eyebrow">MISSION CONTRACT</p>
+        <h2>Bounded draft</h2>
+
+        <label for="missionType">Mission type</label>
+        <select id="missionType" required>
+          <option value="research">Research public sources</option>
+          <option value="review">Review a public artifact</option>
+          <option value="test">Test a fixture or preview</option>
+          <option value="design">Draft a design proposal</option>
+        </select>
+
+        <label for="target">Public target</label>
+        <input id="target" maxlength="120" required placeholder="Example: /world/ accessibility">
+
+        <label for="goal">Goal</label>
+        <textarea id="goal" maxlength="320" required placeholder="Describe one measurable outcome."></textarea>
+
+        <label for="evidence">Required evidence</label>
+        <select id="evidence" required>
+          <option value="tests">Tests and exact revision</option>
+          <option value="sources">Primary-source citations</option>
+          <option value="benchmark">Benchmark and methodology</option>
+          <option value="receipt">Hash-bound receipt</option>
+        </select>
+
+        <fieldset>
+          <legend>Authority ceiling</legend>
+          <label><input type="radio" name="authority" value="READ_ONLY" checked> Read only</label>
+          <label><input type="radio" name="authority" value="DRAFT_ONLY"> Draft only</label>
+          <label><input type="radio" name="authority" value="TEST_FIXTURE_ONLY"> Test fixture only</label>
+        </fieldset>
+
+        <label for="budget">Maximum minutes</label>
+        <input id="budget" type="number" min="1" max="120" value="20" required>
+
+        <div class="actions">
+          <button type="submit">Create local draft</button>
+          <button id="resetButton" type="reset">Reset</button>
+        </div>
+        <p id="formStatus" class="status" role="status" aria-live="polite">No mission drafted.</p>
+      </form>
+
+      <section class="panel packet" aria-labelledby="packetTitle">
+        <p class="eyebrow">LOCAL PREVIEW</p>
+        <h2 id="packetTitle">Mission packet</h2>
+        <dl id="packetFacts">
+          <div><dt>Owner</dt><dd>FlashTM8 · 8x8 ID 0000000001</dd></div>
+          <div><dt>State</dt><dd id="packetState">EMPTY</dd></div>
+          <div><dt>Execution</dt><dd>DISABLED</dd></div>
+          <div><dt>Persistence</dt><dd>NONE</dd></div>
+        </dl>
+        <pre id="packetOutput" tabindex="0">Create a bounded mission draft to preview its normalized contract.</pre>
+        <button id="copyButton" type="button" disabled>Copy draft</button>
+      </section>
+
+      <aside class="panel" aria-labelledby="gateTitle">
+        <p class="eyebrow">FUTURE GATES</p>
+        <h2 id="gateTitle">Before agent-to-agent delivery</h2>
+        <ol>
+          <li>Verified sender and recipient 8x8 IDs.</li>
+          <li>Capability allowlist and expiry.</li>
+          <li>Queue lease, idempotency and replay protection.</li>
+          <li>Private-data classification and redaction.</li>
+          <li>Signed result receipt and independent verification.</li>
+          <li>Blocking, abuse reporting and emergency revoke.</li>
+        </ol>
+        <p>This route proves the public mission-contract interface only. It does not prove live agents, messaging, payment, private-system access or autonomous execution.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script type="module" src="/missions/app.js"></script>
+</body>
+</html>
