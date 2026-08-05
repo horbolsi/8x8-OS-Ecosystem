@@ -1,3 +1,5 @@
+import './presence-consent.js';
+
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
@@ -19,9 +21,7 @@ function announce(message) {
   if (!announcement || !message || message === lastMessage) return;
   lastMessage = message;
   announcement.textContent = "";
-  window.requestAnimationFrame(() => {
-    announcement.textContent = message;
-  });
+  window.requestAnimationFrame(() => { announcement.textContent = message; });
 }
 
 function scheduleTravelerAnnouncement(prefix) {
@@ -32,31 +32,20 @@ function scheduleTravelerAnnouncement(prefix) {
   });
 }
 
-for (const button of $$('[data-move]')) {
-  button.addEventListener("click", () => scheduleTravelerAnnouncement("Moved"));
-}
-
-for (const button of $$('[data-mode]')) {
-  button.addEventListener("click", () => scheduleTravelerAnnouncement("Mode changed"));
-}
-
+for (const button of $$('[data-move]')) button.addEventListener("click", () => scheduleTravelerAnnouncement("Moved"));
+for (const button of $$('[data-mode]')) button.addEventListener("click", () => scheduleTravelerAnnouncement("Mode changed"));
 $("#jumpButton")?.addEventListener("click", () => announce("Traveler jumped."));
 
 window.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
-  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) {
-    scheduleTravelerAnnouncement("Moved");
-  } else if (key === "p" || key === "v") {
-    scheduleTravelerAnnouncement("Mode changed");
-  } else if (key === " ") {
-    announce("Traveler jumped.");
-  }
+  if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) scheduleTravelerAnnouncement("Moved");
+  else if (key === "p" || key === "v") scheduleTravelerAnnouncement("Mode changed");
+  else if (key === " ") announce("Traveler jumped.");
 });
 
 $("#serviceLayer")?.addEventListener("click", (event) => {
   const beacon = event.target.closest("[data-service-id]");
-  if (!beacon) return;
-  announce(`Selected service: ${beacon.textContent.trim()}. Synthetic public preview.`);
+  if (beacon) announce(`Selected service: ${beacon.textContent.trim()}. Synthetic public preview.`);
 });
 
 $("#presenceMode")?.addEventListener("change", (event) => {
@@ -70,15 +59,11 @@ if (modal) {
     const trigger = event.target.closest("button");
     if (trigger && trigger.id !== "closeModal") previousFocus = trigger;
   }, true);
-
   modal.addEventListener("close", () => {
     if (previousFocus instanceof HTMLElement && document.contains(previousFocus)) previousFocus.focus();
     previousFocus = null;
   });
-
-  const observer = new MutationObserver(() => {
-    if (modal.open) $("#closeModal")?.focus();
-  });
+  const observer = new MutationObserver(() => { if (modal.open) $("#closeModal")?.focus(); });
   observer.observe(modal, { attributes: true, attributeFilter: ["open"] });
 }
 
