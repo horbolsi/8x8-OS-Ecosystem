@@ -1,0 +1,41 @@
+name: Trading Analytics Public Beta
+on:
+  pull_request:
+    paths:
+      - 'public/trading-lab/**'
+      - '.github/workflows/trading-analytics-public-beta.yml'
+  push:
+    branches:
+      - feature/trading-analytics-public-beta-v1
+    paths:
+      - 'public/trading-lab/**'
+      - '.github/workflows/trading-analytics-public-beta.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON
+        run: python -m json.tool public/trading-lab/state.json >/dev/null
+      - name: Verify required truth labels and provenance
+        run: |
+          grep -q 'PUBLIC_SAFE_SYNTHETIC_PAPER_ONLY' public/trading-lab/state.json
+          grep -q '195a7de71a94a612463eca6213953f10922545be' public/trading-lab/state.json
+          grep -q 'NO_PROFITABILITY_CLAIM' public/trading-lab/state.json
+          grep -q 'SYNTHETIC DATA' public/trading-lab/index.html
+          grep -q 'NO LIVE ORDERS' public/trading-lab/index.html
+          grep -q 'No strategy is approved for live use' public/trading-lab/index.html
+      - name: Reject active financial and secret adapters
+        run: |
+          if grep -RniE '(api[_-]?key|secret[_-]?key|private[_-]?key|seed phrase|place[_-]?order|create[_-]?order|walletconnect|ccxt|binance|coinbase|kraken|bitget)' public/trading-lab; then
+            echo 'Forbidden financial or credential adapter marker found.' >&2
+            exit 1
+          fi
+      - name: Basic accessibility and rollback contract
+        run: |
+          grep -q '<html lang="en">' public/trading-lab/index.html
+          grep -q '<h1>' public/trading-lab/index.html
+          grep -q 'aria-label=' public/trading-lab/index.html
+          grep -q 'financialSideEffects.*false' public/trading-lab/state.json
