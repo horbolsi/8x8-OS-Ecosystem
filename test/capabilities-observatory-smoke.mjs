@@ -31,8 +31,8 @@ assert.equal(state.summary.council_quorum, false);
 assert.ok(Object.values(state.absolute_boundaries).every((value) => value === false));
 assert.equal(state.source.repository, '8x8org/8x8-user-edition');
 assert.equal(state.source.commit, '52fbb2f4a4c19e1384e6c8a000f260ac54495750');
-assert.match(state.source.blob_sha, /^[0-9a-f]{40}$/);
-assert.match(state.source.upstream_pin_set_sha256, /^[0-9a-f]{64}$/);
+assert.equal(state.source.blob_sha, '5b65b82dac605d83790edd0071ff5931a4b29f88');
+assert.equal(state.source.upstream_pin_set_sha256, '5a10b4f8de51fa9c50cbfbc9f10553a033c30fd687c215124222c2568f5dec41');
 
 const supervision = state.candidates.find((item) => item.repository === 'roboflow/supervision');
 assert.equal(supervision.status, 'READY_FOR_ADAPTER_DESIGN');
@@ -58,6 +58,15 @@ assert.match(html, /class="skip-link"/);
 assert.match(html, /aria-live="polite"/);
 assert.match(html, /src="\.\/app\.js"/);
 assert.match(html, /href="\.\/styles\.css"/);
+assert.match(html, /name="8x8-release-id" content="MSG231-CAPABILITIES-OBSERVATORY-PREVIEW-V1"/);
+assert.match(html, /name="8x8-source-commit" content="52fbb2f4a4c19e1384e6c8a000f260ac54495750"/);
+assert.match(html, /name="8x8-source-blob" content="5b65b82dac605d83790edd0071ff5931a4b29f88"/);
+assert.match(html, /name="8x8-pin-set-sha256" content="5a10b4f8de51fa9c50cbfbc9f10553a033c30fd687c215124222c2568f5dec41"/);
+assert.match(html, /name="8x8-candidate-packets" content="13\/13"/);
+assert.match(html, /name="8x8-external-benchmarks" content="1\/2"/);
+assert.match(html, /name="8x8-runtime-installations" content="0"/);
+assert.match(html, /name="8x8-real-council-votes" content="0\/4"/);
+assert.match(html, /name="8x8-whole-system-completion" content="NOT_INFERRED"/);
 assert.doesNotMatch(html, /https?:\/\//i);
 assert.doesNotMatch(html, /<script[\s>](?![^>]*src=)/i);
 assert.doesNotMatch(js, /innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(|new Function/);
@@ -81,4 +90,4 @@ for (const pattern of [
   /localhost:\d+/i,
 ]) assert.doesNotMatch(corpus, pattern);
 
-console.log('MSG231_CAPABILITIES_OBSERVATORY_SMOKE_PASS checks=48 installed=0 votes=0');
+console.log('MSG231_CAPABILITIES_OBSERVATORY_SMOKE_PASS checks=57 installed=0 votes=0');
