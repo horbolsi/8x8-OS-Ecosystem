@@ -1,0 +1,81 @@
+{
+  "schema_version": "8x8.public-world.v1",
+  "release_unit_id": "public-8x8-world-browser-v1",
+  "mode": "PUBLIC_BROWSER_BETA_LOCAL_ONLY",
+  "truth_banner": "PUBLIC BROWSER WORLD — LOCAL DEVICE SENSORS ONLY — ZERO LIVE USERS — NO WALLET OR PRIVATE CORE",
+  "observed_at": "2026-08-04T23:38:00Z",
+  "score": {
+    "earned": 100,
+    "possible": 100,
+    "scope": "Browser world shell, local-only location and orientation, synthetic services and zero-user presence",
+    "whole_system_score": "NOT_INFERRED"
+  },
+  "owner_preview": {
+    "id": "0000000001",
+    "handle": "FlashTM8",
+    "mode": "PUBLIC_IDENTITY_PREVIEW_ONLY",
+    "authenticated": false,
+    "private_profile_mounted": false
+  },
+  "privacy": {
+    "default_presence": "HIDDEN",
+    "available_presence_modes": ["HIDDEN", "REGION_APPROXIMATE", "PRECISE_TEMPORARY"],
+    "coordinates_uploaded": false,
+    "coordinates_persisted": false,
+    "coordinates_shared_with_users": false,
+    "precise_presence_expiry_minutes": 10,
+    "nearby_people_scan": false,
+    "live_user_count": 0
+  },
+  "capabilities": {
+    "keyboard_touch_movement": "IMPLEMENTED",
+    "jump_prone_walk_drive_modes": "IMPLEMENTED_LOCAL_SIMULATION",
+    "device_orientation": "USER_PERMISSION_LOCAL_ONLY",
+    "geolocation": "USER_PERMISSION_LOCAL_ONLY",
+    "google_maps_link": "IMPLEMENTED_AFTER_LOCAL_LOCATION",
+    "apple_maps_link": "IMPLEMENTED_AFTER_LOCAL_LOCATION",
+    "live_presence_backend": "NOT_CONNECTED",
+    "chat_and_call": "IDENTITY_AND_COMMUNICATION_BACKEND_REQUIRED",
+    "bluetooth_mesh": "NATIVE_CLIENT_AND_RUNTIME_PERMISSION_REQUIRED",
+    "wifi_peer_mesh": "NATIVE_CLIENT_AND_PLATFORM_SUPPORT_REQUIRED",
+    "marketplace": "TESTNET_CATALOG_PREVIEW",
+    "payments": "DISABLED",
+    "wallet_signing": "DISABLED",
+    "agent_missions": "PROPOSAL_PREVIEW_ONLY",
+    "developer_plugins": "REGISTRY_AND_GOVERNANCE_PREVIEW",
+    "terminal": "SANDBOX_DESCRIPTION_ONLY",
+    "radio_streaming": "CATALOG_PREVIEW_ONLY",
+    "competitive_games": "ARENA_RULESET_PREVIEW_ONLY"
+  },
+  "services": [
+    {"id":"market","label":"Marketplace","icon":"M","status":"YELLOW","category":"ECONOMY","summary":"Testnet catalog preview. Purchases and wallet signing are disabled."},
+    {"id":"nft-vault","label":"NFT & Vault Hall","icon":"V","status":"PURPLE","category":"ECONOMY","summary":"1:1 vault concept and collection gallery. No minting or custody in this slice."},
+    {"id":"shops","label":"Creator Shops","icon":"S","status":"PURPLE","category":"CREATORS","summary":"Future developer and creator storefronts with provenance and governance."},
+    {"id":"gas","label":"Gas Station","icon":"G","status":"CYAN","category":"TRAVEL","summary":"Explains network gas and route energy. No payment or fuel purchase."},
+    {"id":"garage","label":"Vehicle Garage","icon":"C","status":"CYAN","category":"TRAVEL","summary":"Switch between walking and local simulated driving modes."},
+    {"id":"roads","label":"World Roads","icon":"R","status":"GREEN","category":"TRAVEL","summary":"Interactive movement lanes and local map links are available."},
+    {"id":"missions","label":"Agent Missions","icon":"A","status":"PURPLE","category":"AGENTS","summary":"Draft a mission to another agent. Delivery requires verified identities and policy leases."},
+    {"id":"plugins","label":"Plugin Port","icon":"P","status":"CYAN","category":"DEVELOPERS","summary":"8x8-compatible tools require provenance, security tests, permissions and rollback."},
+    {"id":"scan","label":"8x8Scan","icon":"8","status":"YELLOW","category":"BLOCKCHAIN","summary":"Testnet explorer vision. Live chain ingestion is not connected in this browser slice."},
+    {"id":"radio","label":"Radio & Streams","icon":"B","status":"PURPLE","category":"MEDIA","summary":"Public broadcast and creator channel catalog preview."},
+    {"id":"terminal","label":"Device Terminal","icon":"T","status":"BLACK","category":"SYSTEM","summary":"Real device terminals require an installed, owner-authorized local connector. Browser shell is disabled."},
+    {"id":"arena","label":"8x8 Arena","icon":"X","status":"PURPLE","category":"GAMES","summary":"Competition, 1v1, 5v5 and large-match ruleset preview. No shooting simulation is active here."}
+  ],
+  "synthetic_beacons": [
+    {"id":"seraphim","label":"Seraphim Guide","x":52,"y":42,"status":"CYAN","kind":"AGENT"},
+    {"id":"market-beacon","label":"Marketplace Demo","x":28,"y":31,"status":"YELLOW","kind":"SERVICE"},
+    {"id":"vault-beacon","label":"NFT Vault Demo","x":72,"y":30,"status":"PURPLE","kind":"SERVICE"},
+    {"id":"arena-beacon","label":"Arena Preview","x":76,"y":70,"status":"PURPLE","kind":"SERVICE"},
+    {"id":"plugin-beacon","label":"Plugin Port","x":26,"y":72,"status":"CYAN","kind":"SERVICE"}
+  ],
+  "public_boundaries": {
+    "private_core_connected": false,
+    "user_database_connected": false,
+    "precise_location_backend_connected": false,
+    "wallet_data_connected": false,
+    "financial_execution_enabled": false,
+    "social_posting_enabled": false,
+    "remote_device_control_enabled": false,
+    "production_authentication_enabled": false
+  }
+}

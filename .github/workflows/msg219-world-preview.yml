@@ -1,0 +1,89 @@
+name: MSG219 Public 8x8 World Preview
+
+on:
+  pull_request:
+    paths:
+      - "public/world/**"
+      - "test/world-smoke.mjs"
+      - "server/app.js"
+      - "vercel.json"
+      - ".github/workflows/msg219-world-preview.yml"
+  push:
+    branches:
+      - "feature/msg219-public-8x8-world-v1"
+    paths:
+      - "public/world/**"
+      - "test/world-smoke.mjs"
+      - "server/app.js"
+      - "vercel.json"
+      - ".github/workflows/msg219-world-preview.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install exact declared dependencies without scripts
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Validate world syntax, fixtures and deployment configuration
+        run: |
+          set -Eeuo pipefail
+          node --check public/world/app.js
+          node --check test/world-smoke.mjs
+          python3 -m json.tool public/world/state.json >/dev/null
+          python3 -m json.tool public/world/manifest.webmanifest >/dev/null
+          python3 -m json.tool vercel.json >/dev/null
+          python3 - <<'PY'
+          import json
+          data = json.load(open('vercel.json', encoding='utf-8'))
+          rules = [item for item in data['headers'] if item['source'] == '/world/:path*']
+          assert len(rules) == 1
+          headers = {item['key'].lower(): item['value'] for item in rules[0]['headers']}
+          assert "default-src 'self'" in headers['content-security-policy']
+          assert "unsafe-inline" not in headers['content-security-policy']
+          assert 'geolocation=(self)' in headers['permissions-policy']
+          assert 'gyroscope=(self)' in headers['permissions-policy']
+          assert 'microphone=()' in headers['permissions-policy']
+          assert 'camera=()' in headers['permissions-policy']
+          assert 'bluetooth=()' in headers['permissions-policy']
+          assert headers['x-frame-options'] == 'DENY'
+          assert headers['referrer-policy'] == 'no-referrer'
+          print('VERCEL_WORLD_HEADERS=PASS')
+          PY
+
+      - name: Run existing beta tests
+        run: npm test
+
+      - name: Run public-world smoke tests
+        run: node test/world-smoke.mjs
+
+      - name: Enforce public-world boundary
+        run: |
+          set -Eeuo pipefail
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|authorization:[[:space:]]*bearer|seed phrase|private key|wallet address|/root/|127\.0\.0\.1|localhost:|gh[pousr]_|github_pat_|sk-[A-Za-z0-9])' public/world; then
+            echo 'World public-boundary scan failed'
+            exit 1
+          fi
+          if grep -RInE '(unsafe-inline|\.innerHTML|\.outerHTML|insertAdjacentHTML|document\.write|\.style\.|localStorage|sessionStorage|document\.cookie|WebSocket\(|EventSource\(|getUserMedia\(|navigator\.bluetooth\.requestDevice)' public/world; then
+            echo 'Unsafe browser-world capability detected'
+            exit 1
+          fi
+          grep -F 'geolocation=(self)' server/app.js vercel.json
+          grep -F 'gyroscope=(self)' server/app.js vercel.json
+          grep -F 'bluetooth=()' server/app.js vercel.json
+          grep -F 'live_users: 0' server/app.js
+          echo 'PUBLIC_8X8_WORLD_BOUNDARY=PASS'

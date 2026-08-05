@@ -1,0 +1,15 @@
+{
+  "name": "8x8 World Public Beta",
+  "short_name": "8x8 World",
+  "description": "Public browser world shell for 8x8 with local-only movement, location and orientation controls.",
+  "id": "/world/",
+  "start_url": "/world/",
+  "scope": "/world/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050815",
+  "theme_color": "#050815",
+  "categories": ["games", "social", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr"
+}
