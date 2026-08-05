@@ -4,11 +4,12 @@ import { readFile } from 'node:fs/promises';
 const js = await readFile(new URL('../public/world/seraphim-tour.js', import.meta.url), 'utf8');
 const css = await readFile(new URL('../public/world/seraphim-tour.css', import.meta.url), 'utf8');
 const accessibility = await readFile(new URL('../public/world/accessibility.js', import.meta.url), 'utf8');
+const stepIds = ['truth', 'movement', 'world', 'presence', 'portals'];
 
 const checks = [
   ['loaded inside existing world', accessibility.includes("import './seraphim-tour.js'")],
   ['immutable guided steps', js.includes('Object.freeze')],
-  ['five bounded steps', (js.match(/id: '/g) || []).length === 5],
+  ['five bounded steps', stepIds.every((id) => js.includes(`id: '${id}'`)) && !js.includes("id: 'sixth-step'")],
   ['truth state first', js.includes("id: 'truth'") && js.includes('zero live users')],
   ['movement and privacy explained', js.includes("id: 'movement'") && js.includes('explicit action')],
   ['synthetic world explained', js.includes("id: 'world'") && js.includes('not remote players')],
