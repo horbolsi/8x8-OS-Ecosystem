@@ -1,0 +1,40 @@
+name: MSG229 Visual Council Registry
+
+on:
+  pull_request:
+    paths:
+      - 'public/visual-council/**'
+      - 'test/visual-council-smoke.mjs'
+      - '.github/workflows/msg229-visual-council.yml'
+  push:
+    branches:
+      - feature/msg229-visual-council-registry-v1
+    paths:
+      - 'public/visual-council/**'
+      - 'test/visual-council-smoke.mjs'
+      - '.github/workflows/msg229-visual-council.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Validate visual council contract
+        run: node test/visual-council-smoke.mjs
+      - name: Validate JSON
+        run: python3 -m json.tool public/visual-council/manifest.json >/dev/null
+      - name: Public boundary scan
+        run: |
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|/root/|127\.0\.0\.1|localhost:|gho_|sk-[A-Za-z0-9])' public/visual-council; then
+            echo 'Public boundary violation'
+            exit 1
+          fi
