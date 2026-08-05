@@ -1,0 +1,60 @@
+name: MSG221 Public 8x8Scan Preview
+
+on:
+  pull_request:
+    paths:
+      - "public/scan/**"
+      - "test/scan-smoke.mjs"
+      - "package.json"
+      - ".github/workflows/msg221-scan-preview.yml"
+  push:
+    branches:
+      - "feature/msg221-public-8x8scan-testnet-v1"
+    paths:
+      - "public/scan/**"
+      - "test/scan-smoke.mjs"
+      - "package.json"
+      - ".github/workflows/msg221-scan-preview.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install declared dependencies without scripts
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate syntax and fixture
+        run: |
+          set -Eeuo pipefail
+          node --check public/scan/app.js
+          node --check test/scan-smoke.mjs
+          python3 -m json.tool public/scan/state.json >/dev/null
+      - name: Run full beta regression suite
+        run: npm test
+      - name: Enforce 8x8Scan public boundary
+        run: |
+          set -Eeuo pipefail
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|authorization:[[:space:]]*bearer|seed phrase|mnemonic|wallet address|/root/|127\.0\.0\.1|localhost:|gh[pousr]_|github_pat_|sk-[A-Za-z0-9])' public/scan; then
+            echo '8x8Scan public-boundary scan failed'
+            exit 1
+          fi
+          if grep -RInE '(unsafe-inline|\.innerHTML|\.outerHTML|insertAdjacentHTML|document\.write|localStorage|sessionStorage|document\.cookie|WebSocket\(|EventSource\(|getUserMedia\(|navigator\.bluetooth)' public/scan; then
+            echo 'Unsafe 8x8Scan browser capability detected'
+            exit 1
+          fi
+          grep -F '"live_chain_queries": false' public/scan/state.json
+          grep -F '"signing_enabled": false' public/scan/state.json
+          grep -F '"mainnet_actions": 0' public/scan/state.json
+          echo 'PUBLIC_8X8SCAN_BOUNDARY=PASS'

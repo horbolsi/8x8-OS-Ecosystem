@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050815">
+  <meta name="description" content="8x8Scan protected beta catalog for testnet-only asset and network truth.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>8x8Scan Testnet Catalog</title>
+  <link rel="stylesheet" href="/scan/styles.css">
+</head>
+<body>
+  <a class="skip" href="#catalog">Skip to catalog</a>
+  <header class="topbar">
+    <a class="brand" href="/world/"><b>8×8</b><span>SCAN</span></a>
+    <strong>PROTECTED BETA · TESTNET FIXTURE</strong>
+    <nav aria-label="Product navigation"><a href="/world/">World</a><a href="/art-board/">Art Board</a></nav>
+  </header>
+
+  <main id="catalog">
+    <section class="hero panel">
+      <div><p class="eyebrow">SERAPHIM EXPLAINS THE LEDGER</p><h1>See what exists, what is planned, and what has not been deployed.</h1><p>8x8Scan presents public-safe testnet metadata only. It does not connect a wallet, query private systems, sign transactions, or imply monetary value.</p></div>
+      <div class="score"><b>100/100</b><span>DECLARED CATALOG SLICE</span></div>
+    </section>
+
+    <section class="truth panel" aria-label="Current truth state">
+      <div><span>LIVE QUERIES</span><b>OFF</b></div><div><span>TESTNET DEPLOYMENTS</span><b id="deploymentCount">0</b></div><div><span>MAINNET ACTIONS</span><b>0</b></div><div><span>WALLET</span><b>DISCONNECTED</b></div>
+    </section>
+
+    <section class="toolbar panel" aria-label="Catalog controls">
+      <label for="viewMode">View</label>
+      <select id="viewMode"><option value="assets">Assets</option><option value="networks">Networks</option></select>
+      <label for="filter">Filter</label>
+      <input id="filter" type="search" autocomplete="off" placeholder="Symbol, network, or state">
+      <button id="reset" type="button">Reset</button>
+    </section>
+
+    <section class="layout">
+      <section class="panel list-panel" aria-labelledby="listTitle"><h2 id="listTitle">Assets</h2><p id="resultSummary" role="status" aria-live="polite"></p><div id="records" class="records"></div></section>
+      <aside class="panel inspector" aria-live="polite"><p class="eyebrow">EVIDENCE INSPECTOR</p><h2 id="detailTitle">Select a record</h2><dl id="details"></dl><p class="boundary">Public fixture only. Addresses, balances, private keys, wallet authority and live transaction execution are absent.</p></aside>
+    </section>
+
+    <section class="panel methodology"><h2>How to read this beta</h2><div class="method-grid"><article><b>SOURCE_PRESENT</b><p>Reviewed source exists, but no deployment is claimed.</p></article><article><b>IMPLEMENTATION_PENDING</b><p>The network lane is planned and remains unfinished.</p></article><article><b>OWNER_FORMULA_PENDING</b><p>No supply is invented while tokenomics remain unresolved.</p></article></div></section>
+  </main>
+
+  <script type="module" src="/scan/app.js"></script>
+</body>
+</html>
