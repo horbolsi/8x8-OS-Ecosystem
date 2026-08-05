@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0.0",
+  "registryId": "8x8-public-estate-v1",
+  "generatedAt": "2026-08-05T21:15:00Z",
+  "branch": "integration/public-8x8-v1",
+  "truthBoundary": "PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY",
+  "productLanes": [
+    {
+      "id": "private-core",
+      "name": "Private 8x8 Core",
+      "visibility": "PRIVATE",
+      "publicMount": false,
+      "status": "RUNTIME_AND_EVIDENCE_GATED"
+    },
+    {
+      "id": "public-user-edition",
+      "name": "8x8 Public User Edition",
+      "visibility": "PUBLIC_SAFE",
+      "publicMount": true,
+      "status": "INTEGRATION_ACTIVE"
+    }
+  ],
+  "realities": [
+    {"id":"private-past","monitor":0,"status":"RECOVERY_AND_CLASSIFICATION"},
+    {"id":"public-present","monitor":1,"status":"PROTECTED_BETA"},
+    {"id":"private-owner-core","monitor":2,"status":"UNMOUNTED_PUBLICLY"},
+    {"id":"future-lab","monitor":3,"status":"PUBLIC_SAFE_RESEARCH_AND_RELEASE_CANDIDATES"}
+  ],
+  "publicSurfaces": [
+    {"id":"portal","path":"/","status":"DEPLOYED_BETA","truth":"PUBLIC_SAFE"},
+    {"id":"world","path":"/world/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_PRESENCE"},
+    {"id":"art-board","path":"/art-board/","status":"DEPLOYED_BETA","truth":"EVIDENCE_AND_PRODUCT_MAP"},
+    {"id":"visual-council","path":"/visual-council/","status":"DEPLOYED_BETA","truth":"VISION_REGISTRY_NOT_TELEMETRY"},
+    {"id":"missions","path":"/missions/","status":"DEPLOYED_BETA","truth":"LOCAL_ONLY_NO_REMOTE_EXECUTION"},
+    {"id":"plugins","path":"/plugins/","status":"DEPLOYED_BETA","truth":"FIXTURE_ONLY_ZERO_EXECUTION"},
+    {"id":"scan","path":"/scan/","status":"DEPLOYED_BETA","truth":"TESTNET_ONLY_NO_WALLET"},
+    {"id":"marketplace","path":"/marketplace/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_NO_PAYMENTS"},
+    {"id":"future-lab","path":"/future-lab/","status":"DEPLOYED_BETA","truth":"FUTURE_DESIGNS_NOT_LIVE_CLAIMS"}
+  ],
+  "domains": [
+    {"id":"authority-governance","maturity":"PARTIAL_VERIFIED","publicTarget":"DOCUMENTATION_AND_GATES"},
+    {"id":"agents-council","maturity":"PARTIAL_RUNTIME_GATED","publicTarget":"IDENTITY_PROFILES_AND_RECEIPTS"},
+    {"id":"missions-control","maturity":"PARTIAL_VERIFIED","publicTarget":"BOUNDED_DRAFTING_AND_STATUS"},
+    {"id":"memory-context","maturity":"PRIVATE_IMPLEMENTED_PUBLIC_SANITIZATION_REQUIRED","publicTarget":"PROVENANCE_AND_CONTEXT_DIGESTS"},
+    {"id":"connectors","maturity":"MIXED_VERIFICATION","publicTarget":"SANITIZED_AUTHORITY_AND_FRESHNESS_MAP"},
+    {"id":"studio-media","maturity":"PARTIAL_VERIFIED","publicTarget":"ARTIFACT_REGISTRY_AND_DEMOS"},
+    {"id":"worlds-interfaces","maturity":"PUBLIC_BETA_EXPANDING","publicTarget":"ACCESSIBLE_PUBLIC_CLIENTS"},
+    {"id":"markets","maturity":"SIMULATION_SIGNAL_ONLY","publicTarget":"DELAYED_SYNTHETIC_ANALYTICS"},
+    {"id":"blockchain","maturity":"TESTNET_LAB","publicTarget":"TESTNET_EVIDENCE_AND_PROTOCOL_DOCS"},
+    {"id":"release-recovery","maturity":"PARTIAL_VERIFIED","publicTarget":"EXACT_HEAD_RECEIPTS_AND_ROLLBACK"}
+  ],
+  "promotionContract": [
+    "CANONICAL_ID_RESOLVED",
+    "PUBLIC_PRIVATE_CLASSIFIED",
+    "IMPLEMENTATION_COMPLETE",
+    "EXACT_HEAD_TESTS_PASS",
+    "SECURITY_PRIVACY_PROVENANCE_ACCESSIBILITY_PASS",
+    "COMPATIBILITY_AND_ROLLBACK_PROVEN",
+    "SOURCE_AND_ARTIFACT_DIGESTS_RECORDED",
+    "DEPLOYMENT_READY",
+    "ROOT_AND_CHANGED_ROUTES_VERIFIED",
+    "REGISTRY_AND_PRODUCT_MAP_UPDATED"
+  ],
+  "prohibitedPublicClaims": [
+    "WHOLE_SYSTEM_COMPLETE",
+    "FULL_PRIVATE_CORE_CONNECTED",
+    "LIVE_UNRESTRICTED_AUTONOMY",
+    "PERMANENT_UPTIME",
+    "QUANTUM_OR_BEYOND_QUANTUM_COMPUTATION",
+    "LIVE_REVENUE_OR_TOKEN_VALUE",
+    "UNVERIFIED_AGENT_ACTIVITY"
+  ]
+}
