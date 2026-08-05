@@ -1,0 +1,62 @@
+name: MSG224 Public Plugin Gate
+
+on:
+  pull_request:
+    paths:
+      - "public/plugins/**"
+      - "test/plugins-smoke.mjs"
+      - "package.json"
+      - ".github/workflows/msg224-plugin-gate.yml"
+  push:
+    branches:
+      - "feature/msg224-public-plugin-gate-v1"
+    paths:
+      - "public/plugins/**"
+      - "test/plugins-smoke.mjs"
+      - "package.json"
+      - ".github/workflows/msg224-plugin-gate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install declared dependencies without scripts
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate syntax and fixture
+        run: |
+          set -Eeuo pipefail
+          node --check public/plugins/app.js
+          node --check test/plugins-smoke.mjs
+          python3 -m json.tool public/plugins/state.json >/dev/null
+      - name: Run existing protected-beta regressions
+        run: npm test
+      - name: Enforce plugin public boundary
+        run: |
+          set -Eeuo pipefail
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|authorization:[[:space:]]*bearer|seed phrase|private key|wallet address|/root/|127\.0\.0\.1|localhost:|gh[pousr]_|github_pat_|sk-[A-Za-z0-9])' public/plugins; then
+            echo 'Plugin gate public-boundary scan failed'
+            exit 1
+          fi
+          if grep -RInE '(unsafe-inline|\.innerHTML|\.outerHTML|insertAdjacentHTML|document\.write|localStorage|sessionStorage|document\.cookie|WebSocket\(|EventSource\(|getUserMedia\(|navigator\.bluetooth)' public/plugins; then
+            echo 'Unsafe plugin-gate browser capability detected'
+            exit 1
+          fi
+          grep -F '"live_plugins": 0' public/plugins/state.json
+          grep -F '"installed_plugins": 0' public/plugins/state.json
+          grep -F '"executions": 0' public/plugins/state.json
+          grep -F '"payments": 0' public/plugins/state.json
+          grep -F '"votes_cast": 0' public/plugins/state.json
+          echo 'PUBLIC_PLUGIN_GATE_BOUNDARY=PASS'

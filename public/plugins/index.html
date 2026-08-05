@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050815">
+  <meta name="description" content="8x8 public-safe plugin governance gate protected beta.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>8x8 Plugin Gate</title>
+  <link rel="stylesheet" href="/plugins/styles.css">
+</head>
+<body>
+  <a class="skip" href="#catalog">Skip to plugin candidates</a>
+  <header class="topbar">
+    <a class="brand" href="/world/"><b>8×8</b><span>PLUGIN GATE</span></a>
+    <nav aria-label="Product navigation">
+      <a href="/world/">World</a><a href="/marketplace/">Marketplace</a><a href="/missions/">Missions</a><a href="/scan/">8x8Scan</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div><p class="eyebrow">SERAPHIM DEVELOPER PORT</p><h1>Bring intelligence without importing chaos.</h1><p>Inspect the evidence an agent, tool, dashboard or world module must provide before it can become an official governed 8x8 plugin.</p></div>
+      <div class="score"><b>0</b><span>LIVE PLUGINS</span></div>
+    </section>
+    <section class="truth" aria-label="Current truth">
+      <div><span>MODE</span><b>FIXTURE</b></div><div><span>INSTALL</span><b>OFF</b></div><div><span>EXECUTION</span><b>OFF</b></div><div><span>PAYMENTS</span><b>OFF</b></div><div><span>VOTING</span><b>OFF</b></div>
+    </section>
+    <section class="layout">
+      <aside class="panel">
+        <p class="eyebrow">GATE CHECKLIST</p><h2>Required evidence</h2>
+        <div id="requirements"></div>
+        <p class="boundary">This route reviews public fixture metadata only. It cannot install code, access devices, connect wallets, cast votes or reach the private control plane.</p>
+      </aside>
+      <section class="panel" id="catalog" tabindex="-1">
+        <div class="section-head"><div><p class="eyebrow">FIXTURE CANDIDATES</p><h2>Review queue</h2></div><label>Filter stage<select id="stageFilter"><option value="ALL">All stages</option><option>DESIGN_REVIEW</option><option>PROVENANCE_REVIEW</option><option>SECURITY_REVIEW</option><option>ACCESSIBILITY_REVIEW</option></select></label></div>
+        <p id="status" class="status" aria-live="polite"></p>
+        <div id="candidates" class="cards"></div>
+      </section>
+      <aside class="panel inspector" aria-live="polite">
+        <p class="eyebrow">EVIDENCE INSPECTOR</p><h2 id="inspectTitle">Select a candidate</h2><dl id="inspectFacts"></dl>
+        <button id="proposalButton" type="button" disabled>Draft governance proposal</button>
+        <p>No proposal is transmitted or persisted.</p>
+      </aside>
+    </section>
+  </main>
+  <script type="module" src="/plugins/app.js"></script>
+</body>
+</html>
