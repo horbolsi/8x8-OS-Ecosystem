@@ -1,0 +1,50 @@
+name: Public 8x8 V1 Integration
+
+on:
+  pull_request:
+    paths:
+      - 'public/**'
+      - 'docs/PUBLIC_8X8_V1_SCOPE.md'
+      - 'test/estate-registry-smoke.mjs'
+      - '.github/workflows/public-v1-integration.yml'
+  push:
+    branches:
+      - integration/public-8x8-v1
+    paths:
+      - 'public/**'
+      - 'docs/PUBLIC_8X8_V1_SCOPE.md'
+      - 'test/estate-registry-smoke.mjs'
+      - '.github/workflows/public-v1-integration.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Validate estate registry
+        run: node test/estate-registry-smoke.mjs
+      - name: Validate JSON documents
+        run: |
+          python3 -m json.tool public/estate-registry.json >/dev/null
+          python3 -m json.tool public/product-map.json >/dev/null
+          python3 -m json.tool public/future-lab/state.json >/dev/null
+      - name: Public boundary scan
+        run: |
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|gho_|github_pat_|sk-[A-Za-z0-9]|/root/|\.ssh/|wallet seed|mnemonic)' public docs/PUBLIC_8X8_V1_SCOPE.md; then
+            echo 'Public boundary violation'
+            exit 1
+          fi
+      - name: Truth-label checks
+        run: |
+          grep -q 'PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY' public/estate-registry.json
+          grep -q 'WHOLE_SYSTEM_COMPLETE' public/estate-registry.json
+          grep -q 'Private Owner Boundary' docs/PUBLIC_8X8_V1_SCOPE.md
