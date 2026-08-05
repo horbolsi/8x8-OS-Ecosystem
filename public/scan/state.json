@@ -1,0 +1,32 @@
+{
+  "release_unit": "public-8x8scan-testnet-catalog-v1",
+  "mode": "PROTECTED_BETA_FIXTURE",
+  "owner": {"id": "0000000001", "display_name": "FlashTM8"},
+  "truth": {
+    "live_chain_queries": false,
+    "wallet_connected": false,
+    "signing_enabled": false,
+    "mainnet_actions": 0,
+    "testnet_deployments": 0,
+    "private_addresses_exposed": false
+  },
+  "assets": [
+    {"symbol":"8x8","name":"8x8 Core","supply":"8888888","status":"SOURCE_PRESENT"},
+    {"symbol":"TM8","name":"FlashTM8","supply":"1000000000","status":"DESIGN_FROZEN_TEST"},
+    {"symbol":"0x8","name":"Nobelis","supply":"1000000000","status":"DESIGN_FROZEN_TEST"},
+    {"symbol":"Ux8","name":"Ux8","supply":null,"status":"OWNER_FORMULA_PENDING"},
+    {"symbol":"SRP","name":"Seraphim","supply":null,"status":"OWNER_FORMULA_PENDING"},
+    {"symbol":"XM8","name":"XM8","supply":null,"status":"OWNER_FORMULA_PENDING"},
+    {"symbol":"Fx8","name":"Fx8","supply":null,"status":"OWNER_FORMULA_PENDING"},
+    {"symbol":"Tx8","name":"Tx8","supply":null,"status":"OWNER_FORMULA_PENDING"},
+    {"symbol":"Sx8","name":"Sx8","supply":null,"status":"OWNER_FORMULA_PENDING"}
+  ],
+  "networks": [
+    {"id":"bitcoin-testnet4","label":"Bitcoin Testnet4","environment":"TESTNET","state":"PROTOCOL_SELECTION_PENDING"},
+    {"id":"ethereum-sepolia","label":"Ethereum Sepolia","environment":"TESTNET","state":"SOURCE_PRESENT_NOT_DEPLOYED"},
+    {"id":"bsc-testnet","label":"BSC Testnet","environment":"TESTNET","state":"SOURCE_PRESENT_NOT_DEPLOYED"},
+    {"id":"solana-devnet","label":"Solana Devnet","environment":"DEVNET","state":"IMPLEMENTATION_PENDING"},
+    {"id":"ton-testnet","label":"TON Testnet","environment":"TESTNET","state":"IMPLEMENTATION_PENDING"},
+    {"id":"pi-testnet","label":"Pi Testnet","environment":"TESTNET","state":"IMPLEMENTATION_PENDING"}
+  ]
+}
