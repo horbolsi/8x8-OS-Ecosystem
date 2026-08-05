@@ -1,32 +1,30 @@
 {
-  "schemaVersion": "1.2.0",
+  "schemaVersion": "1.3.0",
   "registryId": "8x8-public-estate-v1",
-  "generatedAt": "2026-08-05T21:56:00Z",
+  "generatedAt": "2026-08-05T23:38:00Z",
   "branch": "integration/public-8x8-v1",
   "truthBoundary": "PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY",
   "productLanes": [
-    {"id":"private-core","name":"Private 8x8 Core","visibility":"PRIVATE","publicMount":false,"status":"RUNTIME_AND_EVIDENCE_GATED"},
+    {"id":"private-core","name":"Private 8x8 Core","visibility":"PRIVATE","publicMount":false,"status":"UNMOUNTED_PUBLICLY"},
     {"id":"public-user-edition","name":"8x8 Public User Edition","visibility":"PUBLIC_SAFE","publicMount":true,"status":"INTEGRATION_ACTIVE"}
   ],
   "realities": [
-    {"id":"private-past","monitor":0,"status":"RECOVERY_AND_CLASSIFICATION"},
+    {"id":"private-past","monitor":0,"status":"PRIVATE_NOT_PROJECTED"},
     {"id":"public-present","monitor":1,"status":"PROTECTED_BETA"},
     {"id":"private-owner-core","monitor":2,"status":"UNMOUNTED_PUBLICLY"},
-    {"id":"future-lab","monitor":3,"status":"PUBLIC_SAFE_RESEARCH_AND_RELEASE_CANDIDATES"}
+    {"id":"future-lab","monitor":3,"status":"PUBLIC_SAFE_CONCEPTS_ONLY"}
   ],
   "publicSurfaces": [
     {"id":"portal","path":"/","status":"INTEGRATION_PREVIEW","truth":"THREE_MONITOR_PUBLIC_SAFE_PORTAL"},
     {"id":"world","path":"/world/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_PRESENCE"},
     {"id":"art-board","path":"/art-board/","status":"DEPLOYED_BETA","truth":"EVIDENCE_AND_PRODUCT_MAP"},
     {"id":"visual-council","path":"/visual-council/","status":"DEPLOYED_BETA","truth":"VISION_REGISTRY_NOT_TELEMETRY"},
-    {"id":"capabilities","path":"/capabilities/","status":"INTEGRATION_PREVIEW","truth":"THIRTEEN_PINNED_CANDIDATES_ZERO_RUNTIME_INSTALLATIONS"},
     {"id":"missions","path":"/missions/","status":"DEPLOYED_BETA","truth":"LOCAL_ONLY_NO_REMOTE_EXECUTION"},
     {"id":"plugins","path":"/plugins/","status":"DEPLOYED_BETA","truth":"FIXTURE_ONLY_ZERO_EXECUTION"},
     {"id":"scan","path":"/scan/","status":"DEPLOYED_BETA","truth":"TESTNET_ONLY_NO_WALLET"},
     {"id":"marketplace","path":"/marketplace/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_NO_PAYMENTS"},
-    {"id":"future-lab","path":"/future-lab/","status":"DEPLOYED_BETA","truth":"FUTURE_DESIGNS_NOT_LIVE_CLAIMS"},
-    {"id":"assets","path":"/assets/","status":"INTEGRATION_PREVIEW","truth":"NINE_ASSET_TESTNET_DESIGN_LAB_NO_WALLET"},
-    {"id":"legacy-dashboard","path":"/legacy-dashboard/","status":"INTEGRATION_PREVIEW","truth":"RECOVERED_CAPABILITY_MAP_NOT_LIVE_BACKEND_CLAIMS"}
+    {"id":"future-lab","path":"/future-lab/","status":"DEPLOYED_BETA","truth":"PUBLIC_CONCEPTS_NOT_PRIVATE_RESEARCH"},
+    {"id":"assets","path":"/assets/","status":"INTEGRATION_PREVIEW","truth":"TESTNET_DESIGN_LAB_NO_WALLET"}
   ],
   "assetSystem": {
     "status": "DESIGN_TESTNET_AND_EVIDENCE_ONLY",
@@ -36,23 +34,16 @@
     "mainnetExecution": false,
     "liveTokenValueClaimed": false
   },
-  "legacyCapabilityGroups": [
-    "AGENTS_AND_MARKETPLACE","MISSIONS_AND_AUTOMATION","STUDIO_AND_MEDIA","WORLD_AND_SPATIAL_UI","MEMORY_AND_CONTEXT","CONNECTORS_AND_GITHUB_INTELLIGENCE","PLUGIN_GOVERNANCE","BLOCKCHAIN_AND_ASSETS","TRADING_AND_MARKETS","STAKING_AND_ECONOMIC_MODELS","NFT_AND_CREATOR_ASSETS","GOVERNANCE","ADMIN_AND_OWNER_CONTROL","TERMINAL_AND_DEVICE_RELAY","WALLET_AND_TREASURY","PUBLICATION_AND_DEPLOYMENT","JARVIS_OMNIVERSE","LIVING_PUZZLE","PUBLIC_USER_EDITION","THREE_REALITY_FABRIC"
-  ],
   "domains": [
     {"id":"authority-governance","maturity":"PARTIAL_VERIFIED","publicTarget":"DOCUMENTATION_AND_GATES"},
-    {"id":"agents-council","maturity":"PARTIAL_RUNTIME_GATED","publicTarget":"IDENTITY_PROFILES_AND_RECEIPTS"},
+    {"id":"public-agent-archetypes","maturity":"PUBLIC_DESCRIPTIONS","publicTarget":"GENERIC_PROFILES_ONLY"},
     {"id":"missions-control","maturity":"PARTIAL_VERIFIED","publicTarget":"BOUNDED_DRAFTING_AND_STATUS"},
-    {"id":"memory-context","maturity":"PRIVATE_IMPLEMENTED_PUBLIC_SANITIZATION_REQUIRED","publicTarget":"PROVENANCE_AND_CONTEXT_DIGESTS"},
-    {"id":"connectors","maturity":"MIXED_VERIFICATION","publicTarget":"SANITIZED_AUTHORITY_AND_FRESHNESS_MAP"},
-    {"id":"external-capabilities","maturity":"THIRTEEN_PACKETS_MERGED_ONE_OF_TWO_EXTERNAL_BENCHMARKS_COMPLETE","publicTarget":"SOURCE_PINNED_DECISIONS_AND_BLOCKERS"},
     {"id":"studio-media","maturity":"PARTIAL_VERIFIED","publicTarget":"ARTIFACT_REGISTRY_AND_DEMOS"},
     {"id":"worlds-interfaces","maturity":"PUBLIC_BETA_EXPANDING","publicTarget":"ACCESSIBLE_PUBLIC_CLIENTS"},
     {"id":"markets","maturity":"SIMULATION_SIGNAL_ONLY","publicTarget":"DELAYED_SYNTHETIC_ANALYTICS"},
-    {"id":"blockchain","maturity":"TESTNET_LAB","publicTarget":"NINE_ASSET_TESTNET_EVIDENCE_AND_PROTOCOL_DOCS"},
-    {"id":"release-recovery","maturity":"PARTIAL_VERIFIED","publicTarget":"EXACT_HEAD_RECEIPTS_AND_ROLLBACK"},
-    {"id":"legacy-dashboard-convergence","maturity":"CLASSIFIED_MIGRATION_ACTIVE","publicTarget":"SAFE_FEATURE_PARITY_WITHOUT_PRIVATE_MUTATION"}
+    {"id":"blockchain","maturity":"TESTNET_LAB","publicTarget":"TESTNET_EVIDENCE_AND_PROTOCOL_DOCS"},
+    {"id":"release-recovery","maturity":"PARTIAL_VERIFIED","publicTarget":"PUBLIC_RECEIPTS_AND_ROLLBACK"}
   ],
-  "promotionContract": ["CANONICAL_ID_RESOLVED","PUBLIC_PRIVATE_CLASSIFIED","IMPLEMENTATION_COMPLETE","EXACT_HEAD_TESTS_PASS","SECURITY_PRIVACY_PROVENANCE_ACCESSIBILITY_PASS","COMPATIBILITY_AND_ROLLBACK_PROVEN","SOURCE_AND_ARTIFACT_DIGESTS_RECORDED","DEPLOYMENT_READY","ROOT_AND_CHANGED_ROUTES_VERIFIED","REGISTRY_AND_PRODUCT_MAP_UPDATED"],
-  "prohibitedPublicClaims": ["WHOLE_SYSTEM_COMPLETE","FULL_PRIVATE_CORE_CONNECTED","LIVE_UNRESTRICTED_AUTONOMY","PERMANENT_UPTIME","QUANTUM_OR_BEYOND_QUANTUM_COMPUTATION","LIVE_REVENUE_OR_TOKEN_VALUE","UNVERIFIED_AGENT_ACTIVITY","LIVE_MAINNET_ASSET_DEPLOYMENT","LIVE_STAKING_OR_PROFIT"]
+  "promotionContract": ["PUBLIC_SCOPE_DEFINED","PUBLIC_PRIVATE_CLASSIFIED","IMPLEMENTATION_COMPLETE","EXACT_HEAD_TESTS_PASS","SECURITY_PRIVACY_PROVENANCE_ACCESSIBILITY_PASS","COMPATIBILITY_AND_ROLLBACK_PROVEN","PUBLIC_SOURCE_AND_ARTIFACT_DIGESTS_RECORDED","DEPLOYMENT_READY","ROOT_AND_CHANGED_ROUTES_VERIFIED","PUBLIC_REGISTRY_UPDATED"],
+  "prohibitedPublicClaims": ["WHOLE_SYSTEM_COMPLETE","FULL_PRIVATE_CORE_CONNECTED","LIVE_UNRESTRICTED_AUTONOMY","PERMANENT_UPTIME","QUANTUM_OR_BEYOND_QUANTUM_COMPUTATION","LIVE_REVENUE_OR_TOKEN_VALUE","UNVERIFIED_AGENT_ACTIVITY","LIVE_MAINNET_ASSET_DEPLOYMENT","LIVE_STAKING_OR_PROFIT","PRIVATE_REPOSITORY_CENSUS","INTERNAL_AGENT_OPERATIONS","PROTECTED_DEPLOYMENT_IDENTIFIERS"]
 }
