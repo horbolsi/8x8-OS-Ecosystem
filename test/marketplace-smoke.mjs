@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const html=fs.readFileSync('public/marketplace/index.html','utf8');
+const css=fs.readFileSync('public/marketplace/styles.css','utf8');
+const js=fs.readFileSync('public/marketplace/app.js','utf8');
+
+assert.match(html,/8x8 Marketplace Catalog/);
+assert.match(html,/LIVE SELLERS <b>0<\/b>/);
+assert.match(html,/PAYMENTS <b>OFF<\/b>/);
+assert.match(html,/WALLET <b>DISCONNECTED<\/b>/);
+assert.match(html,/PROTECTED BETA/);
+assert.match(html,/Content-Security-Policy/);
+assert.match(html,/Skip to catalog/);
+assert.match(html,/aria-live="polite"/);
+assert.match(css,/prefers-reduced-motion/);
+assert.match(css,/forced-colors/);
+assert.match(css,/@media\(max-width:600px\)/);
+assert.match(js,/Object\.freeze/);
+assert.match(js,/textContent/);
+assert.match(js,/replaceChildren/);
+assert.doesNotMatch(js,/innerHTML|outerHTML|insertAdjacentHTML|document\.write/);
+assert.doesNotMatch(js,/localStorage|sessionStorage|document\.cookie/);
+assert.doesNotMatch(js,/fetch\(|WebSocket|EventSource|getUserMedia|geolocation|bluetooth/);
+assert.doesNotMatch(`${html}\n${js}`,/walletconnect|private key|seed phrase|mnemonic|checkout|purchase now/i);
+assert.doesNotMatch(`${html}\n${js}`,/\/root\/|localhost|127\.0\.0\.1|gh[pousr]_|github_pat_|sk-[A-Za-z0-9]/);
+assert.match(js,/FIXTURE_ONLY/);
+assert.match(js,/GOVERNANCE_REVIEW/);
+assert.match(js,/BLOCKED/);
+console.log(JSON.stringify({status:'PASS',release_unit:'public-marketplace-catalog-v1',checks:22,live_sellers:0,payments:false,wallet:false,financial_execution:false}));
