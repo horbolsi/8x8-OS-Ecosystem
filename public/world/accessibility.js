@@ -66,15 +66,18 @@ $("#presenceMode")?.addEventListener("change", (event) => {
 
 const modal = $("#modal");
 if (modal) {
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("button");
+    if (trigger && trigger.id !== "closeModal") previousFocus = trigger;
+  }, true);
+
   modal.addEventListener("close", () => {
     if (previousFocus instanceof HTMLElement && document.contains(previousFocus)) previousFocus.focus();
     previousFocus = null;
   });
 
   const observer = new MutationObserver(() => {
-    if (!modal.open) return;
-    if (!previousFocus) previousFocus = document.activeElement;
-    $("#closeModal")?.focus();
+    if (modal.open) $("#closeModal")?.focus();
   });
   observer.observe(modal, { attributes: true, attributeFilter: ["open"] });
 }
