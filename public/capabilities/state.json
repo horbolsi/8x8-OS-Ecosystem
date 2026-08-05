@@ -1,12 +1,12 @@
 {
-  "schema_version": "8x8.public-capabilities-observatory.v1",
-  "release_id": "MSG231-CAPABILITIES-OBSERVATORY-PREVIEW-V1",
-  "truth_state": "PUBLIC_SAFE_PROJECTION_OF_CANONICAL_MSG197_LEDGER_V3",
+  "schema_version": "8x8.public-capabilities-observatory.v2",
+  "release_id": "MSG232-CAPABILITIES-OBSERVATORY-PREVIEW-V2",
+  "truth_state": "PUBLIC_SAFE_PROJECTION_OF_CANONICAL_MSG197_LEDGER_V4",
   "source": {
     "repository": "8x8org/8x8-user-edition",
-    "commit": "52fbb2f4a4c19e1384e6c8a000f260ac54495750",
-    "path": "research/external-capabilities/CANDIDATE_STATUS_LEDGER_V3.json",
-    "blob_sha": "5b65b82dac605d83790edd0071ff5931a4b29f88",
+    "commit": "fd33e0786b9f2b0bf4794ba153cfe7c2e4ef0737",
+    "path": "research/external-capabilities/CANDIDATE_STATUS_LEDGER_V4.json",
+    "blob_sha": "138ba5f26fd46651d29e7dd6903a15e94c0802f1",
     "upstream_pin_set_sha256": "5a10b4f8de51fa9c50cbfbc9f10553a033c30fd687c215124222c2568f5dec41"
   },
   "summary": {
@@ -14,6 +14,7 @@
     "candidate_packets_merged": 13,
     "external_measured_benchmarks_complete": 1,
     "external_measured_benchmarks_required": 2,
+    "disabled_adapter_contracts_merged": 1,
     "third_party_candidates_installed_into_8x8": 0,
     "real_council_votes": 0,
     "quorum_required": 4,
@@ -28,7 +29,7 @@
     {"id":"MSG197-WORKFLOW-001","repository":"obra/superpowers","pin":"44c9b2d6e889982ac18c27d05a19fefe335194e1","decision":"ADOPT_BOUNDED_PATTERNS_REJECT_ORCHESTRATOR","status":"PATTERNS_ONLY","runtime":"NOT_INSTALLED_NO_SECOND_ORCHESTRATOR"},
     {"id":"MSG197-ADR-001","repository":"uber/ADR","pin":"73873e18948be7a8637955eeef2f813a541692b8","decision":"ADOPT_TELEMETRY_SCHEMA_AND_ATTACK_TAXONOMY_ONLY","status":"PATTERNS_ONLY","runtime":"NOT_INSTALLED_NO_PRODUCTION_TELEMETRY"},
     {"id":"MSG197-PDF-001","repository":"firecrawl/pdf-inspector","pin":"12e9a655e36924564057464bf25494b8c027eb57","decision":"REJECT_PROMOTION_AT_CURRENT_PIN","status":"BLOCKED","runtime":"NOT_INSTALLED_SUPPLY_CHAIN_BLOCKED","evidence":{"parser_canary":"PASS","promotion":"BLOCKED","advisories":["RUSTSEC-2026-0176","RUSTSEC-2026-0177","RUSTSEC-2026-0192"]}},
-    {"id":"MSG197-VISION-001","repository":"roboflow/supervision","pin":"bc20dd19fbc7b6cceaec447f1182346ca9158523","decision":"NARROW_SUBSET_ELIGIBLE_FOR_ADAPTER_DESIGN","status":"READY_FOR_ADAPTER_DESIGN","runtime":"NOT_INSTALLED_ADAPTER_DESIGN_OWNER_GATED","evidence":{"python_lanes":["3.11","3.12"],"deterministic_outputs":"PASS","known_vulnerabilities":0,"cleanup":"PASS","merge_commit":"16b51f18603156b1d485c75b7c5ab9dd77067ff8"}},
+    {"id":"MSG197-VISION-001","repository":"roboflow/supervision","pin":"bc20dd19fbc7b6cceaec447f1182346ca9158523","decision":"DISABLED_ADAPTER_CONTRACT_MERGED_RUNTIME_ACTIVATION_OWNER_GATED","status":"ADAPTER_CONTRACT_MERGED","runtime":"NOT_INSTALLED_DISABLED_ADAPTER_CONTRACT_MERGED","evidence":{"python_lanes":["3.11","3.12"],"deterministic_outputs":"PASS","known_vulnerabilities":0,"cleanup":"PASS","measured_canary_merge":"16b51f18603156b1d485c75b7c5ab9dd77067ff8","adapter_contract":{"merge_commit":"a7d3be2dabce36b6cc994bbaab0d27ed5de5ae99","source_head":"d219fc83bac02a39ff7c75757106a26968015c22","enabled":false,"install_state":"NOT_INSTALLED","runtime_authority":"NONE","production_ready":false}}},
     {"id":"MSG197-COMPUTER-001","repository":"cloudflare/computer","pin":"76d9e75c5688713b656bce85540d9e0071cece8b","decision":"ADOPT_WORKSPACE_BOUNDARY_IDEAS_DEFER_ALL_EXECUTION","status":"PATTERNS_ONLY","runtime":"NOT_INSTALLED_ALL_BACKENDS_DENIED"},
     {"id":"MSG197-AIRLLM-001","repository":"lyogavin/airllm","pin":"64a4e4fc3749aa7dc9bba4788f560ed0d7e74bd2","decision":"EXTERNAL_CUDA_ONLY_PHONE_AND_ACTIVE_NODE_REJECTED","status":"BLOCKED","runtime":"NOT_INSTALLED_GPU_AND_MODEL_APPROVAL_REQUIRED"},
     {"id":"MSG197-LOOPX-001","repository":"huangruiteng/loopx","pin":"22b57a76e18736c31fe749867292f3feeb62f27b","decision":"EXTRACT_SELECTED_PROTOCOL_PATTERNS_ONLY","status":"PATTERNS_ONLY","runtime":"NOT_INSTALLED_NO_SECOND_CONTROL_PLANE"},
