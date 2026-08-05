@@ -1,13 +1,23 @@
 {
   "release_id": "MSG232-CAPABILITIES-OBSERVATORY-PREVIEW-V2",
-  "schema_version": "2.0.0",
+  "schema_version": "2.1.0",
   "route": "/capabilities/",
   "scope": "STATIC_PUBLIC_SAFE_MSG197_LEDGER_V4_PROJECTION",
   "score": {
-    "earned": 0,
+    "earned": 90,
     "possible": 100,
-    "state": "PENDING_EXACT_HEAD_CI_DEPLOYMENT_AND_ROUTE_RECEIPT",
-    "whole_system_score": "NOT_INFERRED"
+    "state": "PROTECTED_DEPLOYMENT_READY_ROUTE_HTTP_200_BLOCKED_BY_VERCEL_SSO_REDIRECT",
+    "whole_system_score": "NOT_INFERRED",
+    "weights": {
+      "exact_head_ci": 15,
+      "state_contract": 15,
+      "privacy_and_security": 15,
+      "accessibility": 10,
+      "vercel_ready": 15,
+      "exact_head_binding": 10,
+      "rollback_recorded": 10,
+      "route_http_200": 10
+    }
   },
   "canonical_source": {
     "repository": "8x8org/8x8-user-edition",
@@ -15,6 +25,28 @@
     "path": "research/external-capabilities/CANDIDATE_STATUS_LEDGER_V4.json",
     "blob_sha": "138ba5f26fd46651d29e7dd6903a15e94c0802f1",
     "supervision_adapter_merge": "a7d3be2dabce36b6cc994bbaab0d27ed5de5ae99"
+  },
+  "deployment": {
+    "content_commit": "35b35d8b72f0505609f9c81ba954f181a20e08e9",
+    "deployment_id": "dpl_5nsbHGwvxF3ZLaELZ5Ea9HCVv9iC",
+    "deployment_url": "https://8x8-os-ecosystem-gmbwr09lj-8x8-team-url.vercel.app",
+    "branch_alias": "https://8x8-os-ecosystem-git-feature-msg232-capabil-98b750-8x8-team-url.vercel.app",
+    "state": "READY",
+    "target": "PROTECTED_PREVIEW",
+    "github_workflow_run_id": 31053812855,
+    "github_workflow_conclusion": "SUCCESS",
+    "production_alias_changed": false
+  },
+  "route_verification": {
+    "path": "/capabilities/",
+    "attempted_at": "2026-08-05T22:44:39Z",
+    "expected_status": 200,
+    "observed_status": 302,
+    "observed_location_class": "VERCEL_SSO_REDIRECT",
+    "share_access_attempted": true,
+    "http_200_verified": false,
+    "content_markers_verified_over_http": false,
+    "blocker": "The connected Vercel fetch returned the authentication redirect even with a generated protected-access share URL. No HTTP 200 or rendered-content claim is made."
   },
   "boundaries": {
     "read_only": true,
@@ -29,14 +61,13 @@
     "wallet_or_financial_action": false
   },
   "promotion_gates": {
-    "exact_head_ci": false,
-    "codeql": false,
-    "state_contract": false,
-    "privacy_and_security": false,
-    "accessibility": false,
-    "vercel_ready": false,
+    "exact_head_ci": true,
+    "state_contract": true,
+    "privacy_and_security": true,
+    "accessibility": true,
+    "vercel_ready": true,
     "route_http_200": false,
-    "exact_head_binding": false,
+    "exact_head_binding": true,
     "rollback_recorded": true,
     "owner_production_authorization": false
   },
@@ -45,5 +76,5 @@
     "baseline_commit": "6b7e5bf8fb13587a2e26f4949ae774a41571cc5f",
     "method": "close or revert the scoped release PR; production alias remains unchanged"
   },
-  "truth_state": "IMPLEMENTED_BRANCH_AWAITING_VALIDATION"
+  "truth_state": "PROTECTED_PREVIEW_READY_ROUTE_VERIFICATION_BLOCKED_NO_MERGE"
 }
