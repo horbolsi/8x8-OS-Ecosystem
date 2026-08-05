@@ -1,0 +1,48 @@
+name: MSG222 Public Marketplace Catalog
+
+on:
+  pull_request:
+    paths:
+      - "public/marketplace/**"
+      - "test/marketplace-smoke.mjs"
+      - ".github/workflows/msg222-marketplace-preview.yml"
+  push:
+    branches:
+      - "feature/msg222-public-marketplace-catalog-v1"
+    paths:
+      - "public/marketplace/**"
+      - "test/marketplace-smoke.mjs"
+      - ".github/workflows/msg222-marketplace-preview.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate JavaScript syntax
+        run: |
+          node --check public/marketplace/app.js
+          node --check test/marketplace-smoke.mjs
+      - name: Run marketplace boundary suite
+        run: node test/marketplace-smoke.mjs
+      - name: Run existing beta regressions
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          npm test
+      - name: Enforce static public boundary
+        run: |
+          set -Eeuo pipefail
+          ! grep -RInE '(innerHTML|outerHTML|insertAdjacentHTML|document\.write|localStorage|sessionStorage|document\.cookie|WebSocket|EventSource|getUserMedia|navigator\.bluetooth|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|github_pat_|gh[pousr]_|sk-[A-Za-z0-9])' public/marketplace
+          grep -F 'PAYMENTS <b>OFF</b>' public/marketplace/index.html
+          grep -F 'WALLET <b>DISCONNECTED</b>' public/marketplace/index.html
+          grep -F 'LIVE SELLERS <b>0</b>' public/marketplace/index.html
+          echo 'PUBLIC_MARKETPLACE_BOUNDARY=PASS'
