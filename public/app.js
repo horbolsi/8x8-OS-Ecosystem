@@ -1,4 +1,4 @@
-const releaseFallback = "8X8-BETA-DUAL-MONITOR-V0.1";
+const releaseFallback = "8X8-PUBLIC-SYSTEM-BETA";
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
@@ -25,6 +25,7 @@ function emit(type, detail = {}) {
 
 function toast(message) {
   const node = $("#toast");
+  if (!node) return;
   node.textContent = message;
   node.classList.add("visible");
   clearTimeout(toast.timer);
@@ -33,9 +34,9 @@ function toast(message) {
 
 function setupClock() {
   const clock = $("#clock");
+  if (!clock) return;
   const update = () => {
-    const now = new Date();
-    clock.textContent = now.toISOString().slice(11, 23);
+    clock.textContent = new Date().toISOString().slice(11, 23);
     requestAnimationFrame(update);
   };
   update();
@@ -43,6 +44,7 @@ function setupClock() {
 
 function setupFrameMeter() {
   const output = $("#fps");
+  if (!output) return;
   let frames = 0;
   let last = performance.now();
   function frame(now) {
@@ -59,6 +61,7 @@ function setupFrameMeter() {
 
 function setupSpace() {
   const canvas = $("#space");
+  if (!canvas) return;
   const ctx = canvas.getContext("2d", { alpha: true });
   let width = 0;
   let height = 0;
@@ -106,6 +109,7 @@ function setupSpace() {
 
 function setupGlobe() {
   const canvas = $("#globe");
+  if (!canvas) return;
   const ctx = canvas.getContext("2d");
   let width = 0;
   let height = 0;
@@ -114,7 +118,7 @@ function setupGlobe() {
     lat: Math.asin(2 * Math.random() - 1),
     lon: Math.random() * Math.PI * 2,
     pulse: Math.random() * Math.PI * 2,
-    id: `node-${String(index + 1).padStart(3, "0")}`,
+    id: `synthetic-node-${String(index + 1).padStart(3, "0")}`,
   }));
 
   function resize() {
@@ -197,7 +201,6 @@ function setupGlobe() {
     ctx.arc(0, 0, radius, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
-
     requestAnimationFrame(draw);
   }
 
@@ -207,32 +210,35 @@ function setupGlobe() {
 }
 
 function setupAgents() {
+  const output = $("#agents");
+  if (!output) return;
   const definitions = [
-    ["HERMES", "#67f7ff"], ["FLASH", "#ffd36a"], ["SERAPH", "#9f7cff"], ["ATLAS", "#73ffbe"],
-    ["SOMA", "#ff7088"], ["CIPHER", "#64a7ff"], ["ORACLE", "#d5ff73"], ["WOMB", "#ff8ee5"],
+    ["HERMES", "#67f7ff"], ["FLASH", "#ffd36a"], ["SERAPHIM", "#9f7cff"], ["ARCHITECT", "#73ffbe"],
+    ["SCRIBE", "#ff7088"], ["AEGIS", "#64a7ff"], ["CURATOR", "#d5ff73"], ["MODERATOR", "#ff8ee5"],
   ];
-  $("#agents").innerHTML = definitions.map(([name, color]) => `
+  output.innerHTML = definitions.map(([name, color]) => `
     <div class="agent" style="--agent-color:${color}" data-agent-id="${name}">
       <span class="face" aria-hidden="true"></span><small>${name}</small>
     </div>`).join("");
   $$(".agent").forEach((node) => node.addEventListener("click", () => {
     const id = node.dataset.agentId;
-    emit("agent.selected", { agent_id: id });
-    toast(`${id} selected · public demo profile only`);
+    emit("agent.profile.selected", { agent_id: id, live_presence_claimed: false });
+    toast(`${id} selected · visual profile only · live presence not claimed`);
   }));
 }
 
 function setupEvents() {
-  const events = [
-    ["release", "Dual monitor beta manifest verified", "PASS"],
-    ["public", "Public payload contains sanitized fixtures only", "PASS"],
-    ["private", "Owner monitor remains unmounted", "LOCKED"],
-    ["agents", "Eight visual agent identities initialized", "PASS"],
-    ["trace", "Pixel interaction IDs active in local session", "LOCAL"],
-  ];
   const output = $("#publicEvents");
+  if (!output) return;
+  const events = [
+    ["release", "Current beta routes exposed from one public portal", "PASS"],
+    ["truth", "Synthetic, local-only, testnet and gated states labeled", "PASS"],
+    ["private", "Private owner core remains unmounted", "LOCKED"],
+    ["agents", "Eight visual profiles loaded without live-presence claims", "PASS"],
+    ["rollback", "Release remains commit-bound and reversible", "READY"],
+  ];
   output.innerHTML = events.map(([kind, text, state], index) => `
-    <li><time>+${String(index * 8).padStart(2, "0")}ms</time><span>${text}</span><b>${state}</b></li>`).join("");
+    <li data-kind="${kind}"><time>+${String(index * 8).padStart(2, "0")}ms</time><span>${text}</span><b>${state}</b></li>`).join("");
 }
 
 function setupInteractions() {
@@ -240,6 +246,7 @@ function setupInteractions() {
     button.addEventListener("click", () => {
       const target = button.dataset.focus;
       const targetMonitor = $(`[data-monitor="${target}"]`);
+      if (!targetMonitor) return;
       $$(".monitor").forEach((monitor) => {
         monitor.classList.toggle("focused", monitor === targetMonitor);
         monitor.classList.toggle("dimmed", monitor !== targetMonitor);
@@ -250,16 +257,9 @@ function setupInteractions() {
     });
   });
 
-  $$("[data-module]").forEach((button) => {
-    button.addEventListener("click", () => {
-      emit("module.request", { module: button.dataset.module });
-      toast(`${button.textContent.trim()} is mapped for the expansion release.`);
-    });
-  });
-
-  $("#ownerButton").addEventListener("click", () => {
-    emit("owner.session.requested", { public_build: true });
-    toast("Owner sessions are intentionally disabled in the public beta.");
+  $("#ownerButton")?.addEventListener("click", () => {
+    emit("owner.boundary.viewed", { public_build: true, private_core_mounted: false });
+    toast("Private owner access is intentionally unavailable in the public beta.");
   });
 
   document.addEventListener("pointerdown", (event) => {
@@ -267,13 +267,13 @@ function setupInteractions() {
     const y = Math.round(event.clientY * (window.devicePixelRatio || 1));
     emit("pixel.pointer", {
       pixel_id: `${x}:${y}`,
-      target: event.target?.closest?.("[data-module],[data-focus],[data-monitor],button")?.getAttribute?.("data-module") || event.target?.tagName || "unknown",
+      target: event.target?.closest?.("a,button,[data-monitor]")?.getAttribute?.("href") || event.target?.tagName || "unknown",
     });
   }, { passive: true });
 }
 
 async function loadRelease() {
-  let release = { release_id: releaseFallback, integrity: "local-fallback", public_mode: true };
+  let release = { release_id: releaseFallback, integrity: "static-public-beta", public_mode: true };
   try {
     const response = await fetch("/api/v1/release", { headers: { accept: "application/json" } });
     if (response.ok) release = await response.json();
@@ -281,8 +281,10 @@ async function loadRelease() {
     // Static fallback remains fully functional.
   }
   window.__releaseId = release.release_id || releaseFallback;
-  $("#releaseId").textContent = window.__releaseId.replace("8X8-BETA-", "");
-  $("#integrity").textContent = `integrity: ${release.integrity || "unknown"}`;
+  const releaseId = $("#releaseId");
+  const integrity = $("#integrity");
+  if (releaseId) releaseId.textContent = window.__releaseId.replace("8X8-", "");
+  if (integrity) integrity.textContent = `integrity: ${release.integrity || "unknown"}`;
   emit("release.loaded", { release_id: window.__releaseId, public_mode: release.public_mode !== false });
 }
 
@@ -294,4 +296,4 @@ setupAgents();
 setupEvents();
 setupInteractions();
 loadRelease();
-emit("session.started", { viewport: [window.innerWidth, window.innerHeight] });
+emit("session.started", { viewport: [window.innerWidth, window.innerHeight], public_routes: 8 });
