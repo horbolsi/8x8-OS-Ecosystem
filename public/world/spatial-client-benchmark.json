@@ -1,0 +1,85 @@
+{
+  "release_unit": "spatial-client-benchmark-v1",
+  "owner_8x8_id": "0000000001",
+  "generated_on": "2026-08-05",
+  "mode": "PROTECTED_BETA_RESEARCH_FIXTURE",
+  "whole_system_score_inferred": false,
+  "decision": {
+    "browser_default": "Babylon.js plus MapLibre GL JS",
+    "global_geospatial_option": "CesiumJS",
+    "immersive_browser_option": "WebXR behind explicit permission and device support",
+    "scene_interchange_contract": "OpenUSD as offline authoring and interchange, not browser runtime authority",
+    "external_experience_clients": ["Roblox", "Unreal Engine"],
+    "authority_rule": "All clients remain beneath canonical 8x8 identity, event, consent, capability and receipt contracts."
+  },
+  "weights": {
+    "browser_delivery": 20,
+    "mobile_accessibility": 15,
+    "spatial_rendering": 15,
+    "geospatial": 10,
+    "xr": 10,
+    "open_interchange": 10,
+    "governance_fit": 10,
+    "operational_cost": 10
+  },
+  "candidates": [
+    {
+      "name": "Babylon.js",
+      "role": "primary browser 3D engine",
+      "scores": {"browser_delivery": 10, "mobile_accessibility": 8, "spatial_rendering": 9, "geospatial": 5, "xr": 9, "open_interchange": 7, "governance_fit": 9, "operational_cost": 9},
+      "weighted_score": 8.45,
+      "status": "RECOMMENDED_BROWSER_ENGINE"
+    },
+    {
+      "name": "MapLibre GL JS",
+      "role": "primary browser map and regional layer",
+      "scores": {"browser_delivery": 10, "mobile_accessibility": 9, "spatial_rendering": 6, "geospatial": 10, "xr": 2, "open_interchange": 5, "governance_fit": 9, "operational_cost": 9},
+      "weighted_score": 7.75,
+      "status": "RECOMMENDED_MAP_ENGINE"
+    },
+    {
+      "name": "CesiumJS",
+      "role": "optional globe and large-scale geospatial client",
+      "scores": {"browser_delivery": 8, "mobile_accessibility": 6, "spatial_rendering": 9, "geospatial": 10, "xr": 4, "open_interchange": 7, "governance_fit": 8, "operational_cost": 6},
+      "weighted_score": 7.35,
+      "status": "CONDITIONAL_GLOBAL_CLIENT"
+    },
+    {
+      "name": "WebXR",
+      "role": "permission-gated immersive browser capability",
+      "scores": {"browser_delivery": 7, "mobile_accessibility": 5, "spatial_rendering": 8, "geospatial": 3, "xr": 10, "open_interchange": 5, "governance_fit": 7, "operational_cost": 8},
+      "weighted_score": 6.65,
+      "status": "EXPERIMENTAL_PERMISSION_GATED"
+    },
+    {
+      "name": "OpenUSD",
+      "role": "scene interchange and offline asset composition",
+      "scores": {"browser_delivery": 2, "mobile_accessibility": 2, "spatial_rendering": 7, "geospatial": 4, "xr": 4, "open_interchange": 10, "governance_fit": 9, "operational_cost": 6},
+      "weighted_score": 5.05,
+      "status": "AUTHORING_INTERCHANGE_ONLY"
+    },
+    {
+      "name": "Roblox",
+      "role": "external governed experience client",
+      "scores": {"browser_delivery": 3, "mobile_accessibility": 7, "spatial_rendering": 8, "geospatial": 3, "xr": 5, "open_interchange": 4, "governance_fit": 5, "operational_cost": 6},
+      "weighted_score": 5.15,
+      "status": "EXTERNAL_CLIENT_ADAPTER_REQUIRED"
+    },
+    {
+      "name": "Unreal Engine",
+      "role": "high-fidelity native or pixel-streamed client",
+      "scores": {"browser_delivery": 5, "mobile_accessibility": 5, "spatial_rendering": 10, "geospatial": 6, "xr": 10, "open_interchange": 9, "governance_fit": 6, "operational_cost": 3},
+      "weighted_score": 6.65,
+      "status": "HIGH_FIDELITY_EXTERNAL_CLIENT"
+    }
+  ],
+  "public_boundaries": {
+    "runtime_imports_added": 0,
+    "device_permissions_added": 0,
+    "network_endpoints_added": 0,
+    "precise_locations_added": 0,
+    "live_users_added": 0,
+    "wallet_or_payment_actions_added": 0,
+    "private_core_connected": false
+  }
+}
