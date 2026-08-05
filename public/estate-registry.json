@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.3.0",
+  "registryId": "8x8-public-estate-v1",
+  "generatedAt": "2026-08-05T23:38:00Z",
+  "branch": "integration/public-8x8-v1",
+  "truthBoundary": "PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY",
+  "productLanes": [
+    {"id":"private-core","name":"Private 8x8 Core","visibility":"PRIVATE","publicMount":false,"status":"UNMOUNTED_PUBLICLY"},
+    {"id":"public-user-edition","name":"8x8 Public User Edition","visibility":"PUBLIC_SAFE","publicMount":true,"status":"INTEGRATION_ACTIVE"}
+  ],
+  "realities": [
+    {"id":"private-past","monitor":0,"status":"PRIVATE_NOT_PROJECTED"},
+    {"id":"public-present","monitor":1,"status":"PROTECTED_BETA"},
+    {"id":"private-owner-core","monitor":2,"status":"UNMOUNTED_PUBLICLY"},
+    {"id":"future-lab","monitor":3,"status":"PUBLIC_SAFE_CONCEPTS_ONLY"}
+  ],
+  "publicSurfaces": [
+    {"id":"portal","path":"/","status":"INTEGRATION_PREVIEW","truth":"THREE_MONITOR_PUBLIC_SAFE_PORTAL"},
+    {"id":"world","path":"/world/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_PRESENCE"},
+    {"id":"art-board","path":"/art-board/","status":"DEPLOYED_BETA","truth":"EVIDENCE_AND_PRODUCT_MAP"},
+    {"id":"visual-council","path":"/visual-council/","status":"DEPLOYED_BETA","truth":"VISION_REGISTRY_NOT_TELEMETRY"},
+    {"id":"missions","path":"/missions/","status":"DEPLOYED_BETA","truth":"LOCAL_ONLY_NO_REMOTE_EXECUTION"},
+    {"id":"plugins","path":"/plugins/","status":"DEPLOYED_BETA","truth":"FIXTURE_ONLY_ZERO_EXECUTION"},
+    {"id":"scan","path":"/scan/","status":"DEPLOYED_BETA","truth":"TESTNET_ONLY_NO_WALLET"},
+    {"id":"marketplace","path":"/marketplace/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_NO_PAYMENTS"},
+    {"id":"future-lab","path":"/future-lab/","status":"DEPLOYED_BETA","truth":"PUBLIC_CONCEPTS_NOT_PRIVATE_RESEARCH"},
+    {"id":"assets","path":"/assets/","status":"INTEGRATION_PREVIEW","truth":"TESTNET_DESIGN_LAB_NO_WALLET"}
+  ],
+  "assetSystem": {
+    "status": "DESIGN_TESTNET_AND_EVIDENCE_ONLY",
+    "assets": ["8x8","TM8","0x8","Ux8","SRP","XM8","Fx8","Tx8","Sx8"],
+    "targetTestEnvironments": ["BITCOIN_TEST_ENVIRONMENTS","ETHEREUM_SEPOLIA","BSC_TESTNET","SOLANA_DEVNET","TON_TESTNET","PI_TESTNET"],
+    "walletConnected": false,
+    "mainnetExecution": false,
+    "liveTokenValueClaimed": false
+  },
+  "domains": [
+    {"id":"authority-governance","maturity":"PARTIAL_VERIFIED","publicTarget":"DOCUMENTATION_AND_GATES"},
+    {"id":"public-agent-archetypes","maturity":"PUBLIC_DESCRIPTIONS","publicTarget":"GENERIC_PROFILES_ONLY"},
+    {"id":"missions-control","maturity":"PARTIAL_VERIFIED","publicTarget":"BOUNDED_DRAFTING_AND_STATUS"},
+    {"id":"studio-media","maturity":"PARTIAL_VERIFIED","publicTarget":"ARTIFACT_REGISTRY_AND_DEMOS"},
+    {"id":"worlds-interfaces","maturity":"PUBLIC_BETA_EXPANDING","publicTarget":"ACCESSIBLE_PUBLIC_CLIENTS"},
+    {"id":"markets","maturity":"SIMULATION_SIGNAL_ONLY","publicTarget":"DELAYED_SYNTHETIC_ANALYTICS"},
+    {"id":"blockchain","maturity":"TESTNET_LAB","publicTarget":"TESTNET_EVIDENCE_AND_PROTOCOL_DOCS"},
+    {"id":"release-recovery","maturity":"PARTIAL_VERIFIED","publicTarget":"PUBLIC_RECEIPTS_AND_ROLLBACK"}
+  ],
+  "promotionContract": ["PUBLIC_SCOPE_DEFINED","PUBLIC_PRIVATE_CLASSIFIED","IMPLEMENTATION_COMPLETE","EXACT_HEAD_TESTS_PASS","SECURITY_PRIVACY_PROVENANCE_ACCESSIBILITY_PASS","COMPATIBILITY_AND_ROLLBACK_PROVEN","PUBLIC_SOURCE_AND_ARTIFACT_DIGESTS_RECORDED","DEPLOYMENT_READY","ROOT_AND_CHANGED_ROUTES_VERIFIED","PUBLIC_REGISTRY_UPDATED"],
+  "prohibitedPublicClaims": ["WHOLE_SYSTEM_COMPLETE","FULL_PRIVATE_CORE_CONNECTED","LIVE_UNRESTRICTED_AUTONOMY","PERMANENT_UPTIME","QUANTUM_OR_BEYOND_QUANTUM_COMPUTATION","LIVE_REVENUE_OR_TOKEN_VALUE","UNVERIFIED_AGENT_ACTIVITY","LIVE_MAINNET_ASSET_DEPLOYMENT","LIVE_STAKING_OR_PROFIT","PRIVATE_REPOSITORY_CENSUS","INTERNAL_AGENT_OPERATIONS","PROTECTED_DEPLOYMENT_IDENTIFIERS"]
+}

@@ -15,7 +15,7 @@ assert(manifest.release_unit === 'visual-council-registry-v1', 'release unit dri
 assert(manifest.truth_state === 'VISION_ARTIFACTS_NOT_LIVE_TELEMETRY', 'truth boundary missing');
 assert(manifest.scope_score?.earned === 100 && manifest.scope_score?.possible === 100, 'declared-scope score invalid');
 assert(manifest.whole_system_score === 'NOT_INFERRED', 'whole-system completion must not be inferred');
-assert(Array.isArray(manifest.canonical_images) && manifest.canonical_images.length === 4, 'exactly four canonical images required');
+assert(Array.isArray(manifest.canonical_images) && manifest.canonical_images.length === 4, 'exactly four public concept records required');
 
 const ids = new Set();
 const hashes = new Set();
@@ -28,12 +28,14 @@ for (const image of manifest.canonical_images) {
   hashes.add(image.sha256);
   assert(Array.isArray(image.dimensions) && image.dimensions.length === 2, `dimensions missing: ${image.id}`);
   assert(image.benchmark_score >= 0 && image.benchmark_score <= 100, `benchmark range error: ${image.id}`);
-  assert(image.authorship === 'CHATGPT_GENERATED_IN_OWNER_SESSION', `unexpected authorship: ${image.id}`);
-  assert(image.drive_url.startsWith('https://drive.google.com/file/d/'), `Drive evidence missing: ${image.id}`);
+  assert(image.public_provenance === 'OWNER_APPROVED_CONCEPT_RECORD', `unexpected public provenance: ${image.id}`);
+  assert(image.binary_publication_state === 'NOT_PUBLISHED_IN_THIS_REPOSITORY', `binary publication state drift: ${image.id}`);
+  assert(!('drive_id' in image), `private storage identifier found: ${image.id}`);
+  assert(!('drive_url' in image), `private storage URL found: ${image.id}`);
+  assert(!('authorship' in image), `private working attribution found: ${image.id}`);
 }
 
-assert(manifest.agent_submission_contract?.fleet_target === '123_PLUS_AGENT_VISIONS', 'fleet target missing');
-assert(manifest.agent_submission_contract?.status === 'REGISTRY_READY_SUBMISSIONS_NOT_YET_VERIFIED', 'agent submission truth state drift');
+assert(manifest.public_submission_contract?.status === 'PUBLIC_CONTRACT_DEFINED_NO_SUBMISSIONS_CLAIMED', 'submission truth state drift');
 assert(html.includes('Whole-system completion: NOT INFERRED'), 'public truth marker missing');
 assert(html.includes('/visual-council/manifest.json'), 'manifest link missing');
 assert(css.includes('prefers-reduced-motion'), 'reduced motion support missing');
@@ -41,6 +43,8 @@ assert(css.includes('forced-colors'), 'forced-colors support missing');
 
 const combined = `${html}\n${css}\n${JSON.stringify(manifest)}`;
 for (const forbidden of [
+  /drive\.google\.com/i,
+  /canva\.com\/d\//i,
   /BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY/i,
   /authorization:\s*bearer/i,
   /localhost/i,
@@ -50,4 +54,4 @@ for (const forbidden of [
   /ethereum\.request/i
 ]) assert(!forbidden.test(combined), `forbidden public capability found: ${forbidden}`);
 
-console.log('visual-council-registry-v1: PASS (4 images, unique SHA-256, explicit truth boundary)');
+console.log('visual-council-registry-v1: PASS (4 redacted concept records, unique SHA-256, explicit truth boundary)');
