@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070a18">
+  <meta name="description" content="8x8 Marketplace protected-beta catalog with synthetic listings and no payments.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>8x8 Marketplace Catalog</title>
+  <link rel="stylesheet" href="/marketplace/styles.css">
+</head>
+<body>
+  <a class="skip" href="#catalog">Skip to catalog</a>
+  <header class="topbar">
+    <a href="/world/" aria-label="Return to 8x8 World"><b>8×8</b> WORLD</a>
+    <strong>MARKETPLACE CATALOG</strong>
+    <nav aria-label="Product routes"><a href="/art-board/">Art Board</a><a href="/scan/">8x8Scan</a></nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <p class="eyebrow">SERAPHIM CREATOR GUIDE</p>
+      <h1 id="title">Explore governed tools without pretending commerce is live.</h1>
+      <p>Every listing is synthetic, unsigned and non-purchasable. This slice demonstrates discovery, evidence and governance states only.</p>
+      <div class="truth" role="status"><span>LIVE SELLERS <b>0</b></span><span>PAYMENTS <b>OFF</b></span><span>WALLET <b>DISCONNECTED</b></span><span>MODE <b>PROTECTED BETA</b></span></div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel" aria-labelledby="filters-title">
+        <h2 id="filters-title">Filters</h2>
+        <label for="category">Category</label>
+        <select id="category"><option value="all">All</option><option value="agent">Agents</option><option value="tool">Tools</option><option value="world">World modules</option><option value="media">Media</option></select>
+        <label for="state">Review state</label>
+        <select id="state"><option value="all">All</option><option value="fixture">Fixture</option><option value="review">Governance review</option><option value="blocked">Blocked</option></select>
+        <p class="boundary">No checkout, wallet connection, token transfer, live seller account, external tracking or private-core access exists here.</p>
+      </aside>
+
+      <section id="catalog" class="catalog" tabindex="-1" aria-labelledby="catalog-title">
+        <div class="section-head"><div><p class="eyebrow">PUBLIC-SAFE FIXTURES</p><h2 id="catalog-title">Creator catalog</h2></div><p id="resultCount" aria-live="polite"></p></div>
+        <div id="listingGrid" class="grid"></div>
+      </section>
+
+      <aside class="panel inspector" aria-live="polite">
+        <p class="eyebrow">EVIDENCE INSPECTOR</p>
+        <h2 id="itemTitle">Select a listing</h2>
+        <p id="itemSummary">Review provenance, permissions and release state before any future installation.</p>
+        <dl id="itemFacts"></dl>
+        <button type="button" id="requestButton" disabled>Request access</button>
+      </aside>
+    </section>
+  </main>
+  <footer><span>OWNER 8x8 ID 0000000001</span><span>ZERO FINANCIAL EXECUTION</span><span>SYNTHETIC DATA ONLY</span></footer>
+  <script type="module" src="/marketplace/app.js"></script>
+</body>
+</html>
