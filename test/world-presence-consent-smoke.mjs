@@ -16,7 +16,7 @@ const checks = [
   ['manual clear control', js.includes('presenceClearButton')],
   ['automatic expiry', js.includes('expiresAt') && js.includes('setInterval') && js.includes('expired automatically')],
   ['page exit clears', js.includes('pagehide') && js.includes('clearConsent')],
-  ['screen reader status', js.includes("role: 'status'") && js.includes("'aria-live': 'polite'"))],
+  ['screen reader status', js.includes("role: 'status'") && js.includes("'aria-live': 'polite'")],
   ['DOM safe roster', js.includes('textContent') && js.includes('replaceChildren') && !/\.innerHTML|\.outerHTML|insertAdjacentHTML/.test(js)],
   ['no browser storage', !/localStorage|sessionStorage|document\.cookie/.test(js)],
   ['no network calls', !/fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon/.test(js)],
