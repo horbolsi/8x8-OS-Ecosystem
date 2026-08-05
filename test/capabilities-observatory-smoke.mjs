@@ -55,10 +55,24 @@ assert.equal(airllm.status, 'BLOCKED');
 
 assert.equal(release.release_id, 'MSG232-CAPABILITIES-OBSERVATORY-PREVIEW-V2');
 assert.equal(release.route, '/capabilities/');
-assert.equal(release.score.earned, 0);
+assert.equal(release.score.earned, 90);
+assert.equal(release.score.possible, 100);
 assert.equal(release.score.whole_system_score, 'NOT_INFERRED');
+assert.equal(Object.values(release.score.weights).reduce((total, value) => total + value, 0), 100);
 assert.equal(release.canonical_source.commit, 'fd33e0786b9f2b0bf4794ba153cfe7c2e4ef0737');
 assert.equal(release.canonical_source.blob_sha, '138ba5f26fd46651d29e7dd6903a15e94c0802f1');
+assert.equal(release.deployment.content_commit, '35b35d8b72f0505609f9c81ba954f181a20e08e9');
+assert.equal(release.deployment.deployment_id, 'dpl_5nsbHGwvxF3ZLaELZ5Ea9HCVv9iC');
+assert.equal(release.deployment.state, 'READY');
+assert.equal(release.deployment.github_workflow_run_id, 31053812855);
+assert.equal(release.deployment.github_workflow_conclusion, 'SUCCESS');
+assert.equal(release.deployment.production_alias_changed, false);
+assert.equal(release.route_verification.observed_status, 302);
+assert.equal(release.route_verification.observed_location_class, 'VERCEL_SSO_REDIRECT');
+assert.equal(release.route_verification.http_200_verified, false);
+assert.equal(release.route_verification.content_markers_verified_over_http, false);
+assert.equal(release.promotion_gates.route_http_200, false);
+assert.equal(release.truth_state, 'PROTECTED_PREVIEW_READY_ROUTE_VERIFICATION_BLOCKED_NO_MERGE');
 assert.equal(release.boundaries.read_only, true);
 for (const [key, value] of Object.entries(release.boundaries)) {
   if (key !== 'read_only') assert.equal(value, false, key);
@@ -106,4 +120,4 @@ for (const pattern of [
   /localhost:\d+/i,
 ]) assert.doesNotMatch(corpus, pattern);
 
-console.log('MSG232_CAPABILITIES_OBSERVATORY_V2_SMOKE_PASS installed=0 adapters=1 votes=0');
+console.log('MSG232_CAPABILITIES_OBSERVATORY_V2_SMOKE_PASS score=90 route=302 installed=0 adapters=1 votes=0');
