@@ -1,15 +1,11 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "release_unit": "visual-council-registry-v1",
-  "owner": {
-    "display_name": "FlashTM8",
-    "eight_by_eight_id": "0000000001"
-  },
   "truth_state": "VISION_ARTIFACTS_NOT_LIVE_TELEMETRY",
   "scope_score": {
     "earned": 100,
     "possible": 100,
-    "meaning": "The registry contains four supplied vision artifacts with unique SHA-256 digests, dimensions, provenance state, benchmark scores, explicit limitations and owner-accessible Drive references. It does not assert whole-system completion."
+    "meaning": "Four public concept records have unique SHA-256 digests, dimensions, benchmark scores, and explicit limitations. Private binary locations and working records are excluded."
   },
   "whole_system_score": "NOT_INFERRED",
   "rubric": {
@@ -25,106 +21,69 @@
     {
       "id": "8X8-VIS-0001",
       "title": "8x8 Sovereign Architecture Vision V1",
-      "role": "CANONICAL_ARCHITECTURE_REFERENCE",
+      "role": "PUBLIC_ARCHITECTURE_CONCEPT",
       "dimensions": [1536, 1024],
       "bytes": 529847,
       "sha256": "fe56383723bfcf117d2a15f3e926b7f020d677419f2d2ba7f290a165a63b66dd",
-      "drive_id": "11HAsdX-Ye3T67anqmDbqYBkNosCnHfqj",
-      "drive_url": "https://drive.google.com/file/d/11HAsdX-Ye3T67anqmDbqYBkNosCnHfqj/view?usp=drivesdk",
-      "authorship": "CHATGPT_GENERATED_IN_OWNER_SESSION",
+      "public_provenance": "OWNER_APPROVED_CONCEPT_RECORD",
+      "binary_publication_state": "NOT_PUBLISHED_IN_THIS_REPOSITORY",
       "benchmark_score": 82.5,
       "machine_visual_index": 64.28,
       "strengths": ["architecture hierarchy", "reasoning and control layers", "trust and cryptography", "governance lifecycle"],
-      "limitations": ["many metrics are illustrative", "does not fully model past-present-future worlds", "not bound to live telemetry"]
+      "limitations": ["illustrative metrics", "not bound to public telemetry"]
     },
     {
       "id": "8X8-VIS-0002",
       "title": "8x8 Omniversal Product Atlas V1",
-      "role": "CANONICAL_PRODUCT_AND_WORLD_MAP_REFERENCE",
+      "role": "PUBLIC_PRODUCT_CONCEPT",
       "dimensions": [1536, 864],
       "bytes": 434628,
       "sha256": "50d7f3dc0a086e8f05124685acefc00e18cfa907aed261a2f2ef504af6fd6bb9",
-      "drive_id": "1sb1g9dQm2GQojTGqRttalYeZoHx-LwW3",
-      "drive_url": "https://drive.google.com/file/d/1sb1g9dQm2GQojTGqRttalYeZoHx-LwW3/view?usp=drivesdk",
-      "authorship": "CHATGPT_GENERATED_IN_OWNER_SESSION",
+      "public_provenance": "OWNER_APPROVED_CONCEPT_RECORD",
+      "binary_publication_state": "NOT_PUBLISHED_IN_THIS_REPOSITORY",
       "benchmark_score": 86.4,
       "machine_visual_index": 70.0,
-      "strengths": ["product storytelling", "world and map layer", "agent constellation", "connector galaxy", "high color separation"],
-      "limitations": ["architecture depth is lower", "illustrative counts are not evidence", "some text is too small"]
+      "strengths": ["product storytelling", "world layer", "public ecosystem composition", "color separation"],
+      "limitations": ["illustrative counts", "small text"]
     },
     {
       "id": "8X8-VIS-0003",
       "title": "8x8 Omniversal System Atlas V2",
-      "role": "PUBLIC_HERO_AND_OPERATIONAL_OVERVIEW_REFERENCE",
+      "role": "PUBLIC_OVERVIEW_CONCEPT",
       "dimensions": [1536, 1024],
       "bytes": 486320,
       "sha256": "976a96e1203d9cd0668b7205175be075f7ff5b3df40f3d9f7a46a963e1f10648",
-      "drive_id": "1i2kx4SL3h7ei8Q0eDZWbXJyOvKNvUTbm",
-      "drive_url": "https://drive.google.com/file/d/1i2kx4SL3h7ei8Q0eDZWbXJyOvKNvUTbm/view?usp=drivesdk",
-      "authorship": "CHATGPT_GENERATED_IN_OWNER_SESSION",
+      "public_provenance": "OWNER_APPROVED_CONCEPT_RECORD",
+      "binary_publication_state": "NOT_PUBLISHED_IN_THIS_REPOSITORY",
       "benchmark_score": 84.7,
       "machine_visual_index": 41.21,
-      "strengths": ["clean layout", "strong central core", "balanced public presentation", "good section readability"],
-      "limitations": ["illustrative metrics resemble live claims", "less explicit council and three-reality logic", "not data-bound"]
+      "strengths": ["clean layout", "central core", "balanced presentation", "section readability"],
+      "limitations": ["illustrative metrics resemble live claims", "not data-bound"]
     },
     {
       "id": "8X8-VIS-0004",
       "title": "8x8 Three Realities System Atlas V1",
-      "role": "CURRENT_FLAGSHIP_VISION_REFERENCE",
+      "role": "PUBLIC_FLAGSHIP_CONCEPT",
       "dimensions": [1536, 1024],
       "bytes": 497028,
       "sha256": "9c8a97de183c08fe4d1dfdb76de470fb5e3b1191a181823235a16aab6e662a71",
-      "drive_id": "1wsSD8960hkQxXmaodmAJWQGUHEloi9XE",
-      "drive_url": "https://drive.google.com/file/d/1wsSD8960hkQxXmaodmAJWQGUHEloi9XE/view?usp=drivesdk",
-      "authorship": "CHATGPT_GENERATED_IN_OWNER_SESSION",
+      "public_provenance": "OWNER_APPROVED_CONCEPT_RECORD",
+      "binary_publication_state": "NOT_PUBLISHED_IN_THIS_REPOSITORY",
       "benchmark_score": 89.15,
       "machine_visual_index": 23.32,
-      "strengths": ["best past-present-future integration", "strongest platform and agent coverage", "council and governance visibility", "best extensibility concept"],
-      "limitations": ["darkest image", "lower machine edge/entropy index", "illustrative values must be replaced by signed telemetry"]
+      "strengths": ["three-reality integration", "platform coverage", "governance visibility", "extensibility"],
+      "limitations": ["dark presentation", "illustrative values require public evidence"]
     }
   ],
-  "discovered_external_visuals": [
-    {
-      "id": "8X8-DISCOVERED-0001",
-      "title": "8x8 interface thumbnail",
-      "drive_id": "1u0kfyMHAS3OdlVRddo5HJBxE0KtMIBJS",
-      "url": "https://drive.google.com/file/d/1u0kfyMHAS3OdlVRddo5HJBxE0KtMIBJS/view?usp=drivesdk",
-      "authorship": "UNATTRIBUTED_CONNECTOR_ASSET",
-      "benchmark_status": "PENDING_BINARY_HASH_AND_PROVENANCE"
-    },
-    {
-      "id": "8X8-DISCOVERED-0002",
-      "title": "8x8 Visual Benchmark Chart V1",
-      "drive_id": "10Q5_nilCw8ejrfL8gv3S5QB6rZGIZyE8",
-      "url": "https://drive.google.com/file/d/10Q5_nilCw8ejrfL8gv3S5QB6rZGIZyE8/view?usp=drivesdk",
-      "authorship": "UNATTRIBUTED_AGENT_OR_TOOL_OUTPUT",
-      "benchmark_status": "PENDING_BINARY_HASH_AND_PROVENANCE"
-    },
-    {
-      "id": "8X8-DISCOVERED-0003",
-      "title": "8x8 Whole System Artboard 360 Brief",
-      "url": "https://www.canva.com/d/t1bk07mMdtiPMiO",
-      "authorship": "UNATTRIBUTED_CANVA_WORKSPACE_OUTPUT",
-      "benchmark_status": "PENDING_EXPORT_AND_HASH"
-    },
-    {
-      "id": "8X8-DISCOVERED-0004",
-      "title": "8x8 Glowing Core Design",
-      "url": "https://www.canva.com/d/nR2Rm2o_Bolkzas",
-      "authorship": "UNATTRIBUTED_CANVA_WORKSPACE_OUTPUT",
-      "benchmark_status": "PENDING_EXPORT_AND_HASH"
-    }
-  ],
-  "agent_submission_contract": {
-    "required_per_agent": ["agent_id", "canonical_name", "role", "body_id", "prompt_digest", "source_context_digest", "model_or_tool", "created_at", "binary_sha256", "dimensions", "license", "provenance", "self_score", "council_score", "truthfulness_score", "differences_from_canonical", "gaps_detected"],
-    "fleet_target": "123_PLUS_AGENT_VISIONS",
-    "status": "REGISTRY_READY_SUBMISSIONS_NOT_YET_VERIFIED",
-    "rule": "No image is attributed to an agent without an identity-bound receipt and binary digest."
+  "public_submission_contract": {
+    "required_fields": ["public_creator_label", "tool_class", "created_at", "binary_sha256", "dimensions", "license", "public_provenance", "accessibility_text", "benchmark_score", "truthfulness_score", "release_receipt"],
+    "status": "PUBLIC_CONTRACT_DEFINED_NO_SUBMISSIONS_CLAIMED",
+    "rule": "No public attribution is made without a public receipt and compatible rights record."
   },
   "promotion_policy": {
-    "vision_artifact": "May be displayed with an explicit concept/vision label.",
-    "public_documentation": "Requires accessibility text, provenance, hash, license and public-safe review.",
-    "live_dashboard": "Requires signed telemetry binding and removal of illustrative counts.",
-    "production_release": "Requires exact-head tests, public/private boundary checks, rollback receipt and owner gate."
+    "concept_record": "May be listed with an explicit concept label.",
+    "public_binary": "Requires public rights, accessibility text, provenance, digest, and publication approval.",
+    "live_dashboard": "Requires public telemetry binding and removal of illustrative counts.",
+    "production_release": "Requires exact-head tests, public boundary checks, rollback, and owner approval."
   }
 }
