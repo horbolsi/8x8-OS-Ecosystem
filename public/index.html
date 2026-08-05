@@ -4,146 +4,40 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#030712" />
-  <meta name="description" content="8x8 OS public beta: evidence-backed product map, world, missions, plugins, testnet scan, marketplace preview, Visual Council, and dual-monitor cockpit." />
-  <title>8x8 OS — Public System Beta</title>
+  <meta name="description" content="8x8 OS Public V1 integration: three monitors, public world, private boundary, Future Lab, agents, missions, Studio, connectors, blockchain assets, legacy capabilities, and cryptographic evidence." />
+  <title>8x8 OS — Three-Monitor Public V1</title>
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .three-monitor-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}.future-monitor{border-color:rgba(255,211,106,.3);background:linear-gradient(180deg,rgba(37,25,64,.76),rgba(4,13,28,.88))}.future-monitor .monitor-index,.future-monitor .panel-title b{color:#ffd36a}.future-stack{display:grid;gap:12px}.future-card{border:1px solid rgba(255,211,106,.15);border-radius:15px;background:rgba(12,17,37,.7);padding:15px}.future-card h4{margin:0 0 6px}.future-card p{margin:0;color:#91a9b7;line-height:1.5;font-size:.76rem}.feature-band{width:min(1500px,calc(100% - 28px));margin:34px auto}.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.feature-card{border:1px solid rgba(103,247,255,.15);background:rgba(5,14,29,.7);border-radius:18px;padding:17px;text-decoration:none;color:inherit}.feature-card:hover{border-color:rgba(103,247,255,.42);transform:translateY(-2px)}.feature-card h3{margin:7px 0}.feature-card p{color:#91a9b7;line-height:1.5;font-size:.78rem}.feature-card small{color:#67f7ff}.future-link{color:#ffd36a}.monitor-link{display:inline-block;margin-top:10px;color:#67f7ff}.future-monitor .monitor-link{color:#ffd36a}@media(max-width:1280px){.three-monitor-grid{grid-template-columns:1fr}.feature-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.feature-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-  <canvas id="space" aria-hidden="true"></canvas>
-  <div class="scanline" aria-hidden="true"></div>
-
-  <header class="topbar glass">
-    <div class="brand-block">
-      <div class="brand-mark" aria-hidden="true">8×8</div>
-      <div>
-        <p class="eyebrow">FlashTM8 ⚡ / 8x8 OS</p>
-        <h1>Public System Beta</h1>
-      </div>
-    </div>
-    <div class="system-strip" aria-label="System status">
-      <span class="status-pill online"><i></i> Protected beta</span>
-      <span class="status-pill"><i></i> Release <b id="releaseId">loading</b></span>
-      <span class="status-pill"><i></i> Frame <b id="fps">0</b> fps</span>
-      <span class="clock" id="clock">--:--:--.---</span>
-    </div>
-  </header>
-
+  <canvas id="space" aria-hidden="true"></canvas><div class="scanline" aria-hidden="true"></div>
+  <header class="topbar glass"><div class="brand-block"><div class="brand-mark" aria-hidden="true">8×8</div><div><p class="eyebrow">FlashTM8 ⚡ / 8x8 OS</p><h1>Three-Monitor Public V1</h1></div></div><div class="system-strip" aria-label="System status"><span class="status-pill online"><i></i> Integration preview</span><span class="status-pill"><i></i> Release <b id="releaseId">loading</b></span><span class="status-pill"><i></i> Frame <b id="fps">0</b> fps</span><span class="clock" id="clock">--:--:--.---</span></div></header>
   <main class="world" id="world">
-    <section class="hero-copy current-hero">
-      <p class="kicker">ONE PUBLIC SYSTEM · MANY VERIFIED SURFACES · ZERO SHARED SECRETS</p>
-      <h2>Explore the current public 8x8.<br /><span>Private authority stays private.</span></h2>
-      <p class="intro">This release unifies the implemented public-safe beta surfaces for architecture, spatial exploration, bounded mission drafting, plugin governance, testnet evidence, creator previews, and the Visual Council. Every route states what is live, simulated, testnet-only, local-only, or gated.</p>
-      <div class="hero-actions">
-        <a class="primary action-link" href="/world/">Enter 8x8 World</a>
-        <a class="secondary action-link" href="/art-board/">Open Global Art Board</a>
-        <a class="secondary action-link" href="/visual-council/">View Visual Council</a>
-      </div>
+    <section class="hero-copy current-hero"><p class="kicker">PRIVATE PAST · PUBLIC PRESENT · FUTURE LAB</p><h2>One 8x8 system.<br><span>Three realities, three monitors.</span></h2><p class="intro">This integration lane preserves the private owner core, publishes verified and public-safe present capabilities, and gives future research a visible third monitor without pretending designs are already live.</p><div class="hero-actions"><a class="primary action-link" href="#three-monitors">Enter the three-monitor cockpit</a><a class="secondary action-link" href="/assets/">Coins & tokens</a><a class="secondary action-link" href="/legacy-dashboard/">Recovered dashboard features</a></div></section>
+    <section class="release-truth glass" aria-labelledby="release-truth-title"><div><p class="eyebrow">PUBLIC V1 INTEGRATION</p><h2 id="release-truth-title">Converging the real public 8x8</h2></div><ul><li><b>Monitor 01:</b> verified public product and community surfaces.</li><li><b>Monitor 02:</b> private owner authority remains unmounted and inaccessible.</li><li><b>Monitor 03:</b> future designs, research, simulations, and release candidates.</li><li><b>Cryptographic rule:</b> future work reaches present only through exact-head tests, digests, deployment verification, and rollback.</li></ul></section>
+    <section class="cockpit three-monitor-grid" id="three-monitors" aria-label="Three monitor 8x8 cockpit">
+      <article class="monitor public-monitor" data-monitor="public" tabindex="0"><div class="monitor-chrome"><div><span class="monitor-index">MONITOR 01</span><h3>Public Present</h3></div><div class="monitor-badges"><span>PUBLIC SAFE</span><span>VERIFIED SURFACES</span></div></div><div class="monitor-content public-grid"><div class="globe-panel panel"><canvas id="globe" aria-label="Animated synthetic node globe"></canvas><div class="globe-overlay"><span class="reticle"></span><div class="coordinates"><b>SYNTHETIC NODE FIELD</b><span id="geoMode">privacy-preserving demo</span></div></div></div><div class="agent-panel panel"><div class="panel-title"><span>Visual agent profiles</span><b id="agentCount">8 profiles</b></div><div class="agents" id="agents"></div></div><div class="timeline-panel panel"><div class="panel-title"><span>Public release evidence</span><b>STATIC DEMO</b></div><ol id="publicEvents" class="event-list"></ol></div><div class="metric-grid"><div class="metric"><span>Public routes</span><b>11</b><small>current integration surfaces</small></div><div class="metric"><span>Financial execution</span><b>0</b><small>disabled</small></div><div class="metric"><span>Private payload</span><b>0</b><small>not mounted</small></div></div><a class="monitor-link" href="/world/">Open Public World →</a></div></article>
+      <article class="monitor private-monitor" data-monitor="private" tabindex="0"><div class="monitor-chrome"><div><span class="monitor-index">MONITOR 02</span><h3>Private Owner Core</h3></div><div class="monitor-badges danger"><span>OWNER GATE</span><span>NOT PUBLIC</span></div></div><div class="monitor-content private-grid"><div class="owner-core panel"><div class="core-orbit" aria-hidden="true"><span></span><span></span><span></span><div class="core">8×8</div></div><div class="owner-state"><span>PRIVATE CORE</span><b>UNMOUNTED</b><small>Runtime controls, private memory, credentials, wallets, databases, precise topology, service mutation, and owner-only interfaces remain outside this public build.</small></div></div><div class="permission-panel panel"><div class="panel-title"><span>Public authority</span><b>BOUNDED</b></div><div class="permission-row"><span>Explore</span><i style="--value:100%"></i><b>OPEN</b></div><div class="permission-row"><span>Draft locally</span><i style="--value:100%"></i><b>LOCAL</b></div><div class="permission-row muted"><span>Remote execute</span><i style="--value:0%"></i><b>OFF</b></div><div class="permission-row muted"><span>Production</span><i style="--value:0%"></i><b>GATED</b></div></div><div class="truth-panel panel"><div class="panel-title"><span>Owner boundary</span><b>PASS</b></div><ul><li><span>Secrets</span><b>not delivered</b></li><li><span>Wallets</span><b>not connected</b></li><li><span>Mutation routes</span><b>disabled</b></li><li><span>Private authority</span><b>not inherited</b></li></ul></div><button class="owner-button" id="ownerButton">Private owner access is unavailable here <span>LOCKED</span></button></div></article>
+      <article class="monitor future-monitor" data-monitor="future" tabindex="0"><div class="monitor-chrome"><div><span class="monitor-index">MONITOR 03</span><h3>Future Lab</h3></div><div class="monitor-badges"><span>RESEARCH</span><span>RELEASE CANDIDATES</span></div></div><div class="monitor-content future-stack"><div class="future-card"><h4>Private Past recovery</h4><p>Inventory dormant branches, historical dashboards, agents, databases, Studio artifacts, runtime receipts, and superseded designs.</p></div><div class="future-card"><h4>Canonical convergence</h4><p>Reduce competing repositories and branches into one authority map, compatibility path, and evidence chain.</p></div><div class="future-card"><h4>Coins, tokens & protocol</h4><p>Nine-asset system, chain-specific implementations, testnet evidence, authority controls, supply invariants, and counterfeit protection.</p></div><div class="future-card"><h4>Self-expanding research</h4><p>Living Puzzle, Intelligence Observatory, agent council, context snapshots, cryptographic promotion, and continuous modernization.</p></div><div class="future-card"><h4>Promotion contract</h4><p>Identity, scope, implementation, tests, security, privacy, accessibility, compatibility, digests, deployment, route verification, and rollback.</p></div><a class="monitor-link future-link" href="/future-lab/">Enter Future Lab →</a><a class="monitor-link future-link" href="/assets/">Open blockchain and asset lab →</a></div></article>
     </section>
-
-    <section class="release-truth glass" aria-labelledby="release-truth-title">
-      <div>
-        <p class="eyebrow">CURRENT PUBLIC RELEASE</p>
-        <h2 id="release-truth-title">Evidence-backed protected beta</h2>
-      </div>
-      <ul>
-        <li><b>Public-safe:</b> no private core, credentials, wallets, or owner data mounted.</li>
-        <li><b>Truthful:</b> fixtures, simulations, testnet views, and local-only tools are labeled.</li>
-        <li><b>Reversible:</b> deployed from the designated beta branch with commit-bound rollback.</li>
-        <li><b>Not claimed:</b> whole-system completion, live autonomous execution, or production authority.</li>
-      </ul>
-    </section>
-
-    <section class="surface-map" aria-labelledby="surface-map-title">
-      <div class="section-heading">
-        <p class="eyebrow">PUBLIC PRODUCT MAP</p>
-        <h2 id="surface-map-title">Implemented beta surfaces</h2>
-        <p>These are separate public-safe release units beneath one 8x8 identity. Click through instead of admiring buttons that previously did absolutely nothing.</p>
-      </div>
-      <div class="surface-grid">
-        <a class="surface-card" href="/world/"><span>◎</span><h3>8x8 World</h3><p>Accessible browser movement, synthetic presence, consent controls, and Seraphim onboarding.</p><small>PUBLIC-SAFE · SYNTHETIC PRESENCE</small></a>
-        <a class="surface-card" href="/art-board/"><span>◈</span><h3>Global Art Board</h3><p>Spatial product, evidence, architecture, and release overview.</p><small>PUBLIC-SAFE · EVIDENCE MAP</small></a>
-        <a class="surface-card" href="/visual-council/"><span>✦</span><h3>Visual Council</h3><p>SHA-256 registered vision artifacts, benchmark rubric, provenance, and agent submission contract.</p><small>VISION REGISTRY · NOT TELEMETRY</small></a>
-        <a class="surface-card" href="/missions/"><span>⌁</span><h3>Mission Drafts</h3><p>Bounded local mission-contract drafting without remote execution.</p><small>LOCAL-ONLY · NO NETWORK SEND</small></a>
-        <a class="surface-card" href="/plugins/"><span>＋</span><h3>Plugin Governance</h3><p>Fixture-only permission, provenance, and installation evidence review.</p><small>FIXTURE-ONLY · ZERO EXECUTION</small></a>
-        <a class="surface-card" href="/scan/"><span>◇</span><h3>8x8Scan</h3><p>Testnet-state and asset evidence catalog with no connected wallet.</p><small>TESTNET VIEW · NO MAINNET</small></a>
-        <a class="surface-card" href="/marketplace/"><span>▦</span><h3>Marketplace Preview</h3><p>Synthetic creator, module, and plugin discovery without checkout or payments.</p><small>PREVIEW · NO COMMERCE</small></a>
-        <a class="surface-card" href="#cockpit"><span>▣</span><h3>Dual Monitor Cockpit</h3><p>Public/private boundary demonstration and sanitized visual agent profiles.</p><small>DEMO · PRIVATE CORE UNMOUNTED</small></a>
-      </div>
-    </section>
-
-    <section class="cockpit" id="cockpit" aria-label="Dual monitor cockpit">
-      <article class="monitor public-monitor" data-monitor="public" tabindex="0">
-        <div class="monitor-chrome">
-          <div><span class="monitor-index">MONITOR 01</span><h3>Public World Interface</h3></div>
-          <div class="monitor-badges"><span>READ ONLY</span><span>SANITIZED</span><span>PROTECTED BETA</span></div>
-        </div>
-        <div class="monitor-content public-grid">
-          <div class="globe-panel panel">
-            <canvas id="globe" aria-label="Animated synthetic node globe"></canvas>
-            <div class="globe-overlay"><span class="reticle"></span><div class="coordinates"><b>SYNTHETIC NODE FIELD</b><span id="geoMode">privacy-preserving demo</span></div></div>
-          </div>
-          <div class="agent-panel panel">
-            <div class="panel-title"><span>Visual agent profiles</span><b id="agentCount">8 profiles</b></div>
-            <div class="agents" id="agents"></div>
-          </div>
-          <div class="timeline-panel panel">
-            <div class="panel-title"><span>Public release evidence</span><b>STATIC DEMO</b></div>
-            <ol id="publicEvents" class="event-list"></ol>
-          </div>
-          <div class="metric-grid">
-            <div class="metric"><span>Published routes</span><b>8</b><small>public beta surfaces</small></div>
-            <div class="metric"><span>Financial execution</span><b>0</b><small>wallets and checkout disabled</small></div>
-            <div class="metric"><span>Private payload</span><b>0</b><small>not mounted</small></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="monitor private-monitor" data-monitor="private" tabindex="0">
-        <div class="monitor-chrome">
-          <div><span class="monitor-index">MONITOR 02</span><h3>Private Owner Boundary</h3></div>
-          <div class="monitor-badges danger"><span>OWNER GATE</span><span>NOT CONNECTED</span></div>
-        </div>
-        <div class="monitor-content private-grid">
-          <div class="owner-core panel">
-            <div class="core-orbit" aria-hidden="true"><span></span><span></span><span></span><div class="core">8×8</div></div>
-            <div class="owner-state"><span>PRIVATE CORE</span><b>UNMOUNTED</b><small>No credentials, private records, runtime controls, wallets, precise topology, or owner-only interfaces are delivered to this public build.</small></div>
-          </div>
-          <div class="permission-panel panel">
-            <div class="panel-title"><span>Public authority</span><b>BOUNDED</b></div>
-            <div class="permission-row"><span>Explore</span><i style="--value:100%"></i><b>OPEN</b></div>
-            <div class="permission-row"><span>Draft locally</span><i style="--value:100%"></i><b>LOCAL</b></div>
-            <div class="permission-row muted"><span>Remote execute</span><i style="--value:0%"></i><b>OFF</b></div>
-            <div class="permission-row muted"><span>Production</span><i style="--value:0%"></i><b>GATED</b></div>
-          </div>
-          <div class="truth-panel panel">
-            <div class="panel-title"><span>Release boundary</span><b>PASS</b></div>
-            <ul>
-              <li><span>Public payload</span><b>sanitized</b></li>
-              <li><span>Simulations</span><b>labeled</b></li>
-              <li><span>Mutation routes</span><b>disabled</b></li>
-              <li><span>Private authority</span><b>not inherited</b></li>
-            </ul>
-          </div>
-          <button class="owner-button" id="ownerButton">Private owner access is not available here <span>LOCKED</span></button>
-        </div>
-      </article>
-    </section>
-
-    <nav class="module-dock glass" aria-label="8x8 public beta routes">
-      <a href="/world/"><span>◎</span>World</a>
-      <a href="/art-board/"><span>◈</span>Art Board</a>
-      <a href="/visual-council/"><span>✦</span>Visual Council</a>
-      <a href="/missions/"><span>⌁</span>Missions</a>
-      <a href="/plugins/"><span>＋</span>Plugins</a>
-      <a href="/scan/"><span>◇</span>8x8Scan</a>
-      <a href="/marketplace/"><span>▦</span>Marketplace</a>
-      <a href="/product-map.json"><span>{ }</span>Evidence JSON</a>
-    </nav>
+    <section class="feature-band"><div class="section-heading"><p class="eyebrow">RECOVERED AND CURRENT DOMAINS</p><h2>More than a dashboard</h2><p>The public integration now exposes the strongest safe parts of the old dashboards and the newer system architecture while preserving truthful maturity labels.</p></div><div class="feature-grid">
+      <a class="feature-card" href="/world/"><small>PUBLIC BETA</small><h3>World & Spatial Interface</h3><p>Accessible world, consent, onboarding, synthetic presence, and spatial navigation.</p></a>
+      <a class="feature-card" href="/art-board/"><small>EVIDENCE MAP</small><h3>Global Art Board</h3><p>Architecture, product, evidence, agents, worlds, and release overview.</p></a>
+      <a class="feature-card" href="/missions/"><small>LOCAL ONLY</small><h3>Mission Control</h3><p>Bounded mission drafting, constraints, gates, receipts, and rollback planning.</p></a>
+      <a class="feature-card" href="/plugins/"><small>FIXTURE ONLY</small><h3>Plugin Governance</h3><p>Permissions, provenance, compatibility, installation gates, and review evidence.</p></a>
+      <a class="feature-card" href="/visual-council/"><small>PROVENANCE</small><h3>Visual Council</h3><p>Registered images, scoring, authorship, digests, accessibility, and agent submissions.</p></a>
+      <a class="feature-card" href="/marketplace/"><small>NO COMMERCE</small><h3>Marketplace Preview</h3><p>Creator, module, agent, and plugin discovery without checkout or payments.</p></a>
+      <a class="feature-card" href="/scan/"><small>TESTNET VIEW</small><h3>8x8Scan</h3><p>Asset and chain evidence without a connected wallet or mainnet execution.</p></a>
+      <a class="feature-card" href="/assets/"><small>NINE-ASSET LAB</small><h3>Coins & Tokens</h3><p>8x8, TM8, 0x8, Ux8, SRP, XM8, Fx8, Tx8, and Sx8 with explicit testnet and design states.</p></a>
+      <a class="feature-card" href="/legacy-dashboard/"><small>24 DOMAINS</small><h3>Legacy Dashboard Map</h3><p>Trading, staking, NFT, governance, admin, relay, Studio, agents, memory, connectors, and future systems classified safely.</p></a>
+      <a class="feature-card" href="/future-lab/"><small>MONITOR 03</small><h3>Future Lab</h3><p>Research horizons, convergence, modernization, simulations, and release promotion.</p></a>
+      <a class="feature-card" href="/estate-registry.json"><small>MACHINE READABLE</small><h3>Estate Registry</h3><p>Canonical lanes, realities, domains, surfaces, promotion gates, and prohibited claims.</p></a>
+      <a class="feature-card" href="/product-map.json"><small>MACHINE READABLE</small><h3>Product Map</h3><p>Public routes, interaction modes, truth boundaries, privacy, and release constraints.</p></a>
+    </div></section>
+    <nav class="module-dock glass" aria-label="8x8 public V1 routes"><a href="/world/"><span>◎</span>World</a><a href="/future-lab/"><span>△</span>Future</a><a href="/assets/"><span>◈</span>Assets</a><a href="/legacy-dashboard/"><span>▦</span>Legacy Features</a><a href="/missions/"><span>⌁</span>Missions</a><a href="/plugins/"><span>＋</span>Plugins</a><a href="/scan/"><span>◇</span>8x8Scan</a><a href="/visual-council/"><span>✦</span>Council</a></nav>
   </main>
-
-  <aside class="toast" id="toast" role="status" aria-live="polite"></aside>
-  <footer><span>8x8 OS · protected public beta</span><span id="integrity">integrity: pending</span><span>© FlashTM8 ⚡</span></footer>
-  <script type="module" src="/app.js"></script>
-</body>
-</html>
+  <aside class="toast" id="toast" role="status" aria-live="polite"></aside><footer><span>8x8 OS · Public V1 integration</span><span id="integrity">integrity: pending</span><span>© FlashTM8 ⚡</span></footer><script type="module" src="/app.js"></script>
+</body></html>
