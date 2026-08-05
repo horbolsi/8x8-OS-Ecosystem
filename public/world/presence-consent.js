@@ -4,68 +4,76 @@ const fixture = Object.freeze([
   { id: 'fixture-reviewer-03', label: 'Safety Reviewer Fixture', zone: 'GOVERNANCE RING', role: 'SYNTHETIC REVIEWER', ageSeconds: 55 }
 ]);
 
-const style = document.createElement('link');
-style.rel = 'stylesheet';
-style.href = '/world/presence-consent.css';
+function element(tag, options = {}) {
+  const node = document.createElement(tag);
+  if (options.id) node.id = options.id;
+  if (options.className) node.className = options.className;
+  if (options.text) node.textContent = options.text;
+  for (const [name, value] of Object.entries(options.attrs || {})) node.setAttribute(name, value);
+  return node;
+}
+function labeledSelect(id, labelText, values) {
+  const label = element('label', { text: labelText, attrs: { for: id } });
+  const select = element('select', { id });
+  for (const [value, text] of values) {
+    const option = element('option', { text });
+    option.value = value;
+    select.append(option);
+  }
+  return [label, select];
+}
+function fact(label, value, valueId) {
+  const box = element('div');
+  box.append(element('span', { text: label }), element('b', { id: valueId, text: value }));
+  return box;
+}
+
+const style = element('link', { attrs: { rel: 'stylesheet', href: '/world/presence-consent.css' } });
 document.head.append(style);
 
-const card = document.createElement('article');
-card.className = 'glass card presence-consent-card';
-card.setAttribute('aria-labelledby', 'presenceConsentTitle');
-card.innerHTML = `
-  <p class="eyebrow">PRIVACY-SAFE PRESENCE</p>
-  <h2 id="presenceConsentTitle">Coarse-zone consent preview</h2>
-  <p class="presence-boundary">Fixture-only presence. No precise coordinates, account lookup, network transmission, storage, cookies, Bluetooth, Wi-Fi, camera or microphone.</p>
-  <div class="presence-consent-grid">
-    <div class="presence-consent-controls">
-      <label for="presenceZone">Coarse public zone</label>
-      <select id="presenceZone"><option>GENESIS PLAZA</option><option>CREATOR QUARTER</option><option>GOVERNANCE RING</option></select>
-      <label for="presenceDuration">Consent expiry</label>
-      <select id="presenceDuration"><option value="30">30 seconds</option><option value="60">60 seconds</option><option value="120">120 seconds</option></select>
-      <div class="presence-consent-actions">
-        <button id="presenceConsentButton" type="button" aria-pressed="false">Enable synthetic presence</button>
-        <button id="presenceClearButton" type="button" disabled>Clear now</button>
-      </div>
-      <p id="presenceConsentStatus" class="presence-status" role="status" aria-live="polite">Consent is off.</p>
-      <div class="presence-consent-facts" aria-label="Presence truth state">
-        <div><span>LIVE PEOPLE</span><b>0</b></div><div><span>EXPIRES IN</span><b id="presenceCountdown">OFF</b></div><div><span>TRANSMISSION</span><b>NONE</b></div>
-      </div>
-    </div>
-    <div>
-      <h3>Visible fixture roster</h3>
-      <ul id="presenceRoster" class="presence-roster"></ul>
-    </div>
-  </div>`;
-
+const card = element('article', { className: 'glass card presence-consent-card', attrs: { 'aria-labelledby': 'presenceConsentTitle' } });
+card.append(
+  element('p', { className: 'eyebrow', text: 'PRIVACY-SAFE PRESENCE' }),
+  element('h2', { id: 'presenceConsentTitle', text: 'Coarse-zone consent preview' }),
+  element('p', { className: 'presence-boundary', text: 'Fixture-only presence. No precise coordinates, account lookup, network transmission, storage, cookies, Bluetooth, Wi-Fi, camera or microphone.' })
+);
+const grid = element('div', { className: 'presence-consent-grid' });
+const controls = element('div', { className: 'presence-consent-controls' });
+controls.append(...labeledSelect('presenceZone', 'Coarse public zone', [
+  ['GENESIS PLAZA', 'GENESIS PLAZA'], ['CREATOR QUARTER', 'CREATOR QUARTER'], ['GOVERNANCE RING', 'GOVERNANCE RING']
+]));
+controls.append(...labeledSelect('presenceDuration', 'Consent expiry', [['30','30 seconds'],['60','60 seconds'],['120','120 seconds']]));
+const actions = element('div', { className: 'presence-consent-actions' });
+const consentButton = element('button', { id: 'presenceConsentButton', text: 'Enable synthetic presence', attrs: { type: 'button', 'aria-pressed': 'false' } });
+const clearButton = element('button', { id: 'presenceClearButton', text: 'Clear now', attrs: { type: 'button' } });
+clearButton.disabled = true;
+actions.append(consentButton, clearButton);
+const status = element('p', { id: 'presenceConsentStatus', className: 'presence-status', text: 'Consent is off.', attrs: { role: 'status', 'aria-live': 'polite' } });
+const facts = element('div', { className: 'presence-consent-facts', attrs: { 'aria-label': 'Presence truth state' } });
+facts.append(fact('LIVE PEOPLE', '0'), fact('EXPIRES IN', 'OFF', 'presenceCountdown'), fact('TRANSMISSION', 'NONE'));
+controls.append(actions, status, facts);
+const rosterPanel = element('div');
+rosterPanel.append(element('h3', { text: 'Visible fixture roster' }));
+const roster = element('ul', { id: 'presenceRoster', className: 'presence-roster' });
+rosterPanel.append(roster);
+grid.append(controls, rosterPanel);
+card.append(grid);
 document.querySelector('.dashboard-grid')?.prepend(card);
 
-const consentButton = document.querySelector('#presenceConsentButton');
-const clearButton = document.querySelector('#presenceClearButton');
 const duration = document.querySelector('#presenceDuration');
 const zone = document.querySelector('#presenceZone');
-const roster = document.querySelector('#presenceRoster');
-const status = document.querySelector('#presenceConsentStatus');
 const countdown = document.querySelector('#presenceCountdown');
 let expiresAt = 0;
 let timer = null;
-
 function setStatus(message) { status.textContent = message; }
 function renderRoster(active) {
   roster.replaceChildren();
   for (const entry of active ? fixture : []) {
-    const item = document.createElement('li');
-    const name = document.createElement('strong');
-    const facts = document.createElement('span');
-    name.textContent = entry.label;
-    facts.textContent = `${entry.role} · ${entry.zone} · fixture age ${entry.ageSeconds}s`;
-    item.append(name, facts);
+    const item = element('li');
+    item.append(element('strong', { text: entry.label }), element('span', { text: `${entry.role} · ${entry.zone} · fixture age ${entry.ageSeconds}s` }));
     roster.append(item);
   }
-  if (!active) {
-    const empty = document.createElement('li');
-    empty.textContent = 'No presence fixtures visible. Consent is off.';
-    roster.append(empty);
-  }
+  if (!active) roster.append(element('li', { text: 'No presence fixtures visible. Consent is off.' }));
 }
 function clearConsent(reason = 'Presence consent cleared.') {
   expiresAt = 0;
@@ -82,7 +90,7 @@ function updateCountdown() {
   countdown.textContent = remaining ? `${remaining}s` : 'OFF';
   if (!remaining) clearConsent('Presence consent expired automatically.');
 }
-consentButton?.addEventListener('click', () => {
+consentButton.addEventListener('click', () => {
   const seconds = Number(duration.value);
   expiresAt = Date.now() + seconds * 1000;
   consentButton.setAttribute('aria-pressed', 'true');
@@ -93,6 +101,6 @@ consentButton?.addEventListener('click', () => {
   timer = window.setInterval(updateCountdown, 1000);
   updateCountdown();
 });
-clearButton?.addEventListener('click', () => clearConsent());
+clearButton.addEventListener('click', () => clearConsent());
 window.addEventListener('pagehide', () => clearConsent('Presence cleared when leaving the page.'));
 renderRoster(false);
