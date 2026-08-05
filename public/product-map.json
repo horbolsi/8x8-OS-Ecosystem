@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0.0",
+  "releaseUnit": "public-product-map-demo-v1",
+  "owner": {
+    "displayName": "FlashTM8 / Meher Trabelsi",
+    "eightByEightId": "0000000001"
+  },
+  "mode": "PROTECTED_BETA",
+  "generatedAt": "2026-08-05T14:18:20Z",
+  "routes": [
+    {
+      "path": "/art-board/",
+      "label": "Global Art Board",
+      "purpose": "Public-safe spatial product and evidence overview",
+      "interaction": ["keyboard", "touch", "pointer"],
+      "truth": {"liveUsers": 0, "preciseLocation": false, "financialExecution": false}
+    },
+    {
+      "path": "/world/",
+      "label": "8x8 World",
+      "purpose": "Accessible browser movement, synthetic presence and Seraphim onboarding",
+      "interaction": ["keyboard", "touch", "pointer", "opt-in-local-sensors"],
+      "truth": {"liveUsers": 0, "remotePlayers": 0, "coordinatesUploaded": false, "privateCoreConnected": false}
+    },
+    {
+      "path": "/scan/",
+      "label": "8x8Scan",
+      "purpose": "Testnet-state and asset evidence catalog",
+      "interaction": ["keyboard", "touch", "pointer"],
+      "truth": {"liveChainQueries": 0, "testnetDeployments": 0, "walletConnected": false}
+    },
+    {
+      "path": "/marketplace/",
+      "label": "Marketplace Preview",
+      "purpose": "Synthetic creator and plugin discovery",
+      "interaction": ["keyboard", "touch", "pointer"],
+      "truth": {"liveSellers": 0, "payments": false, "checkout": false}
+    },
+    {
+      "path": "/missions/",
+      "label": "Mission Drafts",
+      "purpose": "Local-only bounded mission contract drafting",
+      "interaction": ["keyboard", "touch", "pointer"],
+      "truth": {"liveAgents": 0, "remoteExecution": false, "networkSend": false, "persistence": false}
+    },
+    {
+      "path": "/plugins/",
+      "label": "Plugin Governance",
+      "purpose": "Fixture-only evidence and permission review gate",
+      "interaction": ["keyboard", "touch", "pointer"],
+      "truth": {"livePlugins": 0, "installedPlugins": 0, "pluginExecutions": 0, "payments": 0}
+    }
+  ],
+  "accessibility": {
+    "required": ["keyboard", "touch", "screen-reader", "reduced-motion", "forced-colors", "phone", "tablet", "desktop"],
+    "minimumTouchTargetCssPixels": 44
+  },
+  "privacy": {
+    "fixtures": "synthetic-or-consented-only",
+    "precisePublicLocation": false,
+    "browserPersistence": false,
+    "liveChatOrCalls": false,
+    "bluetoothOrWifiMesh": false
+  },
+  "releaseBoundary": {
+    "targetBranch": "beta/8x8-dual-monitor-v0.1",
+    "productionAliasChange": false,
+    "privateControlPlaneMerge": false,
+    "rollback": "Revert the release merge commit or restore the recorded pre-release beta commit."
+  }
+}
