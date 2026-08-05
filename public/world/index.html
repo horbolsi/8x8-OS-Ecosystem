@@ -9,8 +9,13 @@
   <title>8x8 World Public Browser Beta</title>
   <link rel="manifest" href="/world/manifest.webmanifest">
   <link rel="stylesheet" href="/world/styles.css">
+  <link rel="stylesheet" href="/world/accessibility.css">
 </head>
 <body>
+  <a class="skip-link" href="#worldViewport">Skip to interactive world</a>
+  <p id="worldInstructions" class="sr-only">Use W A S D or the arrow keys to move. Press Space to jump, P for prone mode, and V to toggle drive mode. Movement and privacy changes are announced.</p>
+  <div id="travelerAnnouncement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
   <header class="topbar glass">
     <a class="brand" href="/world/" aria-label="8x8 World home"><b>8×8</b><span>WORLD</span></a>
     <strong id="truth">PUBLIC BROWSER WORLD</strong>
@@ -81,7 +86,7 @@
           <div><span>POSITION</span><b id="position">50, 54</b></div>
         </header>
 
-        <div id="worldViewport" tabindex="0" aria-label="8x8 World movement field">
+        <div id="worldViewport" tabindex="0" aria-label="8x8 World movement field" aria-describedby="worldInstructions">
           <div id="worldField">
             <div class="road horizontal"></div>
             <div class="road vertical"></div>
@@ -176,5 +181,6 @@
   </dialog>
 
   <script type="module" src="/world/app.js"></script>
+  <script type="module" src="/world/accessibility.js"></script>
 </body>
 </html>
