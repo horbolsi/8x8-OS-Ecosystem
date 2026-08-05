@@ -1,15 +1,28 @@
-# MSG231 External Capabilities Observatory
+# MSG232 External Capabilities Observatory V2
 
-`/capabilities/` is a static protected-beta projection of the canonical MSG197 ledger in `8x8org/8x8-user-edition`.
+`/capabilities/` is a static protected-beta projection of canonical MSG197 Ledger V4 in `8x8org/8x8-user-edition`.
 
 ## Included
 
-- thirteen immutable candidate identities and source pins;
+- thirteen immutable candidate identities and upstream pins;
 - candidate decisions and runtime boundaries;
-- measured benchmark, installed-candidate and council-vote counts;
+- one measured Supervision canary;
+- one merged, disabled-by-default Supervision adapter contract;
+- measured benchmark, adapter-contract, installed-candidate and council-vote counts;
 - explicit PDF Inspector, AirLLM and council blockers;
 - canonical source commit, ledger blob and upstream pin-set SHA-256;
 - accessible filtering and fail-closed rendering.
+
+## Supervision truth boundary
+
+The adapter contract is evidence and schema only. It remains:
+
+- `enabled=false`
+- `install_state=NOT_INSTALLED`
+- `runtime_authority=NONE`
+- `production_ready=false`
+
+The route cannot execute the adapter or install its upstream package.
 
 ## Excluded
 
@@ -26,4 +39,4 @@ The route may reach `100/100` only after exact-head tests, CodeQL, READY protect
 
 ## Rollback
 
-The pre-release baseline is `integration/public-8x8-v1` at `767f6a0d49f390dab71ec403be381699603bbcce`. Close or revert the release PR to restore that state. No production alias change is authorized.
+The previous V3 protected projection is commit `6b7e5bf8fb13587a2e26f4949ae774a41571cc5f` on `integration/public-8x8-v1`. Close or revert the scoped release PR to restore it. No production alias change is authorized.
