@@ -1,0 +1,27 @@
+{
+  "release_unit": "public-plugin-governance-gate-v1",
+  "mode": "PROTECTED_BETA_FIXTURE",
+  "owner_8x8_id": "0000000001",
+  "live_plugins": 0,
+  "installed_plugins": 0,
+  "executions": 0,
+  "payments": 0,
+  "votes_cast": 0,
+  "private_core_connected": false,
+  "requirements": [
+    {"id":"identity","title":"Verified publisher identity","state":"REQUIRED","evidence":"8x8 ID, organization record and accountable maintainer"},
+    {"id":"provenance","title":"Source and provenance","state":"REQUIRED","evidence":"repository, immutable revision, license and modification notices"},
+    {"id":"security","title":"Security review","state":"REQUIRED","evidence":"threat model, dependency scan, secret scan and resolved critical findings"},
+    {"id":"permissions","title":"Capability manifest","state":"REQUIRED","evidence":"explicit filesystem, network, device, identity and financial permissions"},
+    {"id":"sandbox","title":"Isolation and rollback","state":"REQUIRED","evidence":"sandbox profile, resource ceilings, kill switch and tested uninstall"},
+    {"id":"quality","title":"Quality and accessibility","state":"REQUIRED","evidence":"functional tests, supported devices, keyboard, screen reader and reduced motion"},
+    {"id":"governance","title":"Governance readiness","state":"BLOCKED","evidence":"proposal digest, review window, conflict disclosures and voting policy"},
+    {"id":"commerce","title":"Commerce readiness","state":"BLOCKED","evidence":"pricing, refunds, tax, payout identity and marketplace policy"}
+  ],
+  "fixture_candidates": [
+    {"name":"World Transit Overlay","kind":"WORLD_MODULE","stage":"DESIGN_REVIEW","permissions":"MAP_READ_ONLY"},
+    {"name":"Seraphim Guide Pack","kind":"AGENT_UI","stage":"PROVENANCE_REVIEW","permissions":"PUBLIC_CONTENT_ONLY"},
+    {"name":"8x8Scan Evidence Widget","kind":"DASHBOARD_WIDGET","stage":"SECURITY_REVIEW","permissions":"TESTNET_READ_ONLY"},
+    {"name":"Mission Receipt Viewer","kind":"DEVELOPER_TOOL","stage":"ACCESSIBILITY_REVIEW","permissions":"LOCAL_FILE_READ_ONLY"}
+  ]
+}
