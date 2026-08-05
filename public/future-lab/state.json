@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "monitor": 3,
+  "name": "Future Lab",
+  "reality": "FUTURE_LAB",
+  "mode": "PUBLIC_SAFE_PROTECTED_BETA",
+  "truthBoundary": "FUTURE_DESIGNS_AND_RELEASE_CANDIDATES_ARE_NOT_LIVE_RUNTIME_CLAIMS",
+  "promotionContract": [
+    "IDENTITY_AND_AUTHORITY_RESOLVED",
+    "SCOPE_AND_TRUTH_LABELS_DECLARED",
+    "IMPLEMENTATION_COMPLETE",
+    "EXACT_HEAD_TESTS_PASS",
+    "SECURITY_PRIVACY_RIGHTS_ACCESSIBILITY_PASS",
+    "COMPATIBILITY_AND_ROLLBACK_PROVEN",
+    "SOURCE_AND_ARTIFACT_DIGESTS_RECORDED",
+    "DEPLOYMENT_READY",
+    "ROOT_AND_CHANGED_ROUTES_VERIFIED",
+    "CANONICAL_PRODUCT_MAP_UPDATED"
+  ],
+  "horizons": [
+    {"id":"canonical-convergence","state":"ACTIVE_REVIEW"},
+    {"id":"agent-council-presence","state":"PARTIAL_RUNTIME_GATED"},
+    {"id":"global-context-fabric","state":"IMPLEMENTED_LAYER_ACTIVATION_GATED"},
+    {"id":"living-worlds-interfaces","state":"PUBLIC_BETA_EXPANDING"},
+    {"id":"studio-media-provenance","state":"PARTIAL_PUBLICATION_GATED"},
+    {"id":"markets-blockchain-labs","state":"SIMULATION_TESTNET_ONLY"},
+    {"id":"cryptographic-release-chain","state":"REQUIRED_FOR_PROMOTION"},
+    {"id":"continuous-modernization","state":"BOUNDED_CONTINUOUS_LOOP"}
+  ],
+  "notClaimed": [
+    "WHOLE_SYSTEM_COMPLETE",
+    "LIVE_AUTONOMOUS_PRODUCTION",
+    "QUANTUM_OR_BEYOND_QUANTUM_COMPUTATION",
+    "PERMANENT_UPTIME",
+    "LIVE_REVENUE",
+    "LIVE_TOKEN_VALUE",
+    "UNRESTRICTED_AGENT_AUTHORITY"
+  ]
+}
