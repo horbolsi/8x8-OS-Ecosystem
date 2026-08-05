@@ -1,0 +1,57 @@
+name: MSG223 Public Agent Missions
+
+on:
+  pull_request:
+    paths:
+      - "public/missions/**"
+      - "test/missions-smoke.mjs"
+      - ".github/workflows/msg223-agent-missions.yml"
+  push:
+    branches:
+      - "feature/msg223-public-agent-missions-v1"
+    paths:
+      - "public/missions/**"
+      - "test/missions-smoke.mjs"
+      - ".github/workflows/msg223-agent-missions.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate syntax
+        run: |
+          set -Eeuo pipefail
+          node --check public/missions/app.js
+          node --check test/missions-smoke.mjs
+      - name: Run mission boundary suite
+        run: node test/missions-smoke.mjs
+      - name: Run existing beta regressions
+        run: |
+          set -Eeuo pipefail
+          npm install --ignore-scripts --no-audit --no-fund
+          npm test
+      - name: Enforce public boundary
+        run: |
+          set -Eeuo pipefail
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY|github_pat_|gh[pousr]_|sk-[A-Za-z0-9]|/root/|localhost:|127\.0\.0\.1)' public/missions; then
+            echo 'Credential or private-path boundary failed'
+            exit 1
+          fi
+          if grep -RInE '(innerHTML|insertAdjacentHTML|document\.write|localStorage|sessionStorage|WebSocket\(|EventSource\(|fetch\(|sendBeacon|ethereum\.request|solana\.connect)' public/missions; then
+            echo 'Unsafe mission capability detected'
+            exit 1
+          fi
+          grep -F "connect-src 'none'" public/missions/index.html
+          grep -F 'execution_enabled: false' public/missions/app.js
+          grep -F 'network_send_enabled: false' public/missions/app.js
+          echo 'PUBLIC_AGENT_MISSION_BOUNDARY=PASS'
