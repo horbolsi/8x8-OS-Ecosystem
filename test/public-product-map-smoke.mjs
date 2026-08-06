@@ -8,7 +8,7 @@ assert.equal(map.releaseUnit, 'public-product-map-demo-v1');
 assert.equal(map.owner.eightByEightId, '0000000001');
 assert.equal(map.mode, 'PROTECTED_BETA');
 
-const expectedRoutes = ['/art-board/', '/world/', '/scan/', '/marketplace/', '/missions/', '/plugins/'];
+const expectedRoutes = ['/art-board/', '/world/', '/scan/', '/marketplace/', '/trading-lab/', '/missions/', '/plugins/'];
 assert.deepEqual(map.routes.map((route) => route.path), expectedRoutes);
 assert.equal(new Set(map.routes.map((route) => route.path)).size, expectedRoutes.length);
 
@@ -24,6 +24,8 @@ assert.equal(map.routes.find((route) => route.path === '/world/').truth.liveUser
 assert.equal(map.routes.find((route) => route.path === '/world/').truth.coordinatesUploaded, false);
 assert.equal(map.routes.find((route) => route.path === '/scan/').truth.liveChainQueries, 0);
 assert.equal(map.routes.find((route) => route.path === '/marketplace/').truth.payments, false);
+assert.equal(map.routes.find((route) => route.path === '/trading-lab/').truth.liveOrders, 0);
+assert.equal(map.routes.find((route) => route.path === '/trading-lab/').truth.profitabilityClaimed, false);
 assert.equal(map.routes.find((route) => route.path === '/missions/').truth.remoteExecution, false);
 assert.equal(map.routes.find((route) => route.path === '/plugins/').truth.pluginExecutions, 0);
 

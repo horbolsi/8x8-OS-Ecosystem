@@ -8,7 +8,7 @@ assert.equal(registry.branch, 'integration/public-8x8-v1');
 assert.equal(registry.truthBoundary, 'PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY');
 assert.equal(registry.productLanes.length, 2);
 assert.ok(registry.realities.some((reality) => reality.monitor === 3 && reality.id === 'future-lab'));
-assert.equal(registry.publicSurfaces.length, 10);
+assert.equal(registry.publicSurfaces.length, 11);
 assert.equal(registry.domains.length, 8);
 assert.equal(registry.promotionContract.length, 10);
 
@@ -17,7 +17,7 @@ const paths = registry.publicSurfaces.map((surface) => surface.path);
 assert.equal(new Set(ids).size, ids.length, 'public surface IDs must be unique');
 assert.equal(new Set(paths).size, paths.length, 'public surface paths must be unique');
 
-for (const requiredPath of ['/world/', '/art-board/', '/future-lab/', '/assets/']) {
+for (const requiredPath of ['/world/', '/art-board/', '/trading-lab/', '/future-lab/', '/assets/']) {
   assert.ok(paths.includes(requiredPath), `missing required public surface: ${requiredPath}`);
 }
 for (const forbiddenPath of ['/capabilities/', '/legacy-dashboard/']) {

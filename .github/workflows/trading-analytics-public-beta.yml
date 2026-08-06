@@ -27,6 +27,9 @@ jobs:
           grep -q 'PUBLIC_SAFE_SYNTHETIC_PAPER_ONLY' public/trading-lab/state.json
           grep -q '195a7de71a94a612463eca6213953f10922545be' public/trading-lab/state.json
           grep -q 'NO_PROFITABILITY_CLAIM' public/trading-lab/state.json
+          grep -q '/trading-lab/' public/index.html
+          grep -q '/trading-lab/' public/product-map.json
+          grep -q '/trading-lab/' public/estate-registry.json
           grep -q 'SYNTHETIC DATA' public/trading-lab/index.html
           grep -q 'NO LIVE ORDERS' public/trading-lab/index.html
           grep -q 'No strategy is approved for live use' public/trading-lab/index.html

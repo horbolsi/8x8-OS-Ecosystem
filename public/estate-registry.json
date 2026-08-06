@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.3.0",
   "registryId": "8x8-public-estate-v1",
-  "generatedAt": "2026-08-05T23:38:00Z",
+  "generatedAt": "2026-08-06T05:17:06Z",
   "branch": "integration/public-8x8-v1",
   "truthBoundary": "PUBLIC_SAFE_REGISTRY_NOT_PRIVATE_RUNTIME_TELEMETRY",
   "productLanes": [
@@ -23,6 +23,7 @@
     {"id":"plugins","path":"/plugins/","status":"DEPLOYED_BETA","truth":"FIXTURE_ONLY_ZERO_EXECUTION"},
     {"id":"scan","path":"/scan/","status":"DEPLOYED_BETA","truth":"TESTNET_ONLY_NO_WALLET"},
     {"id":"marketplace","path":"/marketplace/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_NO_PAYMENTS"},
+    {"id":"trading-lab","path":"/trading-lab/","status":"DEPLOYED_BETA","truth":"SYNTHETIC_PAPER_ANALYTICS_NO_EXECUTION"},
     {"id":"future-lab","path":"/future-lab/","status":"DEPLOYED_BETA","truth":"PUBLIC_CONCEPTS_NOT_PRIVATE_RESEARCH"},
     {"id":"assets","path":"/assets/","status":"INTEGRATION_PREVIEW","truth":"TESTNET_DESIGN_LAB_NO_WALLET"}
   ],

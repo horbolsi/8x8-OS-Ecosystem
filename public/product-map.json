@@ -6,7 +6,7 @@
     "eightByEightId": "0000000001"
   },
   "mode": "PROTECTED_BETA",
-  "generatedAt": "2026-08-05T14:18:20Z",
+  "generatedAt": "2026-08-06T05:17:06Z",
   "routes": [
     {
       "path": "/art-board/",
@@ -35,6 +35,13 @@
       "purpose": "Synthetic creator and plugin discovery",
       "interaction": ["keyboard", "touch", "pointer"],
       "truth": {"liveSellers": 0, "payments": false, "checkout": false}
+    },
+    {
+      "path": "/trading-lab/",
+      "label": "Trading Intelligence",
+      "purpose": "Synthetic paper-trading analytics with preserved risk evidence",
+      "interaction": ["keyboard", "touch", "pointer"],
+      "truth": {"liveOrders": 0, "exchangeConnected": false, "walletConnected": false, "profitabilityClaimed": false}
     },
     {
       "path": "/missions/",

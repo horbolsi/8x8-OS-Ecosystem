@@ -252,4 +252,4 @@ setupAgents();
 setupEvents();
 setupInteractions();
 loadRelease();
-emit("public_session.started", { public_routes_claimed: 10, private_data_mounted: false });
+emit("public_session.started", { public_routes_claimed: 11, private_data_mounted: false });

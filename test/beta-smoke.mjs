@@ -127,6 +127,7 @@ try {
   const root = await request("/");
   assert.equal(root.response.status, 200);
   assert.match(root.text, /8x8 OS — Three-Monitor Public V1/);
+  assert.match(root.text, /href="\/trading-lab\/"/);
   assert.doesNotMatch(root.text, /8x8 OS — Dual Monitor Beta/);
   assert.match(root.response.headers.get("content-security-policy") || "", /default-src 'self'/);
   assert.equal(root.response.headers.get("x-frame-options"), "DENY");
