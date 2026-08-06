@@ -17,10 +17,10 @@ Completion claims require current code, tests, execution evidence, named environ
 
 ## Quick Start (Local Development)
 
+Before running, configure required values in `.env` using `.env.example` as the reference.
+
 ```bash
 cp .env.example .env
 npm install
 npm start
 ```
-
-Before running, configure required values in `.env` using `.env.example` as the reference.
