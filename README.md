@@ -22,3 +22,5 @@ cp .env.example .env
 npm install
 npm start
 ```
+
+Before running, configure required values in `.env` using `.env.example` as the reference.
