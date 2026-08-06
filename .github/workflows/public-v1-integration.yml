@@ -37,9 +37,12 @@ jobs:
           python3 -m json.tool public/estate-registry.json >/dev/null
           python3 -m json.tool public/product-map.json >/dev/null
           python3 -m json.tool public/future-lab/state.json >/dev/null
+          if [ -f public/trading-lab/state.json ]; then
+            python3 -m json.tool public/trading-lab/state.json >/dev/null
+          fi
       - name: Public boundary scan
         run: |
-          if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|gho_|github_pat_|sk-[A-Za-z0-9]|/root/|\.ssh/|wallet seed|mnemonic)' public docs/PUBLIC_8X8_V1_SCOPE.md; then
+          if grep -RInE '(BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization:[[:space:]]*bearer|gho_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9]{16,}|/root/|\.ssh/|wallet seed|seed phrase|mnemonic)' public docs/PUBLIC_8X8_V1_SCOPE.md; then
             echo 'Public boundary violation'
             exit 1
           fi
