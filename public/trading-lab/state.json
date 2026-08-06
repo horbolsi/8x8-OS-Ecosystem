@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "releaseUnit": "trading-analytics-public-beta-v2",
+  "mode": "PUBLIC_SAFE_SYNTHETIC_PAPER_ONLY",
+  "engineProvenance": {
+    "repository": "horbolsi/8x8",
+    "pullRequest": 116,
+    "commit": "195a7de71a94a612463eca6213953f10922545be",
+    "workflow": "Trading Paper Engine V1",
+    "workflowConclusion": "success"
+  },
+  "labels": ["SYNTHETIC_DATA","PAPER_EXECUTION_ONLY","NO_EXCHANGE_CONNECTION","NO_WALLET_CONNECTION","NO_LIVE_ORDERS","NO_PROFITABILITY_CLAIM"],
+  "validatedCapabilities": ["DETERMINISTIC_ORDERS_AND_FILLS","FEES_SPREAD_SLIPPAGE","FUNDING_REFERENCE","REJECTION_OUTAGE_PARTIAL_FILL","LIQUIDATION_REFERENCE","MAX_DRAWDOWN","RISK_OF_RUIN_HEURISTIC","SEEDED_MONTE_CARLO","WALK_FORWARD_SPLITS","OUT_OF_SAMPLE_SPLITS","REGIME_CLASSIFICATION","MANIPULATION_FLAGS","CONCENTRATION_RISK"],
+  "syntheticSnapshot": {"strategy":"example-only balanced momentum fixture","marketRegime":"synthetic mixed volatility","orders":128,"filled":109,"partial":11,"rejected":8,"outageEvents":2,"maxDrawdownPct":7.4,"riskOfRuinBand":"MODELLED_LOW_TO_MODERATE_NOT_FORECAST","monteCarloPaths":1000,"concentrationFlag":false,"manipulationFlag":true},
+  "commercialModels": [
+    {"id":"subscriptions","state":"MODEL_ONLY","claim":"NO_USERS_OR_REVENUE"},
+    {"id":"creator-tools","state":"MODEL_ONLY","claim":"NO_USERS_OR_REVENUE"},
+    {"id":"marketplace-commissions","state":"MODEL_ONLY","claim":"NO_TRANSACTIONS_OR_REVENUE"},
+    {"id":"services","state":"MODEL_ONLY","claim":"NO_CLIENTS_OR_REVENUE"},
+    {"id":"grants","state":"MODEL_ONLY","claim":"NO_AWARD_OR_REVENUE"},
+    {"id":"education","state":"MODEL_ONLY","claim":"NO_ENROLLMENT_OR_REVENUE"},
+    {"id":"licensing","state":"MODEL_ONLY","claim":"NO_LICENSEES_OR_REVENUE"}
+  ],
+  "negativeEvidence": ["MANIPULATION_FLAG_PRESENT_IN_FIXTURE","OUTAGE_AND_REJECTION_CASES_PRESERVED","NO_STRATEGY_APPROVED_FOR_LIVE_USE"],
+  "rollback": {"method":"remove route and revert exact release commit","privateDependencies":false,"financialSideEffects":false}
+}
