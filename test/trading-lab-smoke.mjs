@@ -26,8 +26,8 @@ const { port } = server.address();
 
 try {
   const page = await fetch(`http://127.0.0.1:${port}/trading-lab/`);
-  const pageText = await page.text();
   assert.equal(page.status, 200);
+  const pageText = await page.text();
   assert.match(pageText, /Trading Intelligence Synthetic Paper Lab/);
   assert.equal(page.headers.get('x-frame-options'), 'DENY');
   assert.match(page.headers.get('content-security-policy') || '', /default-src 'self'/);
