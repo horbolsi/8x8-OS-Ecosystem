@@ -1,21 +1,24 @@
-# 8x8 Hub — Web3 Operating System
+# 8x8 OS Ecosystem
 
-Full-stack Web3 platform with 22 integrated features.
+Public canonical program tracker and implementation workspace for the 8x8 ecosystem.
 
-## Quick Start
+## Canonical Program Documents
+
+- [`FULL_SYSTEM_MAP.md`](./FULL_SYSTEM_MAP.md)
+- [`REPOSITORY_MAP.md`](./REPOSITORY_MAP.md)
+- [`DEPLOYMENT_GATES.md`](./DEPLOYMENT_GATES.md)
+- [`EVIDENCE_LEDGER.md`](./EVIDENCE_LEDGER.md)
+- [`PROGRAM_TRACKER.md`](./PROGRAM_TRACKER.md)
+
+## Current Status
+
+This repository is the canonical public tracker for full-system reconciliation and hardening.
+Completion claims require current code, tests, execution evidence, named environment, and explicit limitations.
+
+## Quick Start (Local Development)
 
 ```bash
 cp .env.example .env
-# Edit .env with your API keys
 npm install
 npm start
 ```
-
-## Features
-- Trade, Wallet, Staking, NFT, Governance, Games, Social, Streaming, Radio, and more
-- React 18 frontend + Express 5 backend
-- PostgreSQL database
-- Docker support
-
-## Environment Variables
-See .env.example for all required variables.
