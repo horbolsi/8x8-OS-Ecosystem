@@ -128,12 +128,19 @@ try {
   assert.equal(root.response.status, 200);
   assert.match(root.text, /8x8 OS — Three-Monitor Public V1/);
   assert.doesNotMatch(root.text, /8x8 OS — Dual Monitor Beta/);
+  assert.match(root.text, /href="\/trading-lab\/"/);
   assert.match(root.response.headers.get("content-security-policy") || "", /default-src 'self'/);
   assert.equal(root.response.headers.get("x-frame-options"), "DENY");
   assert.equal(
     root.response.headers.get("permissions-policy"),
     "camera=(), microphone=(), geolocation=(), accelerometer=(), gyroscope=(), magnetometer=(), payment=(), usb=(), bluetooth=()",
   );
+
+  const tradingLab = await request("/trading-lab/");
+  assert.equal(tradingLab.response.status, 200);
+  assert.match(tradingLab.text, /Trading Intelligence Synthetic Paper Lab/);
+  assert.match(tradingLab.text, /NO LIVE ORDERS/);
+  assert.doesNotMatch(tradingLab.text, /walletconnect|ccxt|binance|coinbase|kraken|bitget/i);
 
   console.log(JSON.stringify({
     status: "PASS",
