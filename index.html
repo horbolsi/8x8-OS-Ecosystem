@@ -11,7 +11,7 @@
 <main id="boot"><div><div class="spin"></div><b>8×8 OS</b><p>Opening the canonical Fabric Mirror v0.1.0…</p></div></main>
 <noscript>JavaScript is required for this public beta projection.</noscript>
 <script>
-(async()=>{const exact='https://raw.githubusercontent.com/8x8org/8x8-user-edition/af620b04be9503bee0348c91911757d3a65297cc/index.html';try{const r=await fetch(exact,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const html=await r.text();if(!/^<!doctype html>/i.test(html.trim()))throw new Error('non-html canonical payload');document.open('text/html','replace');document.write(html);document.close()}catch(e){document.getElementById('boot').innerHTML='<div><b>8×8 OS</b><p>Canonical Fabric Mirror failed to hydrate. Deployment remains fail-closed rather than serving source code.</p><p style="color:#ff7f93">'+String(e.message).replace(/[<>]/g,'')+'</p></div>'}})();
+(async()=>{const exact='https://raw.githubusercontent.com/8x8org/8x8-user-edition/78cc90271e9f5ce9f9b0bed9dd63d05346edd144/index.html';try{const r=await fetch(exact,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const html=await r.text();if(!/^<!doctype html>/i.test(html.trim()))throw new Error('non-html canonical payload');document.open('text/html','replace');document.write(html);document.close()}catch(e){document.getElementById('boot').innerHTML='<div><b>8×8 OS</b><p>Canonical Fabric Mirror failed to hydrate. Deployment remains fail-closed rather than serving source code.</p><p style="color:#ff7f93">'+String(e.message).replace(/[<>]/g,'')+'</p></div>'}})();
 </script>
 </body>
 </html>
