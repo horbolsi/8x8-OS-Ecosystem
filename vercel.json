@@ -2,15 +2,16 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
   "trailingSlash": false,
+  "redirects": [
+    {"source": "/r3", "destination": "https://8x8-os-ecosystem-enh1thvqn-8x8-team-url.vercel.app", "permanent": false}
+  ],
   "rewrites": [
-    {"source": "/", "destination": "/stable/index.html"},
-    {"source": "/first-blink", "destination": "/stable/index.html"},
-    {"source": "/first-blink/", "destination": "/stable/index.html"},
-    {"source": "/world", "destination": "/stable/index.html"},
-    {"source": "/art-board", "destination": "/stable/index.html"},
-    {"source": "/stable", "destination": "/stable/index.html"},
-    {"source": "/r3", "destination": "/index.html"},
-    {"source": "/((?!.*\\.).*)", "destination": "/stable/index.html"}
+    {"source": "/first-blink", "destination": "/index.html"},
+    {"source": "/first-blink/", "destination": "/index.html"},
+    {"source": "/world", "destination": "/index.html"},
+    {"source": "/art-board", "destination": "/index.html"},
+    {"source": "/stable", "destination": "/index.html"},
+    {"source": "/((?!.*\\.).*)", "destination": "/index.html"}
   ],
   "headers": [
     {
