@@ -11,6 +11,14 @@ For AI assistants, agents, and collaborators, use the public-safe bootstrap:
 
 The bootstrap intentionally exposes only public-safe project context. Private implementation, credentials, development continuity, customer data, and ownership-sensitive material remain private.
 
+## Evidence-aware execution
+
+The public-safe capability record for the implemented One-Fabric mission-state primitive is:
+
+- [`docs/PROOF_CARRYING_EXECUTION_FABRIC_PUBLIC_V1.md`](./docs/PROOF_CARRYING_EXECUTION_FABRIC_PUBLIC_V1.md)
+
+It distinguishes mission pickup, leases, execution, effect commit, verification and terminalization instead of treating a successful process exit as proof of completion.
+
 ## Quick Start
 
 ```bash
