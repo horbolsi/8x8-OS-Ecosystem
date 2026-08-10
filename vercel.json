@@ -2,10 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
   "trailingSlash": false,
-  "redirects": [
-    {"source": "/r3", "destination": "https://8x8-os-ecosystem-enh1thvqn-8x8-team-url.vercel.app", "permanent": false}
-  ],
   "rewrites": [
+    {"source": "/r3", "destination": "/r3/index.html"},
+    {"source": "/r3/", "destination": "/r3/index.html"},
     {"source": "/first-blink", "destination": "/index.html"},
     {"source": "/first-blink/", "destination": "/index.html"},
     {"source": "/world", "destination": "/index.html"},
