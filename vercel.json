@@ -5,12 +5,16 @@
   "rewrites": [
     {"source": "/r3", "destination": "/r3/index.html"},
     {"source": "/r3/", "destination": "/r3/index.html"},
-    {"source": "/first-blink", "destination": "/index.html"},
-    {"source": "/first-blink/", "destination": "/index.html"},
-    {"source": "/world", "destination": "/index.html"},
-    {"source": "/art-board", "destination": "/index.html"},
-    {"source": "/stable", "destination": "/index.html"},
-    {"source": "/((?!.*\\.).*)", "destination": "/index.html"}
+    {"source": "/r4", "destination": "/index.html"},
+    {"source": "/r4/", "destination": "/index.html"},
+    {"source": "/r5", "destination": "/r5/index.html"},
+    {"source": "/r5/", "destination": "/r5/index.html"},
+    {"source": "/first-blink", "destination": "/r5/index.html"},
+    {"source": "/first-blink/", "destination": "/r5/index.html"},
+    {"source": "/world", "destination": "/r5/index.html"},
+    {"source": "/art-board", "destination": "/r5/index.html"},
+    {"source": "/stable", "destination": "/r5/index.html"},
+    {"source": "/((?!.*\\.).*)", "destination": "/r5/index.html"}
   ],
   "headers": [
     {
