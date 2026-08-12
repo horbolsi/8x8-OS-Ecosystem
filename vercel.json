@@ -9,6 +9,8 @@
     {"source": "/first-blink/", "destination": "/index.html"},
     {"source": "/world", "destination": "/index.html"},
     {"source": "/art-board", "destination": "/index.html"},
+    {"source": "/projects", "destination": "/projects/index.html"},
+    {"source": "/projects/", "destination": "/projects/index.html"},
     {"source": "/stable", "destination": "/index.html"},
     {"source": "/((?!.*\\.).*)", "destination": "/index.html"}
   ],
