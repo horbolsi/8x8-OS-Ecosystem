@@ -8,6 +8,7 @@
   "carrier_path": "r5/index.html",
   "carrier_blob_sha": "83bed6faef9e416995cf9770626cb7a5912589b5",
   "root_route": "/",
+  "public_production_url": "https://8x8-os-ecosystem.vercel.app",
   "expected_root_markers": [
     "ONE FABRIC LIVE · R5",
     "0.2.0 · PUBLIC RELEASE CANDIDATE",
