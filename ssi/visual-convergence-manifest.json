@@ -1,0 +1,64 @@
+{
+  "schema": "8x8.ssi-visual-convergence.v1",
+  "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
+  "canonical_root": "fabric://8x8/core",
+  "candidate": {
+    "name": "Spatial Sovereign Interface R5.1",
+    "status": "PREVIEW_ONLY_OWNER_VISUAL_GATE",
+    "carrier": "ssi/index.html",
+    "production_promotion": false
+  },
+  "visual_registry": {
+    "stable_records": 14,
+    "unique_binaries": 13,
+    "canonical": [
+      {"id":"8X8-VIS-0001","sha256":"fe56383723bfcf117d2a15f3e926b7f020d677419f2d2ba7f290a165a63b66dd","role":"Sovereign Architecture Vision V1"},
+      {"id":"8X8-VIS-0002","sha256":"50d7f3dc0a086e8f05124685acefc00e18cfa907aed261a2f2ef504af6fd6bb9","role":"Omniversal Product Atlas V1"},
+      {"id":"8X8-VIS-0003","sha256":"976a96e1203d9cd0668b7205175be075f7ff5b3df40f3d9f7a46a963e1f10648","role":"Omniversal System Atlas V2"},
+      {"id":"8X8-VIS-0004","sha256":"9c8a97de183c08fe4d1dfdb76de470fb5e3b1191a181823235a16aab6e662a71","role":"Three Realities System Atlas V1"}
+    ],
+    "uploaded_reference_hashes": [
+      "429ee193ce7bc97e5c6111e4264a6e4e0b73d243129307e6d2027503649834f1",
+      "d809baec708a04bfd957b0ed1d86d2775b474c29243d2fa9ec570e84ecc1132a",
+      "c9c2264a62a34bc3bf58b99b197c801a35bc13352d6852ffa0954a80e48ae57c",
+      "b2e19da81c826d0df6cf0fa8546e2e383844f99950082e729f91f5c4945f9dbf",
+      "fbe6b50ae4654e91f0c1d48ed973779e7a52dea2c2c5ce6f4433bb7efde83aa2",
+      "40da52511d0ff10d956c89e564b6b500b952dc77d75882499a7b407205531eac",
+      "193340c9abae7e7bb6c87ead5555ead310f4d17f7053b4fd95b25e99e93ac473",
+      "1ca59f8be860424071138892b0ed2be965c7bb2acc4bd1b31a0277023ae84646",
+      "bb0bae01275d6df8f73101e0e8e62d9b44189a528f309ef90cfa513f12e54d64"
+    ],
+    "current_owner_r5_screenshot": {
+      "sha256": "c1cee376781f3a35b94b51eede236b80b1fb31dccc76a0dff0cade60c5b4efaa",
+      "dimensions": "716x1536",
+      "relationship": "UNIQUE_BINARY_RELATIVE_TO_VIS_0001_0014",
+      "visual_fit": "INSUFFICIENT_TO_OWNER_VISION"
+    }
+  },
+  "target_views": [
+    "Command Deck",
+    "Three Realities Timeline",
+    "Agent Constellation",
+    "Agent Body Explorer",
+    "World Map",
+    "Mission Graph",
+    "Systems and Connectors",
+    "Visual Council",
+    "Future Powers",
+    "Evidence and Receipts",
+    "Health and Warnings",
+    "Public-safe Live Metrics"
+  ],
+  "donor_sources": [
+    {"repository":"horbolsi/8x8-os-hub","ref":"9d94c9d1bff32efaa46caf95e692d17564518484","classification":"HISTORICAL_FEATURE_DONOR","observed_features":["Trade","Wallet","Staking","NFT","Governance","Games","Social","Streaming","Radio","Agents","Security","Platforms"]},
+    {"repository":"horbolsi/8x8-OS-Ecosystem","ref":"1411183a64c1063feef9ab6695a90b015099a9d6","classification":"FIRST_BLINK_VISUAL_DONOR","observed_features":["central truth core","orbital hierarchy","Three Realities","explicit status","dark-neon command language"]},
+    {"repository":"horbolsi/8x8-OS-Ecosystem","ref":"77c0e3f3448f2682e59bba3d184b076718ae4e6d","classification":"PUBLIC_V1_COCKPIT_DONOR","observed_features":["three-monitor cockpit","World","Art Board","Missions","Plugins","Visual Council","Marketplace","8x8Scan","Future Lab"]}
+  ],
+  "truth_law": [
+    "HASH_NON_EQUALITY_PROVES_BINARY_NON_IDENTITY_NOT_VISUAL_DISTANCE",
+    "HISTORICAL_DONOR_TELEMETRY_MUST_NOT_BE_RENDERED_AS_LIVE",
+    "PREVIEW_READY_IS_NOT_PRODUCTION",
+    "OWNER_VISUAL_ACCEPTANCE_REQUIRED_BEFORE_PRODUCTION_PROMOTION",
+    "GLOBAL_100_100_REQUIRES_FROZEN_DENOMINATOR"
+  ]
+}
