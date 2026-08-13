@@ -54,6 +54,7 @@ jobs:
           import json
           import subprocess
           from pathlib import Path
+          from urllib.parse import urlparse
 
           identity = json.loads(Path('release-identity.json').read_text())
           vercel = json.loads(Path('vercel.json').read_text())
@@ -65,6 +66,12 @@ jobs:
           assert identity['promotion_law']['preview_is_production'] is False
           assert identity['promotion_law']['production_requires_body_readback'] is True
           assert identity['promotion_law']['production_requires_release_identity_match'] is True
+
+          public_url = identity['public_production_url']
+          parsed = urlparse(public_url)
+          assert parsed.scheme == 'https'
+          assert parsed.hostname
+          assert not parsed.path.rstrip('/')
 
           carrier = Path(identity['carrier_path'])
           assert carrier.is_file(), carrier
@@ -100,6 +107,7 @@ jobs:
               assert expected_rollbacks[route]
 
           print('RELEASE_IDENTITY_CONTRACT=PASS')
+          print('PUBLIC_PRODUCTION_URL=PASS', public_url)
           print('CARRIER_GIT_BLOB=PASS', observed_blob)
           print('VERCEL_ROUTING_CONTRACT=PASS')
           print('ROLLBACK_CONTRACT=PASS')
@@ -130,16 +138,25 @@ jobs:
             --environment "$ENVIRONMENT_NAME" \
             --allow-auth-gated
 
-      - name: Require and verify canonical public production domain
+      - name: Verify canonical public production domain
         if: github.event.deployment.environment == 'Production'
         env:
-          PUBLIC_PRODUCTION_URL: ${{ vars.PUBLIC_PRODUCTION_URL }}
+          PUBLIC_PRODUCTION_URL_OVERRIDE: ${{ vars.PUBLIC_PRODUCTION_URL }}
         run: |
+          PUBLIC_PRODUCTION_URL="$PUBLIC_PRODUCTION_URL_OVERRIDE"
           if [ -z "$PUBLIC_PRODUCTION_URL" ]; then
-            echo "::error::PUBLIC_PRODUCTION_URL repository variable is required for Production proof"
-            echo "PUBLIC_PRODUCTION_DOMAIN=UNCONFIGURED"
+            PUBLIC_PRODUCTION_URL="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          print(json.loads(Path('release-identity.json').read_text())['public_production_url'])
+          PY
+          )"
+          fi
+          if [ -z "$PUBLIC_PRODUCTION_URL" ]; then
+            echo "::error::No canonical public production URL is configured"
             exit 1
           fi
+          echo "PUBLIC_PRODUCTION_URL=$PUBLIC_PRODUCTION_URL"
           python3 scripts/verify_vercel_release_readback.py \
             --base-url "$PUBLIC_PRODUCTION_URL" \
             --environment Production
