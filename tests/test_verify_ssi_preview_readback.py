@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 MODULE_PATH = (
@@ -112,6 +114,83 @@ class VerifySsiPreviewReadbackTests(unittest.TestCase):
     def test_invalid_deployment_sha_fails(self):
         with self.assertRaisesRegex(ValueError, "40-character"):
             VERIFIER.validate_deployed_sha("short")
+
+    def test_authoritative_deployment_attestation_passes(self):
+        sha = "a" * 40
+        url = "https://preview.example.test"
+        receipt = VERIFIER.verify_deployment_attestation(
+            {"id": 88, "sha": sha, "url": "https://api.github.test/deployments/88"},
+            {
+                "id": 99,
+                "state": "success",
+                "environment_url": url,
+                "deployment_url": "https://api.github.test/deployments/88",
+            },
+            sha,
+            url,
+        )
+        self.assertEqual(receipt["sha"], sha)
+        self.assertEqual(receipt["deployment_id"], 88)
+
+    def test_authoritative_deployment_sha_mismatch_fails(self):
+        with self.assertRaisesRegex(RuntimeError, "SHA mismatch"):
+            VERIFIER.verify_deployment_attestation(
+                {"id": 88, "sha": "b" * 40, "url": "https://api.test/d/88"},
+                {
+                    "id": 99,
+                    "state": "success",
+                    "environment_url": "https://preview.example.test",
+                    "deployment_url": "https://api.test/d/88",
+                },
+                "a" * 40,
+                "https://preview.example.test",
+            )
+
+    def test_authoritative_deployment_url_mismatch_fails(self):
+        with self.assertRaisesRegex(RuntimeError, "URL mismatch"):
+            VERIFIER.verify_deployment_attestation(
+                {"id": 88, "sha": "a" * 40, "url": "https://api.test/d/88"},
+                {
+                    "id": 99,
+                    "state": "success",
+                    "environment_url": "https://other.example.test",
+                    "deployment_url": "https://api.test/d/88",
+                },
+                "a" * 40,
+                "https://preview.example.test",
+            )
+
+    def test_authoritative_deployment_non_success_fails(self):
+        with self.assertRaisesRegex(RuntimeError, "not success"):
+            VERIFIER.verify_deployment_attestation(
+                {"id": 88, "sha": "a" * 40, "url": "https://api.test/d/88"},
+                {
+                    "id": 99,
+                    "state": "pending",
+                    "environment_url": "https://preview.example.test",
+                    "deployment_url": "https://api.test/d/88",
+                },
+                "a" * 40,
+                "https://preview.example.test",
+            )
+
+    def test_public_request_never_uses_bypass_secret(self):
+        with patch.dict(os.environ, {"VERCEL_AUTOMATION_BYPASS_SECRET": "secret"}):
+            headers = VERIFIER.request_headers("public")
+        self.assertNotIn("x-vercel-protection-bypass", headers)
+
+    def test_protected_request_requires_configured_bypass(self):
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "requires"):
+                VERIFIER.request_headers("protected-approved-bypass")
+
+    def test_protected_request_uses_bypass_without_exposing_it(self):
+        with patch.dict(
+            os.environ, {"VERCEL_AUTOMATION_BYPASS_SECRET": "opaque-secret"}
+        ):
+            headers = VERIFIER.request_headers("protected-approved-bypass")
+        self.assertEqual(headers["x-vercel-protection-bypass"], "opaque-secret")
+        self.assertEqual(headers["x-vercel-set-bypass-cookie"], "true")
 
 
 if __name__ == "__main__":
