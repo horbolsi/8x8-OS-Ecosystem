@@ -51,7 +51,10 @@
       "source": "/ssi(.*)",
       "headers": [
         {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
-        {"key": "Cache-Control", "value": "no-store, max-age=0"}
+        {"key": "Cache-Control", "value": "no-store, max-age=0"},
+        {"key": "X-8X8-Preview-Identity", "value": "SSI-R5.1-VISION-CONVERGENCE"},
+        {"key": "X-8X8-Release-Channel", "value": "preview"},
+        {"key": "X-8X8-Production-Promotion", "value": "false"}
       ]
     }
   ]
