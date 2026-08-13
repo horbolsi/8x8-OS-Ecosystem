@@ -6,9 +6,12 @@ on:
       - index.html
       - r4/**
       - r5/**
+      - ssi/**
       - vercel.json
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
+      - scripts/verify_ssi_preview_readback.py
+      - tests/test_verify_ssi_preview_readback.py
       - .github/workflows/vercel-release-readback.yml
   push:
     branches:
@@ -17,9 +20,12 @@ on:
       - index.html
       - r4/**
       - r5/**
+      - ssi/**
       - vercel.json
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
+      - scripts/verify_ssi_preview_readback.py
+      - tests/test_verify_ssi_preview_readback.py
       - .github/workflows/vercel-release-readback.yml
   deployment_status:
   workflow_dispatch:
@@ -53,7 +59,8 @@ jobs:
         run: |
           python3 -m json.tool release-identity.json >/dev/null
           python3 -m json.tool vercel.json >/dev/null
-          python3 -m py_compile scripts/verify_vercel_release_readback.py
+          python3 -m py_compile scripts/verify_vercel_release_readback.py scripts/verify_ssi_preview_readback.py
+          python3 -m unittest tests.test_verify_ssi_preview_readback -v
           python3 - <<'PY'
           import json
           import subprocess
@@ -115,6 +122,8 @@ jobs:
           }
           assert rewrites['/_8x8/release'] == '/release-identity.json'
           assert rewrites['/'] == '/index.html'
+          assert rewrites['/ssi'] == '/ssi/index.html'
+          assert rewrites['/ssi/'] == '/ssi/index.html'
           assert rewrites['/r5'] == '/r5/index.html'
           assert rewrites['/r4'] == '/r4/index.html'
           assert rewrites['/r3'] == '/r3/index.html'
@@ -127,6 +136,17 @@ jobs:
                   for header in rule.get('headers', []):
                       release_headers[header['key'].lower()] = header['value']
           assert release_headers['x-8x8-release-identity'] == identity['release_id']
+
+          ssi_headers = {}
+          for rule in vercel.get('headers', []):
+              if rule.get('source') == '/ssi(.*)':
+                  for header in rule.get('headers', []):
+                      ssi_headers[header['key'].lower()] = header['value']
+          assert ssi_headers['x-8x8-preview-identity'] == 'SSI-R5.1-VISION-CONVERGENCE'
+          assert ssi_headers['x-8x8-release-channel'] == 'preview'
+          assert ssi_headers['x-8x8-production-promotion'] == 'false'
+          assert 'no-store' in ssi_headers['cache-control'].lower()
+          assert 'noindex' in ssi_headers['x-robots-tag'].lower()
 
           expected_rollbacks = identity.get('rollback_expected_markers', {})
           for route in identity['rollback_routes']:
@@ -168,6 +188,19 @@ jobs:
             --environment "$ENVIRONMENT_NAME" \
             --allow-auth-gated
 
+      - name: Verify exact SSI preview body and fail-closed headers
+        if: github.event.deployment.environment != 'Production'
+        env:
+          GENERATED_URL: ${{ github.event.deployment_status.environment_url }}
+          ENVIRONMENT_NAME: ${{ github.event.deployment.environment }}
+          DEPLOYED_SHA: ${{ github.event.deployment.sha }}
+        run: |
+          python3 scripts/verify_ssi_preview_readback.py \
+            --base-url "$GENERATED_URL" \
+            --deployed-sha "$DEPLOYED_SHA" \
+            --environment "$ENVIRONMENT_NAME" \
+            --expected-body ssi/index.html
+
       - name: Verify canonical public production domain
         if: github.event.deployment.environment == 'Production'
         env:
@@ -201,3 +234,11 @@ jobs:
           python3 scripts/verify_vercel_release_readback.py \
             --base-url '${{ inputs.base_url }}' \
             --environment '${{ inputs.environment }}'
+          if [ '${{ inputs.environment }}' = 'Preview' ]; then
+            python3 scripts/verify_ssi_preview_readback.py \
+              --base-url '${{ inputs.base_url }}' \
+              --deployed-sha '${{ github.sha }}' \
+              --environment Preview \
+              --expected-body ssi/index.html
+          fi
+
