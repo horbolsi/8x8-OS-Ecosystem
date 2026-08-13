@@ -36,6 +36,7 @@ The release is not accepted as production until all of the following agree on th
 - Release ID: `R5-0.2.0-ONE-FABRIC-LIVE`
 - Carrier: `r5/index.html`
 - Carrier Git blob: `83bed6faef9e416995cf9770626cb7a5912589b5`
+- Canonical public production URL: `https://8x8-os-ecosystem.vercel.app`
 - Rollback R4: `/r4`
 - Rollback R3: `/r3`
 
@@ -45,4 +46,4 @@ The release is not accepted as production until all of the following agree on th
 
 `scripts/verify_vercel_release_readback.py` fails closed on stale body, stale release header, stale release endpoint, auth-gated production, or broken rollback identity.
 
-The repository variable `PUBLIC_PRODUCTION_URL` must point to the canonical public production domain. Production proof fails if it is absent.
+`release-identity.json` now carries the canonical public production URL, so production readback does not depend on a manual repository-variable setup. `PUBLIC_PRODUCTION_URL` remains an optional explicit override; if absent, the workflow uses the versioned release identity.
