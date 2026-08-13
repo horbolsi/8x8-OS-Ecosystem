@@ -2,20 +2,32 @@
   "schema": "8x8.vercel-release-identity.v1",
   "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
   "canonical_root": "fabric://8x8/core",
-  "release_id": "R4-0.1.0-STABLE-PUBLIC-WEB",
-  "version": "0.1.0",
+  "release_id": "R5-0.2.0-ONE-FABRIC-LIVE",
+  "version": "0.2.0",
   "stage": "PUBLIC_PRESENT",
-  "carrier_path": "index.html",
-  "carrier_blob_sha": "fecbf7b2a17099d016ed2c461d3eec5b28438894",
+  "carrier_path": "r5/index.html",
+  "carrier_blob_sha": "83bed6faef9e416995cf9770626cb7a5912589b5",
   "root_route": "/",
   "expected_root_markers": [
-    "Living Omniversal Gate R4",
-    "0.1.0 Stable",
-    "THE 8×8 LIVING FABRIC"
+    "ONE FABRIC LIVE · R5",
+    "0.2.0 · PUBLIC RELEASE CANDIDATE",
+    "fabric://8x8/core"
   ],
   "rollback_routes": [
+    "/r4",
     "/r3"
   ],
+  "rollback_expected_markers": {
+    "/r4": [
+      "Living Omniversal Gate R4",
+      "0.1.0 Stable",
+      "THE 8×8 LIVING FABRIC"
+    ],
+    "/r3": [
+      "Living Omniversal Gate R3",
+      "0.0.1 Beta"
+    ]
+  },
   "promotion_law": {
     "ready_is_deployed": false,
     "preview_is_production": false,
@@ -23,6 +35,8 @@
     "production_requires_exact_sha": true,
     "production_requires_body_readback": true,
     "production_requires_release_identity_match": true,
+    "production_requires_release_header_match": true,
+    "production_requires_release_endpoint_match": true,
     "production_requires_rollback_route_readback": true
   }
 }
