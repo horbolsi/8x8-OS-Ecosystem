@@ -148,14 +148,13 @@ class SsiAccessibilityPrivacyContractTests(unittest.TestCase):
 
     def test_protected_readback_blocker_fails_required_job(self):
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
-        blocked = workflow.index(
-            "SSI_PROTECTED_READBACK=BLOCKED_BYPASS_SECRET_NOT_CONFIGURED"
-        )
+        marker = 'echo "::error::SSI_PROTECTED_READBACK=BLOCKED_BYPASS_SECRET_NOT_CONFIGURED"'
+        blocked = workflow.index(marker)
         verifier = workflow.index(
             "python3 scripts/verify_ssi_preview_readback.py", blocked
         )
         branch = workflow[blocked:verifier]
-        self.assertIn('echo "::error::SSI_PROTECTED_READBACK=', branch)
+        self.assertIn(marker, branch)
         self.assertIn("exit 1", branch)
         self.assertNotIn("exit 0", branch)
 
