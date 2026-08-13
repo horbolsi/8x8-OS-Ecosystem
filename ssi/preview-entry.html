@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>©️8x8 by FlashTM8 ⚡️🌎🤖 · SSI R5.1 Preview</title>
+</head>
+<body>
+<noscript>SSI R5.1 preview requires JavaScript for the preview-only truth-boundary projection.</noscript>
+<script>
+(async()=>{
+  const response=await fetch('/ssi/index.html',{cache:'no-store'});
+  if(!response.ok) throw new Error('SSI source readback failed: '+response.status);
+  let html=await response.text();
+  html=html.replaceAll('<strong>FUNCTIONAL</strong>','<strong>UPCOMING / IN DEVELOPMENT</strong>');
+  html=html.replace('READ / TEST / DESIGN BOUNDARIES','ROLES DEFINED · ASSETS UPCOMING · READ / TEST / DESIGN');
+  html=html.replace('R5.1 · SSI PREVIEW</b><small>visual-convergence candidate · not production','R5.1 · SSI PREVIEW</b><small>explicit preview channel · visual-convergence candidate · not production');
+  html=html.replace('GLOBAL_100_100 == DENOMINATOR_REQUIRED','FUNCTIONAL_ROLE != DEPLOYED_ASSET\nGLOBAL_100_100 == DENOMINATOR_REQUIRED');
+  html=html.replace('PRIVATE_RUNTIME_EXPOSED=NO','FUNCTIONAL_ASSETS_DEPLOYED=NO\nPRIVATE_RUNTIME_EXPOSED=NO');
+  document.open();
+  document.write(html);
+  document.close();
+})().catch(err=>{
+  document.body.innerHTML='<main style="font:16px system-ui;padding:24px;background:#02050b;color:#fff;min-height:100vh"><h1>SSI preview readback failed closed</h1><pre>'+String(err).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</pre></main>';
+});
+</script>
+</body>
+</html>
