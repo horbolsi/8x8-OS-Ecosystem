@@ -12,7 +12,6 @@ import json
 import sys
 import time
 import urllib.error
-import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -43,7 +42,7 @@ def fetch(url: str, timeout: float) -> tuple[int, str, dict[str, str], str]:
     req = urllib.request.Request(
         request_url,
         headers={
-            "User-Agent": "8x8-release-readback/1",
+            "User-Agent": "8x8-release-readback/2",
             "Cache-Control": "no-cache, no-store, max-age=0",
             "Pragma": "no-cache",
             "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
@@ -67,7 +66,13 @@ def looks_auth_gated(status: int, final_url: str, body: str) -> bool:
     return status in {401, 403} or "vercel.com/login" in text or "vercel authentication" in text
 
 
-def verify_url(base_url: str, identity: dict, environment: str, timeout: float) -> None:
+def verify_url(
+    base_url: str,
+    identity: dict,
+    environment: str,
+    timeout: float,
+    allow_auth_gated: bool,
+) -> None:
     base = base_url.rstrip("/")
     status, final_url, headers, root_body = fetch(base + "/", timeout)
     print(f"READBACK_URL={base}")
@@ -81,10 +86,10 @@ def verify_url(base_url: str, identity: dict, environment: str, timeout: float) 
     auth_gated = looks_auth_gated(status, final_url, root_body)
     print(f"AUTH_GATED={'YES' if auth_gated else 'NO'}")
     if auth_gated:
-        if environment.lower() == "production":
-            raise RuntimeError("production carrier is auth-gated")
-        print("PREVIEW_BODY_PROOF=SKIPPED_AUTH_GATED")
-        return
+        if allow_auth_gated:
+            print("BODY_PROOF=SKIPPED_AUTH_GATED_ALLOWED")
+            return
+        raise RuntimeError("readback target is auth-gated")
 
     if status != 200:
         raise RuntimeError(f"root returned HTTP {status}")
@@ -94,9 +99,7 @@ def verify_url(base_url: str, identity: dict, environment: str, timeout: float) 
         raise RuntimeError(f"root release marker mismatch; missing={missing}")
     print(f"ROOT_RELEASE_IDENTITY={identity['release_id']}")
     print("ROOT_MARKERS=PASS")
-
-    carrier_blob_sha = identity["carrier_blob_sha"]
-    print(f"EXPECTED_CARRIER_BLOB_SHA={carrier_blob_sha}")
+    print(f"EXPECTED_CARRIER_BLOB_SHA={identity['carrier_blob_sha']}")
 
     for route in identity.get("rollback_routes", []):
         r_status, r_final, _, r_body = fetch(base + route, timeout)
@@ -114,13 +117,24 @@ def main() -> int:
     ap.add_argument("--identity", default="release-identity.json")
     ap.add_argument("--environment", default="Preview")
     ap.add_argument("--timeout", type=float, default=20.0)
+    ap.add_argument(
+        "--allow-auth-gated",
+        action="store_true",
+        help="Permit an auth-gated generated deployment URL as informational only.",
+    )
     args = ap.parse_args()
 
     identity = load_identity(Path(args.identity))
     print(f"SCHEMA={identity['schema']}")
     print(f"BRAND={identity['brand']}")
     print(f"CANONICAL_ROOT={identity['canonical_root']}")
-    verify_url(args.base_url, identity, args.environment, args.timeout)
+    verify_url(
+        args.base_url,
+        identity,
+        args.environment,
+        args.timeout,
+        args.allow_auth_gated,
+    )
     print("VERCEL_RELEASE_READBACK=PASS")
     return 0
 
