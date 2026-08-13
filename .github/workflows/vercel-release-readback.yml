@@ -3,6 +3,8 @@ name: Vercel Release Readback
 on:
   pull_request:
     paths:
+      - index.html
+      - r4/**
       - r5/**
       - vercel.json
       - release-identity.json
@@ -12,6 +14,8 @@ on:
     branches:
       - main
     paths:
+      - index.html
+      - r4/**
       - r5/**
       - vercel.json
       - release-identity.json
@@ -45,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate release identity, carrier digest and routing contract
+      - name: Validate release identity, physical carrier, routing and rollback contracts
         run: |
           python3 -m json.tool release-identity.json >/dev/null
           python3 -m json.tool vercel.json >/dev/null
@@ -62,10 +66,13 @@ jobs:
           assert identity['schema'] == '8x8.vercel-release-identity.v1'
           assert identity['canonical_root'] == 'fabric://8x8/core'
           assert identity['expected_root_markers']
+          assert identity['carrier_path'] == 'index.html'
           assert identity['promotion_law']['ready_is_deployed'] is False
           assert identity['promotion_law']['preview_is_production'] is False
           assert identity['promotion_law']['production_requires_body_readback'] is True
           assert identity['promotion_law']['production_requires_release_identity_match'] is True
+          assert identity['promotion_law']['production_requires_physical_root_carrier'] is True
+          assert identity['promotion_law']['production_requires_rollback_blob_identity'] is True
 
           public_url = identity['public_production_url']
           parsed = urlparse(public_url)
@@ -73,25 +80,46 @@ jobs:
           assert parsed.hostname
           assert not parsed.path.rstrip('/')
 
-          carrier = Path(identity['carrier_path'])
-          assert carrier.is_file(), carrier
-          observed_blob = subprocess.check_output(
-              ['git', 'hash-object', str(carrier)], text=True
-          ).strip()
-          assert observed_blob == identity['carrier_blob_sha'], (
-              observed_blob,
+          def git_blob(path: str) -> str:
+              p = Path(path)
+              assert p.is_file(), p
+              return subprocess.check_output(
+                  ['git', 'hash-object', str(p)], text=True
+              ).strip()
+
+          root_blob = git_blob('index.html')
+          r5_blob = git_blob('r5/index.html')
+          assert root_blob == identity['carrier_blob_sha'], (
+              root_blob,
               identity['carrier_blob_sha'],
           )
+          assert r5_blob == root_blob, (r5_blob, root_blob)
+
+          rollback_paths = {
+              '/r4': 'r4/index.html',
+              '/r3': 'r3/index.html',
+          }
+          rollback_blobs = identity['rollback_carrier_blob_sha']
+          for route, path in rollback_paths.items():
+              observed = git_blob(path)
+              assert observed == rollback_blobs[route], (
+                  route,
+                  observed,
+                  rollback_blobs[route],
+              )
+              assert observed != root_blob
 
           rewrites = {
               row['source']: row['destination']
               for row in vercel.get('rewrites', [])
           }
           assert rewrites['/_8x8/release'] == '/release-identity.json'
-          assert rewrites['/'] == '/' + identity['carrier_path']
-          assert rewrites['/r5'] == '/' + identity['carrier_path']
-          assert rewrites['/r4'] == '/index.html'
+          assert rewrites['/'] == '/index.html'
+          assert rewrites['/r5'] == '/r5/index.html'
+          assert rewrites['/r4'] == '/r4/index.html'
           assert rewrites['/r3'] == '/r3/index.html'
+          assert rewrites['/world'] == '/index.html'
+          assert rewrites['/stable'] == '/index.html'
 
           release_headers = {}
           for rule in vercel.get('headers', []):
@@ -108,9 +136,11 @@ jobs:
 
           print('RELEASE_IDENTITY_CONTRACT=PASS')
           print('PUBLIC_PRODUCTION_URL=PASS', public_url)
-          print('CARRIER_GIT_BLOB=PASS', observed_blob)
+          print('PHYSICAL_ROOT_CARRIER_BLOB=PASS', root_blob)
+          print('R5_ALIAS_BLOB=PASS', r5_blob)
           print('VERCEL_ROUTING_CONTRACT=PASS')
-          print('ROLLBACK_CONTRACT=PASS')
+          print('ROLLBACK_BLOB_CONTRACT=PASS')
+          print('ROLLBACK_MARKER_CONTRACT=PASS')
           PY
 
   deployment-readback:
