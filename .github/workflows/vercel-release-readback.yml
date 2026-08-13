@@ -216,9 +216,9 @@ jobs:
             exit 1
           fi
           if [ "$ACCESS_MODE" = "protected-approved-bypass" ] && [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
-            echo "SSI_PROTECTED_READBACK=BLOCKED_BYPASS_SECRET_NOT_CONFIGURED"
+            echo "::error::SSI_PROTECTED_READBACK=BLOCKED_BYPASS_SECRET_NOT_CONFIGURED"
             echo "SSI_PUBLIC_PREVIEW_ACCEPTANCE=FALSE_PROTECTED"
-            exit 0
+            exit 1
           fi
           python3 scripts/verify_ssi_preview_readback.py \
             --base-url "$GENERATED_URL" \
