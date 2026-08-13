@@ -5,7 +5,7 @@
   "release_id": "R5-0.2.0-ONE-FABRIC-LIVE",
   "version": "0.2.0",
   "stage": "PUBLIC_PRESENT",
-  "carrier_path": "r5/index.html",
+  "carrier_path": "index.html",
   "carrier_blob_sha": "83bed6faef9e416995cf9770626cb7a5912589b5",
   "root_route": "/",
   "public_production_url": "https://8x8-os-ecosystem.vercel.app",
@@ -38,6 +38,7 @@
     "production_requires_release_identity_match": true,
     "production_requires_release_header_match": true,
     "production_requires_release_endpoint_match": true,
+    "production_requires_physical_root_carrier": true,
     "production_requires_rollback_route_readback": true
   }
 }
