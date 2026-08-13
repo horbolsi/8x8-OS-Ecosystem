@@ -82,6 +82,10 @@ class SsiAccessibilityPrivacyContractTests(unittest.TestCase):
             self.assertIn(marker, self.html)
 
     def test_no_external_or_stateful_privacy_surfaces(self):
+        self.assertFalse(
+            (ROOT / "ssi" / "preview-entry.html").exists(),
+            "unused transform carrier must not diverge from served ssi/index.html",
+        )
         self.assertEqual(self.parser.external_urls, [])
         forbidden = (
             "fetch(",
@@ -150,4 +154,3 @@ class SsiAccessibilityPrivacyContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
