@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Fail-closed Vercel carrier readback for ©️8x8 by FlashTM8 ⚡️🌎🤖.
 
-The verifier proves rendered body identity, not merely deployment build state.
-It is intentionally stdlib-only and performs no mutations.
+The verifier proves rendered body identity, release header identity,
+release endpoint identity and rollback identity. A READY deployment or a
+preview URL is never treated as production proof.
+
+Stdlib-only. Read-only. No deployment mutation.
 """
 from __future__ import annotations
 
@@ -42,7 +45,7 @@ def fetch(url: str, timeout: float) -> tuple[int, str, dict[str, str], str]:
     req = urllib.request.Request(
         request_url,
         headers={
-            "User-Agent": "8x8-release-readback/2",
+            "User-Agent": "8x8-release-readback/3",
             "Cache-Control": "no-cache, no-store, max-age=0",
             "Pragma": "no-cache",
             "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
@@ -63,7 +66,39 @@ def fetch(url: str, timeout: float) -> tuple[int, str, dict[str, str], str]:
 
 def looks_auth_gated(status: int, final_url: str, body: str) -> bool:
     text = (final_url + "\n" + body[:10000]).lower()
-    return status in {401, 403} or "vercel.com/login" in text or "vercel authentication" in text
+    return (
+        status in {401, 403}
+        or "vercel.com/login" in text
+        or "vercel authentication" in text
+    )
+
+
+def require_markers(label: str, body: str, markers: list[str]) -> None:
+    missing = [marker for marker in markers if marker not in body]
+    if missing:
+        raise RuntimeError(f"{label} marker mismatch; missing={missing}")
+    print(f"{label}_MARKERS=PASS")
+
+
+def verify_release_endpoint(base: str, identity: dict, timeout: float) -> None:
+    status, final_url, headers, body = fetch(base + "/_8x8/release", timeout)
+    print(f"RELEASE_ENDPOINT_HTTP={status}")
+    print(f"RELEASE_ENDPOINT_FINAL_URL={final_url}")
+    print(f"RELEASE_ENDPOINT_CACHE_CONTROL={headers.get('cache-control', '')}")
+    if status != 200:
+        raise RuntimeError(f"release endpoint returned HTTP {status}")
+    try:
+        observed = json.loads(body)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("release endpoint did not return JSON") from exc
+
+    for key in ("release_id", "carrier_path", "carrier_blob_sha", "canonical_root"):
+        if observed.get(key) != identity.get(key):
+            raise RuntimeError(
+                f"release endpoint mismatch for {key}: "
+                f"observed={observed.get(key)!r} expected={identity.get(key)!r}"
+            )
+    print("RELEASE_ENDPOINT_IDENTITY=PASS")
 
 
 def verify_url(
@@ -81,6 +116,7 @@ def verify_url(
     print(f"ROOT_FINAL_URL={final_url}")
     print(f"ROOT_CONTENT_TYPE={headers.get('content-type', '')}")
     print(f"ROOT_X_VERCEL_CACHE={headers.get('x-vercel-cache', '')}")
+    print(f"ROOT_X_8X8_RELEASE_IDENTITY={headers.get('x-8x8-release-identity', '')}")
     print(f"ROOT_BODY_SHA256={hashlib.sha256(root_body.encode('utf-8')).hexdigest()}")
 
     auth_gated = looks_auth_gated(status, final_url, root_body)
@@ -94,13 +130,21 @@ def verify_url(
     if status != 200:
         raise RuntimeError(f"root returned HTTP {status}")
 
-    missing = [m for m in identity["expected_root_markers"] if m not in root_body]
-    if missing:
-        raise RuntimeError(f"root release marker mismatch; missing={missing}")
+    release_header = headers.get("x-8x8-release-identity", "")
+    if release_header != identity["release_id"]:
+        raise RuntimeError(
+            "release header mismatch: "
+            f"observed={release_header!r} expected={identity['release_id']!r}"
+        )
+    print("ROOT_RELEASE_HEADER=PASS")
+
+    require_markers("ROOT", root_body, identity["expected_root_markers"])
     print(f"ROOT_RELEASE_IDENTITY={identity['release_id']}")
-    print("ROOT_MARKERS=PASS")
     print(f"EXPECTED_CARRIER_BLOB_SHA={identity['carrier_blob_sha']}")
 
+    verify_release_endpoint(base, identity, timeout)
+
+    rollback_expected = identity.get("rollback_expected_markers", {})
     for route in identity.get("rollback_routes", []):
         r_status, r_final, _, r_body = fetch(base + route, timeout)
         print(f"ROLLBACK_ROUTE={route} HTTP={r_status} FINAL={r_final}")
@@ -108,6 +152,9 @@ def verify_url(
             raise RuntimeError(f"rollback route {route} returned HTTP {r_status}")
         if r_body == root_body:
             raise RuntimeError(f"rollback route {route} is byte-identical to root")
+        markers = rollback_expected.get(route, [])
+        if markers:
+            require_markers(f"ROLLBACK_{route.strip('/').upper()}", r_body, markers)
     print("ROLLBACK_READBACK=PASS")
 
 
@@ -143,5 +190,8 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except Exception as exc:
-        print(f"VERCEL_RELEASE_READBACK=FAIL {type(exc).__name__}: {exc}", file=sys.stderr)
+        print(
+            f"VERCEL_RELEASE_READBACK=FAIL {type(exc).__name__}: {exc}",
+            file=sys.stderr,
+        )
         raise SystemExit(1)
