@@ -18,6 +18,10 @@
     "/r4",
     "/r3"
   ],
+  "rollback_carrier_blob_sha": {
+    "/r4": "fecbf7b2a17099d016ed2c461d3eec5b28438894",
+    "/r3": "21f44bb1bf5b61387abe0320b0d32d2542133f1d"
+  },
   "rollback_expected_markers": {
     "/r4": [
       "Living Omniversal Gate R4",
@@ -39,6 +43,7 @@
     "production_requires_release_header_match": true,
     "production_requires_release_endpoint_match": true,
     "production_requires_physical_root_carrier": true,
-    "production_requires_rollback_route_readback": true
+    "production_requires_rollback_route_readback": true,
+    "production_requires_rollback_blob_identity": true
   }
 }
