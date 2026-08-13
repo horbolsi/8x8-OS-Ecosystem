@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML_PATH = ROOT / "ssi" / "index.html"
 VERCEL_PATH = ROOT / "vercel.json"
+WORKFLOW_PATH = ROOT / ".github" / "workflows" / "vercel-release-readback.yml"
 
 
 class ContractParser(HTMLParser):
@@ -144,6 +145,19 @@ class SsiAccessibilityPrivacyContractTests(unittest.TestCase):
             "form-action 'none'",
         ):
             self.assertIn(directive, csp)
+
+    def test_protected_readback_blocker_fails_required_job(self):
+        workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+        blocked = workflow.index(
+            "SSI_PROTECTED_READBACK=BLOCKED_BYPASS_SECRET_NOT_CONFIGURED"
+        )
+        verifier = workflow.index(
+            "python3 scripts/verify_ssi_preview_readback.py", blocked
+        )
+        branch = workflow[blocked:verifier]
+        self.assertIn('echo "::error::SSI_PROTECTED_READBACK=', branch)
+        self.assertIn("exit 1", branch)
+        self.assertNotIn("exit 0", branch)
 
     def test_economic_truth_markers_remain_gated(self):
         self.assertNotIn("<strong>FUNCTIONAL</strong>", self.html)
