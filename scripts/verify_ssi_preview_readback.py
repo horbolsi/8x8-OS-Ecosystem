@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import sys
 import time
@@ -81,18 +82,70 @@ def validate_deployed_sha(deployed_sha: str) -> str:
     return deployed_sha.lower()
 
 
-def fetch_ssi(base_url: str, timeout: float) -> Observation:
+def verify_deployment_attestation(
+    deployment: dict,
+    deployment_status: dict,
+    deployed_sha: str,
+    base_url: str,
+) -> dict[str, object]:
+    observed_sha = validate_deployed_sha(str(deployment.get("sha", "")))
+    if observed_sha != deployed_sha:
+        raise RuntimeError(
+            "authoritative deployment SHA mismatch: "
+            f"observed={observed_sha} expected={deployed_sha}"
+        )
+    if deployment_status.get("state") != "success":
+        raise RuntimeError(
+            "authoritative deployment status is not success: "
+            f"{deployment_status.get('state')!r}"
+        )
+    observed_url = validate_base_url(str(deployment_status.get("environment_url", "")))
+    if observed_url != base_url:
+        raise RuntimeError(
+            "authoritative deployment URL mismatch: "
+            f"observed={observed_url!r} expected={base_url!r}"
+        )
+    deployment_api_url = deployment.get("url")
+    status_deployment_url = deployment_status.get("deployment_url")
+    if not deployment_api_url or status_deployment_url != deployment_api_url:
+        raise RuntimeError("deployment status is not bound to the attested deployment")
+    return {
+        "provider": "github_deployments_api",
+        "deployment_id": deployment.get("id"),
+        "deployment_status_id": deployment_status.get("id"),
+        "sha": observed_sha,
+        "environment_url": observed_url,
+    }
+
+
+def request_headers(access_mode: str) -> dict[str, str]:
+    headers = {
+        "User-Agent": "8x8-ssi-preview-readback/2",
+        "Cache-Control": "no-cache, no-store, max-age=0",
+        "Pragma": "no-cache",
+        "Accept": "text/html,*/*;q=0.8",
+    }
+    if access_mode == "public":
+        return headers
+    if access_mode != "protected-approved-bypass":
+        raise ValueError(f"unsupported access mode: {access_mode!r}")
+    bypass = os.environ.get("VERCEL_AUTOMATION_BYPASS_SECRET", "")
+    if not bypass:
+        raise RuntimeError(
+            "protected readback requires VERCEL_AUTOMATION_BYPASS_SECRET"
+        )
+    headers["x-vercel-protection-bypass"] = bypass
+    headers["x-vercel-set-bypass-cookie"] = "true"
+    return headers
+
+
+def fetch_ssi(base_url: str, timeout: float, access_mode: str) -> Observation:
     request_url = (
         f"{base_url}/ssi?__8x8_ssi_readback={time.time_ns()}"
     )
     req = urllib.request.Request(
         request_url,
-        headers={
-            "User-Agent": "8x8-ssi-preview-readback/1",
-            "Cache-Control": "no-cache, no-store, max-age=0",
-            "Pragma": "no-cache",
-            "Accept": "text/html,*/*;q=0.8",
-        },
+        headers=request_headers(access_mode),
     )
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -174,8 +227,15 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", required=True)
     parser.add_argument("--deployed-sha", required=True)
+    parser.add_argument("--deployment-record", required=True)
+    parser.add_argument("--deployment-status-record", required=True)
     parser.add_argument("--expected-body", default="ssi/index.html")
     parser.add_argument("--environment", default="Preview")
+    parser.add_argument(
+        "--access-mode",
+        choices=("public", "protected-approved-bypass"),
+        default="public",
+    )
     parser.add_argument("--timeout", type=float, default=20.0)
     args = parser.parse_args()
 
@@ -189,7 +249,18 @@ def main() -> int:
         raise FileNotFoundError(f"expected SSI body not found: {expected_path}")
     expected_body = expected_path.read_bytes()
 
-    observation = fetch_ssi(base_url, args.timeout)
+    deployment = json.loads(Path(args.deployment_record).read_text(encoding="utf-8"))
+    deployment_status = json.loads(
+        Path(args.deployment_status_record).read_text(encoding="utf-8")
+    )
+    attestation = verify_deployment_attestation(
+        deployment,
+        deployment_status,
+        deployed_sha,
+        base_url,
+    )
+
+    observation = fetch_ssi(base_url, args.timeout, args.access_mode)
     receipt = verify_observation(observation, expected_body)
     receipt.update(
         {
@@ -198,6 +269,14 @@ def main() -> int:
             "deployment_url": base_url,
             "environment": "Preview",
             "source_body_sha256": hashlib.sha256(expected_body).hexdigest(),
+            "deployment_attestation": attestation,
+            "access_mode": args.access_mode,
+            "public_preview_acceptance": args.access_mode == "public",
+            "protection_decision": (
+                "PUBLIC_UNAUTHENTICATED"
+                if args.access_mode == "public"
+                else "PROTECTED_APPROVED_AUTOMATION_BYPASS"
+            ),
         }
     )
     print("SSI_PREVIEW_READBACK_RECEIPT=" + json.dumps(receipt, sort_keys=True))
