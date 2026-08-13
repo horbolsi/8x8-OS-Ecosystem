@@ -11,7 +11,7 @@ on:
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
       - scripts/verify_ssi_preview_readback.py
-      - tests/test_verify_ssi_preview_readback.py
+      - tests/**
       - .github/workflows/vercel-release-readback.yml
   push:
     branches:
@@ -25,7 +25,7 @@ on:
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
       - scripts/verify_ssi_preview_readback.py
-      - tests/test_verify_ssi_preview_readback.py
+      - tests/**
       - .github/workflows/vercel-release-readback.yml
   deployment_status:
   workflow_dispatch:
@@ -60,7 +60,7 @@ jobs:
           python3 -m json.tool release-identity.json >/dev/null
           python3 -m json.tool vercel.json >/dev/null
           python3 -m py_compile scripts/verify_vercel_release_readback.py scripts/verify_ssi_preview_readback.py
-          python3 -m unittest tests.test_verify_ssi_preview_readback -v
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 - <<'PY'
           import json
           import subprocess
@@ -241,4 +241,3 @@ jobs:
               --environment Preview \
               --expected-body ssi/index.html
           fi
-
