@@ -5,6 +5,8 @@
   "rewrites": [
     {"source": "/_8x8/release", "destination": "/release-identity.json"},
     {"source": "/", "destination": "/index.html"},
+    {"source": "/ssi", "destination": "/ssi/index.html"},
+    {"source": "/ssi/", "destination": "/ssi/index.html"},
     {"source": "/r3", "destination": "/r3/index.html"},
     {"source": "/r3/", "destination": "/r3/index.html"},
     {"source": "/r4", "destination": "/r4/index.html"},
@@ -42,6 +44,13 @@
     {
       "source": "/release-identity.json",
       "headers": [
+        {"key": "Cache-Control", "value": "no-store, max-age=0"}
+      ]
+    },
+    {
+      "source": "/ssi(.*)",
+      "headers": [
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
         {"key": "Cache-Control", "value": "no-store, max-age=0"}
       ]
     }
