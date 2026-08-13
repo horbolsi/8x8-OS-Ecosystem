@@ -6,7 +6,9 @@
     "name": "Spatial Sovereign Interface R5.1",
     "status": "PREVIEW_ONLY_OWNER_VISUAL_GATE",
     "carrier": "ssi/index.html",
-    "production_promotion": false
+    "production_promotion": false,
+    "preview_identity": "SSI-R5.1-VISION-CONVERGENCE",
+    "release_channel": "preview"
   },
   "visual_registry": {
     "stable_records": 14,
@@ -57,6 +59,9 @@
   "truth_law": [
     "HASH_NON_EQUALITY_PROVES_BINARY_NON_IDENTITY_NOT_VISUAL_DISTANCE",
     "HISTORICAL_DONOR_TELEMETRY_MUST_NOT_BE_RENDERED_AS_LIVE",
+    "FUNCTIONAL_ROLE_DOES_NOT_MEAN_ASSET_DEPLOYED",
+    "EIGHT_FUNCTIONAL_ASSETS_REMAIN_UPCOMING_UNTIL_SEPARATELY_RUNTIME_PROVEN",
+    "PREVIEW_MUST_CARRY_EXPLICIT_PREVIEW_IDENTITY_AND_CHANNEL",
     "PREVIEW_READY_IS_NOT_PRODUCTION",
     "OWNER_VISUAL_ACCEPTANCE_REQUIRED_BEFORE_PRODUCTION_PROMOTION",
     "GLOBAL_100_100_REQUIRES_FROZEN_DENOMINATOR"
