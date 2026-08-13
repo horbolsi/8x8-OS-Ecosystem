@@ -4,14 +4,19 @@
   "trailingSlash": false,
   "rewrites": [
     {"source": "/_8x8/release", "destination": "/release-identity.json"},
+    {"source": "/", "destination": "/r5/index.html"},
     {"source": "/r3", "destination": "/r3/index.html"},
     {"source": "/r3/", "destination": "/r3/index.html"},
-    {"source": "/first-blink", "destination": "/index.html"},
-    {"source": "/first-blink/", "destination": "/index.html"},
-    {"source": "/world", "destination": "/index.html"},
-    {"source": "/art-board", "destination": "/index.html"},
-    {"source": "/stable", "destination": "/index.html"},
-    {"source": "/((?!.*\\.).*)", "destination": "/index.html"}
+    {"source": "/r4", "destination": "/index.html"},
+    {"source": "/r4/", "destination": "/index.html"},
+    {"source": "/r5", "destination": "/r5/index.html"},
+    {"source": "/r5/", "destination": "/r5/index.html"},
+    {"source": "/first-blink", "destination": "/r5/index.html"},
+    {"source": "/first-blink/", "destination": "/r5/index.html"},
+    {"source": "/world", "destination": "/r5/index.html"},
+    {"source": "/art-board", "destination": "/r5/index.html"},
+    {"source": "/stable", "destination": "/r5/index.html"},
+    {"source": "/((?!.*\\.).*)", "destination": "/r5/index.html"}
   ],
   "headers": [
     {
@@ -24,7 +29,8 @@
         {"key": "Cross-Origin-Opener-Policy", "value": "same-origin"},
         {"key": "Cross-Origin-Resource-Policy", "value": "same-origin"},
         {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests"},
-        {"key": "X-8X8-Release-Identity", "value": "R4-0.1.0-STABLE-PUBLIC-WEB"}
+        {"key": "X-8X8-Release-Identity", "value": "R5-0.2.0-ONE-FABRIC-LIVE"},
+        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}
       ]
     },
     {
@@ -37,12 +43,6 @@
       "source": "/release-identity.json",
       "headers": [
         {"key": "Cache-Control", "value": "no-store, max-age=0"}
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}
       ]
     }
   ]

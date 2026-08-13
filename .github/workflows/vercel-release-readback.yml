@@ -3,6 +3,17 @@ name: Vercel Release Readback
 on:
   pull_request:
     paths:
+      - r5/**
+      - vercel.json
+      - release-identity.json
+      - scripts/verify_vercel_release_readback.py
+      - .github/workflows/vercel-release-readback.yml
+  push:
+    branches:
+      - main
+    paths:
+      - r5/**
+      - vercel.json
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
       - .github/workflows/vercel-release-readback.yml
@@ -30,24 +41,76 @@ env:
 
 jobs:
   contract:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate release identity and verifier syntax
+      - name: Validate release identity, carrier digest and routing contract
         run: |
           python3 -m json.tool release-identity.json >/dev/null
+          python3 -m json.tool vercel.json >/dev/null
           python3 -m py_compile scripts/verify_vercel_release_readback.py
           python3 - <<'PY'
           import json
+          import subprocess
           from pathlib import Path
-          p = json.loads(Path('release-identity.json').read_text())
-          assert p['schema'] == '8x8.vercel-release-identity.v1'
-          assert p['canonical_root'] == 'fabric://8x8/core'
-          assert p['expected_root_markers']
-          assert p['promotion_law']['ready_is_deployed'] is False
-          assert p['promotion_law']['preview_is_production'] is False
+          from urllib.parse import urlparse
+
+          identity = json.loads(Path('release-identity.json').read_text())
+          vercel = json.loads(Path('vercel.json').read_text())
+
+          assert identity['schema'] == '8x8.vercel-release-identity.v1'
+          assert identity['canonical_root'] == 'fabric://8x8/core'
+          assert identity['expected_root_markers']
+          assert identity['promotion_law']['ready_is_deployed'] is False
+          assert identity['promotion_law']['preview_is_production'] is False
+          assert identity['promotion_law']['production_requires_body_readback'] is True
+          assert identity['promotion_law']['production_requires_release_identity_match'] is True
+
+          public_url = identity['public_production_url']
+          parsed = urlparse(public_url)
+          assert parsed.scheme == 'https'
+          assert parsed.hostname
+          assert not parsed.path.rstrip('/')
+
+          carrier = Path(identity['carrier_path'])
+          assert carrier.is_file(), carrier
+          observed_blob = subprocess.check_output(
+              ['git', 'hash-object', str(carrier)], text=True
+          ).strip()
+          assert observed_blob == identity['carrier_blob_sha'], (
+              observed_blob,
+              identity['carrier_blob_sha'],
+          )
+
+          rewrites = {
+              row['source']: row['destination']
+              for row in vercel.get('rewrites', [])
+          }
+          assert rewrites['/_8x8/release'] == '/release-identity.json'
+          assert rewrites['/'] == '/' + identity['carrier_path']
+          assert rewrites['/r5'] == '/' + identity['carrier_path']
+          assert rewrites['/r4'] == '/index.html'
+          assert rewrites['/r3'] == '/r3/index.html'
+
+          release_headers = {}
+          for rule in vercel.get('headers', []):
+              if rule.get('source') == '/(.*)':
+                  for header in rule.get('headers', []):
+                      release_headers[header['key'].lower()] = header['value']
+          assert release_headers['x-8x8-release-identity'] == identity['release_id']
+
+          expected_rollbacks = identity.get('rollback_expected_markers', {})
+          for route in identity['rollback_routes']:
+              assert route in rewrites
+              assert route in expected_rollbacks
+              assert expected_rollbacks[route]
+
           print('RELEASE_IDENTITY_CONTRACT=PASS')
+          print('PUBLIC_PRODUCTION_URL=PASS', public_url)
+          print('CARRIER_GIT_BLOB=PASS', observed_blob)
+          print('VERCEL_ROUTING_CONTRACT=PASS')
+          print('ROLLBACK_CONTRACT=PASS')
           PY
 
   deployment-readback:
@@ -75,16 +138,25 @@ jobs:
             --environment "$ENVIRONMENT_NAME" \
             --allow-auth-gated
 
-      - name: Require and verify canonical public production domain
+      - name: Verify canonical public production domain
         if: github.event.deployment.environment == 'Production'
         env:
-          PUBLIC_PRODUCTION_URL: ${{ vars.PUBLIC_PRODUCTION_URL }}
+          PUBLIC_PRODUCTION_URL_OVERRIDE: ${{ vars.PUBLIC_PRODUCTION_URL }}
         run: |
+          PUBLIC_PRODUCTION_URL="$PUBLIC_PRODUCTION_URL_OVERRIDE"
           if [ -z "$PUBLIC_PRODUCTION_URL" ]; then
-            echo "::error::PUBLIC_PRODUCTION_URL repository variable is required for Production proof"
-            echo "PUBLIC_PRODUCTION_DOMAIN=UNCONFIGURED"
+            PUBLIC_PRODUCTION_URL="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+          print(json.loads(Path('release-identity.json').read_text())['public_production_url'])
+          PY
+          )"
+          fi
+          if [ -z "$PUBLIC_PRODUCTION_URL" ]; then
+            echo "::error::No canonical public production URL is configured"
             exit 1
           fi
+          echo "PUBLIC_PRODUCTION_URL=$PUBLIC_PRODUCTION_URL"
           python3 scripts/verify_vercel_release_readback.py \
             --base-url "$PUBLIC_PRODUCTION_URL" \
             --environment Production
