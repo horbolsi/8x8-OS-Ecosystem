@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       base_url:
-        description: Exact Vercel deployment or production alias to verify
+        description: Exact Vercel deployment or canonical production domain to verify
         required: true
         type: string
       environment:
@@ -61,24 +61,30 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.deployment.sha }}
-      - name: Verify exact deployment body identity
+
+      - name: Probe generated deployment URL
         env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+          GENERATED_URL: ${{ github.event.deployment_status.environment_url }}
           ENVIRONMENT_NAME: ${{ github.event.deployment.environment }}
           DEPLOYED_SHA: ${{ github.event.deployment.sha }}
         run: |
           echo "DEPLOYED_SHA=$DEPLOYED_SHA"
           echo "DEPLOYMENT_ENVIRONMENT=$ENVIRONMENT_NAME"
           python3 scripts/verify_vercel_release_readback.py \
-            --base-url "$BASE_URL" \
-            --environment "$ENVIRONMENT_NAME"
-      - name: Verify canonical production alias when configured
-        if: >-
-          github.event.deployment.environment == 'Production' &&
-          vars.PUBLIC_PRODUCTION_URL != ''
+            --base-url "$GENERATED_URL" \
+            --environment "$ENVIRONMENT_NAME" \
+            --allow-auth-gated
+
+      - name: Require and verify canonical public production domain
+        if: github.event.deployment.environment == 'Production'
         env:
           PUBLIC_PRODUCTION_URL: ${{ vars.PUBLIC_PRODUCTION_URL }}
         run: |
+          if [ -z "$PUBLIC_PRODUCTION_URL" ]; then
+            echo "::error::PUBLIC_PRODUCTION_URL repository variable is required for Production proof"
+            echo "PUBLIC_PRODUCTION_DOMAIN=UNCONFIGURED"
+            exit 1
+          fi
           python3 scripts/verify_vercel_release_readback.py \
             --base-url "$PUBLIC_PRODUCTION_URL" \
             --environment Production
