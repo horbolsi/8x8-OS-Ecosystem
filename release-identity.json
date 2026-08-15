@@ -5,17 +5,11 @@
   "release_id": "R6-0.3.0-ONE-FABRIC-FULL-SHELL",
   "version": "0.3.0",
   "stage": "PUBLIC_PRESENT_PRIVATE_ATTACH_GATED",
-  "carrier_path": "r6/index.html",
+  "carrier_path": "index.html",
   "carrier_blob_sha": "9c5f6257f6a511d555a54a7d4fa1ca4a2252d20d",
   "root_route": "/",
   "public_production_url": "https://8x8-os-ecosystem.vercel.app",
-  "expected_root_markers": [
-    "One Fabric R6",
-    "ONE INTERFACE.",
-    "ALL POWERS.",
-    "PUBLIC SHELL ≠ PRIVATE AUTHORITY",
-    "fabric://8x8/core"
-  ],
+  "expected_root_markers": ["One Fabric R6", "ONE INTERFACE.", "ALL POWERS.", "PUBLIC SHELL ≠ PRIVATE AUTHORITY", "fabric://8x8/core"],
   "public_private_boundary": {
     "public_full_product_shell": true,
     "private_resources_embedded_in_carrier": false,
@@ -25,25 +19,10 @@
     "new_tenant_private_mount_count": 0,
     "device_terminal_wallet_connector_authority_inferred_from_ui": false
   },
-  "presale": {
-    "homepage_visible": true,
-    "mode": "UPCOMING_AND_READINESS",
-    "sale_open": false,
-    "payment_enabled": false,
-    "signing_enabled": false,
-    "mainnet_enabled": false
-  },
+  "presale": {"homepage_visible": true, "mode": "UPCOMING_AND_READINESS", "sale_open": false, "payment_enabled": false, "signing_enabled": false, "mainnet_enabled": false},
   "rollback_routes": ["/r5", "/r4", "/r3"],
-  "rollback_carrier_blob_sha": {
-    "/r5": "83bed6faef9e416995cf9770626cb7a5912589b5",
-    "/r4": "fecbf7b2a17099d016ed2c461d3eec5b28438894",
-    "/r3": "21f44bb1bf5b61387abe0320b0d32d2542133f1d"
-  },
-  "rollback_expected_markers": {
-    "/r5": ["ONE FABRIC LIVE · R5", "0.2.0 · PUBLIC RELEASE CANDIDATE"],
-    "/r4": ["Living Omniversal Gate R4", "0.1.0 Stable", "THE 8×8 LIVING FABRIC"],
-    "/r3": ["Living Omniversal Gate R3", "0.0.1 Beta"]
-  },
+  "rollback_carrier_blob_sha": {"/r5": "83bed6faef9e416995cf9770626cb7a5912589b5", "/r4": "fecbf7b2a17099d016ed2c461d3eec5b28438894", "/r3": "21f44bb1bf5b61387abe0320b0d32d2542133f1d"},
+  "rollback_expected_markers": {"/r5": ["ONE FABRIC LIVE · R5", "0.2.0 · PUBLIC RELEASE CANDIDATE"], "/r4": ["Living Omniversal Gate R4", "0.1.0 Stable", "THE 8×8 LIVING FABRIC"], "/r3": ["Living Omniversal Gate R3", "0.0.1 Beta"]},
   "promotion_law": {
     "ready_is_deployed": false,
     "preview_is_production": false,
@@ -53,6 +32,7 @@
     "production_requires_release_identity_match": true,
     "production_requires_release_header_match": true,
     "production_requires_release_endpoint_match": true,
+    "production_requires_physical_root_carrier": true,
     "production_requires_public_private_boundary": true,
     "production_requires_rollback_route_readback": true,
     "whole_system_100_inferred_from_release": false
