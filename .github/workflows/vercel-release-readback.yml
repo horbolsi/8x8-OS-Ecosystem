@@ -6,9 +6,12 @@ on:
       - index.html
       - r4/**
       - r5/**
+      - ssi/**
       - vercel.json
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
+      - scripts/verify_ssi_preview_readback.py
+      - tests/**
       - .github/workflows/vercel-release-readback.yml
   push:
     branches:
@@ -17,9 +20,12 @@ on:
       - index.html
       - r4/**
       - r5/**
+      - ssi/**
       - vercel.json
       - release-identity.json
       - scripts/verify_vercel_release_readback.py
+      - scripts/verify_ssi_preview_readback.py
+      - tests/**
       - .github/workflows/vercel-release-readback.yml
   deployment_status:
   workflow_dispatch:
@@ -39,6 +45,7 @@ on:
 
 permissions:
   contents: read
+  deployments: read
 
 env:
   PYTHONDONTWRITEBYTECODE: "1"
@@ -53,7 +60,8 @@ jobs:
         run: |
           python3 -m json.tool release-identity.json >/dev/null
           python3 -m json.tool vercel.json >/dev/null
-          python3 -m py_compile scripts/verify_vercel_release_readback.py
+          python3 -m py_compile scripts/verify_vercel_release_readback.py scripts/verify_ssi_preview_readback.py
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 - <<'PY'
           import json
           import subprocess
@@ -115,6 +123,8 @@ jobs:
           }
           assert rewrites['/_8x8/release'] == '/release-identity.json'
           assert rewrites['/'] == '/index.html'
+          assert rewrites['/ssi'] == '/ssi/index.html'
+          assert rewrites['/ssi/'] == '/ssi/index.html'
           assert rewrites['/r5'] == '/r5/index.html'
           assert rewrites['/r4'] == '/r4/index.html'
           assert rewrites['/r3'] == '/r3/index.html'
@@ -127,6 +137,17 @@ jobs:
                   for header in rule.get('headers', []):
                       release_headers[header['key'].lower()] = header['value']
           assert release_headers['x-8x8-release-identity'] == identity['release_id']
+
+          ssi_headers = {}
+          for rule in vercel.get('headers', []):
+              if rule.get('source') == '/ssi(.*)':
+                  for header in rule.get('headers', []):
+                      ssi_headers[header['key'].lower()] = header['value']
+          assert ssi_headers['x-8x8-preview-identity'] == 'SSI-R5.1-VISION-CONVERGENCE'
+          assert ssi_headers['x-8x8-release-channel'] == 'preview'
+          assert ssi_headers['x-8x8-production-promotion'] == 'false'
+          assert 'no-store' in ssi_headers['cache-control'].lower()
+          assert 'noindex' in ssi_headers['x-robots-tag'].lower()
 
           expected_rollbacks = identity.get('rollback_expected_markers', {})
           for route in identity['rollback_routes']:
@@ -168,6 +189,46 @@ jobs:
             --environment "$ENVIRONMENT_NAME" \
             --allow-auth-gated
 
+      - name: Fetch authoritative deployment attestation
+        if: github.event.deployment.environment != 'Production'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ID: ${{ github.event.deployment.id }}
+          DEPLOYMENT_STATUS_ID: ${{ github.event.deployment_status.id }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/deployments/$DEPLOYMENT_ID" \
+            > "$RUNNER_TEMP/ssi-deployment.json"
+          gh api "repos/$GITHUB_REPOSITORY/deployments/$DEPLOYMENT_ID/statuses/$DEPLOYMENT_STATUS_ID" \
+            > "$RUNNER_TEMP/ssi-deployment-status.json"
+
+      - name: Verify exact SSI preview body and fail-closed headers
+        if: github.event.deployment.environment != 'Production'
+        env:
+          GENERATED_URL: ${{ github.event.deployment_status.environment_url }}
+          ENVIRONMENT_NAME: ${{ github.event.deployment.environment }}
+          DEPLOYED_SHA: ${{ github.event.deployment.sha }}
+          SSI_PREVIEW_ACCESS_MODE: ${{ vars.SSI_PREVIEW_ACCESS_MODE }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          ACCESS_MODE="${SSI_PREVIEW_ACCESS_MODE:-protected-approved-bypass}"
+          if [ "$ACCESS_MODE" != "public" ] && [ "$ACCESS_MODE" != "protected-approved-bypass" ]; then
+            echo "::error::SSI_PREVIEW_ACCESS_MODE must be public or protected-approved-bypass"
+            exit 1
+          fi
+          if [ "$ACCESS_MODE" = "protected-approved-bypass" ] && [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            echo "::error::SSI_PROTECTED_READBACK=BLOCKED_BYPASS_SECRET_NOT_CONFIGURED"
+            echo "SSI_PUBLIC_PREVIEW_ACCEPTANCE=FALSE_PROTECTED"
+            exit 1
+          fi
+          python3 scripts/verify_ssi_preview_readback.py \
+            --base-url "$GENERATED_URL" \
+            --deployed-sha "$DEPLOYED_SHA" \
+            --deployment-record "$RUNNER_TEMP/ssi-deployment.json" \
+            --deployment-status-record "$RUNNER_TEMP/ssi-deployment-status.json" \
+            --environment "$ENVIRONMENT_NAME" \
+            --access-mode "$ACCESS_MODE" \
+            --expected-body ssi/index.html
+
       - name: Verify canonical public production domain
         if: github.event.deployment.environment == 'Production'
         env:
@@ -197,7 +258,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Verify requested carrier
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          REQUESTED_ENVIRONMENT: ${{ inputs.environment }}
         run: |
           python3 scripts/verify_vercel_release_readback.py \
-            --base-url '${{ inputs.base_url }}' \
-            --environment '${{ inputs.environment }}'
+            --base-url "$BASE_URL" \
+            --environment "$REQUESTED_ENVIRONMENT"
+          echo "SSI_EXACT_MANUAL_READBACK=NOT_RUN_WITHOUT_AUTHORITATIVE_DEPLOYMENT_RECORD"

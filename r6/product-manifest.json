@@ -1,0 +1,41 @@
+{
+  "schema": "8x8.r6.full-product-shell.v1",
+  "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
+  "canonical_root": "fabric://8x8/core",
+  "release": "R6-0.3.0-ONE-FABRIC-FULL-SHELL",
+  "truth": "PUBLIC_PRODUCT_SHELL_PRESENT_PRIVATE_CAPABILITIES_ATTACH_AFTER_AUTH",
+  "public_by_default": [
+    "homepage", "presale-readiness", "world", "agents-catalog", "studio-shell", "network-shell", "8x8scan-shell", "tokens-policy", "nft-vault-shell", "marketplace-shell", "games-shell", "social-shell", "streaming-shell", "research-shell", "competition-shell", "docs-and-evidence"
+  ],
+  "tenant_blank_by_default": [
+    "private-files", "terminal-sessions", "devices", "wallets", "credentials", "connector-grants", "agent-leases", "private-memory", "private-repositories", "private-databases"
+  ],
+  "owner_attachable_after_auth": [
+    "8x8-os-private-runtime", "termux-terminal", "iphone-node", "device-mesh", "vault-broker", "private-agent-fleet", "private-memory", "private-repositories", "private-databases", "internal-services"
+  ],
+  "authority_law": [
+    "PUBLIC_UI_NE_SHARED_AUTHORITY",
+    "VISIBLE_MODULE_NE_CONNECTED_RESOURCE",
+    "LOGIN_NE_OWNER_ROOT",
+    "CONNECTOR_CATALOG_NE_CREDENTIAL_PRESENT",
+    "DEVICE_CATALOG_NE_DEVICE_REACHABLE",
+    "TERMINAL_MODULE_NE_SHELL_ACCESS",
+    "OWNER_PRIVATE_RESOURCE_NE_PUBLIC_CARRIER_ASSET",
+    "RAW_SECRET_NE_BROWSER_STORAGE",
+    "PUBLIC_CARRIER_MUST_NOT_REVERSE_PROXY_RAW_8086"
+  ],
+  "modules": [
+    "Home / Presale", "World / 360 / Spatial", "Command Center", "Agents / A2A / PCEF", "Missions / Councils", "8x8 Studio", "Research", "Media / Image / Video / Audio / 3D", "Publishing / Social", "Trading / Analytics", "Blockchain / 8x8 Network", "8x8Scan", "Wallet / 8x8 ID", "8x8 + Tx8/Ux8/Fx8/XM8/0x8/TM8/Mx8/Sx8", "NFT Vaults", "Marketplace", "Staking / Mining / Proofs", "Games", "Streaming / Radio / TV", "Connectors", "8x8 Terminal", "Developer / IDE", "Models / Universal Router", "Memory / RAG / Knowledge Graph", "Devices / Voice / XR", "Security / Aegis", "Evidence / Receipts / Rollback", "Competitions / Benchmarks", "Settings / Profile / Subscription"
+  ],
+  "connectors_catalog": [
+    "GitHub", "GitLab", "Gmail", "Google Drive", "Google Calendar", "Google Contacts", "Slack", "Discord", "Telegram", "YouTube", "Facebook", "WhatsApp", "Instagram", "Threads", "LinkedIn", "X", "TikTok", "Twitch", "Roblox", "Upwork", "Notion", "Asana", "Linear", "Airtable", "Dropbox", "Box", "Microsoft Outlook", "Microsoft Teams", "Google Cloud", "Vercel", "Replit", "Supabase", "Postgres", "Stripe", "PayPal", "Coinbase", "Binance", "Bitget", "Bitcoin", "Electrum", "Solana", "Ethereum", "OpenAI", "Anthropic", "Google AI", "Hugging Face", "Ollama", "LiveKit", "Spotify", "Shazam", "Home Assistant", "Webhooks"
+  ],
+  "presale": {
+    "homepage_visible": true,
+    "status": "READINESS_AND_UPCOMING_ONLY_UNTIL_SEPARATE_GATES_PASS",
+    "payment_enabled": false,
+    "sale_open": false,
+    "signing_enabled": false,
+    "mainnet_enabled": false
+  }
+}
