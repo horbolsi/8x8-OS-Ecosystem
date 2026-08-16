@@ -9,8 +9,9 @@
   "source_refs": {
     "public_release_merge": "c779c39d56dbc288b273fd4d23d7efb95015387e",
     "core_genesis_policy_merge": "877ff70737a3d643bbecfe2c44201e2293bc5b8f",
-    "core_stable_candidate": "75d8fa2355edc3aea55dc21cc58e0edac7ea2f3b",
-    "tenant_exchange_connector_candidate": "7fbb7554b929ffb1ceff9b805cd58cdbaf9202ef",
+    "core_stable_candidate": "c274e766d5aaa30a7d691fcf6628a11f96d1b7e9",
+    "tenant_exchange_connector_candidate": "6366b07a0f874b30e13dc4ccfefcb09c858e9255",
+    "chatgpt_connector_capability_map_merge": "d8797323dc22c17cdce73d31182f465cc9c51cb6",
     "native_blockchain_candidate": "7ad19dd044042a986426bed997a21b63397f26e0"
   },
   "sovereignty": {
@@ -44,6 +45,18 @@
       "threshold_or_multisig_signer",
       "independent_client_verification"
     ]
+  },
+  "connector_fabric": {
+    "chatgpt_visible_external_connector_count": 59,
+    "plugin_management_control_plane_separate": true,
+    "all_connectors_root_of_trust": false,
+    "all_connector_accounts_authenticated": false,
+    "tool_visibility_is_account_connection_proof": false,
+    "provider_disconnect_must_preserve_8x8_identity": true,
+    "provider_disconnect_must_preserve_authoritative_8x8_state": true,
+    "wallet_signing_inherited_from_connector": false,
+    "mainnet_authority_inherited_from_connector": false,
+    "financial_value_movement_autonomous_by_catalog": false
   },
   "native_8x8": {
     "max_supply": 8888888,
@@ -94,7 +107,7 @@
     {"id":"wallet","name":"Wallet / 8x8 ID","public_state":"REFERENCE_SHELL_SIGNER_GATED"},
     {"id":"vaults","name":"NFT Vaults","public_state":"POLICY_AND_VISUALIZATION_READY_SETTLEMENT_GATED"},
     {"id":"proof","name":"Evidence / Receipts / Transparency","public_state":"PUBLIC_TRUTH_MONITOR_READY"},
-    {"id":"connect","name":"Connectors","public_state":"CATALOG_READY_TENANT_GRANTS_REQUIRED"},
+    {"id":"connect","name":"Connectors","public_state":"CATALOG_59_MAPPED_TENANT_AUTH_GRANT_LEASE_REQUIRED"},
     {"id":"sovereignty","name":"Sovereignty / Decentralization","public_state":"ARCHITECTURE_POLICY_PRESENT_RUNTIME_DIVERSITY_PROOF_PENDING"}
   ],
   "truth": {
@@ -105,6 +118,8 @@
     "fully_decentralized_runtime": false,
     "self_hosted_path_required": true,
     "provider_independence_required": true,
+    "connector_catalog_mapped": true,
+    "all_connector_accounts_authenticated": false,
     "private_account_data": false,
     "exchange_write_authority": false,
     "wallet_private_keys": false,
