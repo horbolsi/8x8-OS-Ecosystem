@@ -11,6 +11,8 @@
     {"source": "/ssi/", "destination": "/ssi/index.html"},
     {"source": "/genesis", "destination": "/genesis/index.html"},
     {"source": "/genesis/", "destination": "/genesis/index.html"},
+    {"source": "/stable", "destination": "/stable/index.html"},
+    {"source": "/stable/", "destination": "/stable/index.html"},
     {"source": "/r3", "destination": "/r3/index.html"},
     {"source": "/r3/", "destination": "/r3/index.html"},
     {"source": "/r4", "destination": "/r4/index.html"},
@@ -21,7 +23,6 @@
     {"source": "/first-blink/", "destination": "/r6/index.html"},
     {"source": "/world", "destination": "/r6/index.html"},
     {"source": "/art-board", "destination": "/r6/index.html"},
-    {"source": "/stable", "destination": "/r6/index.html"},
     {"source": "/((?!.*\\.).*)", "destination": "/r6/index.html"}
   ],
   "headers": [
@@ -43,6 +44,17 @@
     {"source": "/_8x8/release", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
     {"source": "/release-identity.json", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
     {"source": "/r6/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}]},
+    {"source": "/stable(.*)", "headers": [
+      {"key": "Cache-Control", "value": "no-store, max-age=0"},
+      {"key": "X-8X8-Release-Channel", "value": "stable-product"},
+      {"key": "X-8X8-Product-Stable", "value": "true"},
+      {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
+      {"key": "X-8X8-Mainnet-Live", "value": "false"}
+    ]},
+    {"source": "/api/market", "headers": [
+      {"key": "Cache-Control", "value": "no-store, max-age=0"},
+      {"key": "X-8X8-Trading-Authority", "value": "NONE"}
+    ]},
     {"source": "/ssi(.*)", "headers": [
       {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
