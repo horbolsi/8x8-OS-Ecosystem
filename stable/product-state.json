@@ -1,0 +1,55 @@
+{
+  "schema": "8x8.stable-product.public-truth.v1",
+  "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
+  "canonical_root": "fabric://8x8/core",
+  "release_channel": "stable-product-candidate",
+  "financial_sale_open": false,
+  "production_promotion": false,
+  "source_refs": {
+    "core_genesis_policy_merge": "877ff70737a3d643bbecfe2c44201e2293bc5b8f",
+    "core_stable_candidate": "c3511a4eb997f1215567504d03926695eed393fc",
+    "native_blockchain_candidate": "311a31bda9e32de52c0dab169e5d89ac7aac9791"
+  },
+  "native_8x8": {
+    "max_supply": 8888888,
+    "genesis_vault_backing": 88888,
+    "future_vault_backing": 800000,
+    "future_vault_years_1_80_each": 9091,
+    "future_vault_years_81_88_each": 9090,
+    "initial_lp_base_reserve": 44444,
+    "mainnet_live": false,
+    "signing": false
+  },
+  "functional_tokens": {
+    "symbols": ["Tx8","Ux8","Fx8","XM8","0x8","TM8","Mx8","Sx8"],
+    "fixed_supply_each": 8888888,
+    "max_plan_genesis_reserve_each": 1066656,
+    "worst_case_residual_each": 7822232,
+    "worst_case_88y_ceiling_each_per_year": 88889,
+    "live_issuance": false
+  },
+  "modules": [
+    {"id":"world","name":"World / Spatial / 360","public_state":"INTERACTIVE_PUBLIC_VISUALIZATION"},
+    {"id":"agents","name":"Agents / A2A / PCEF","public_state":"REGISTRY_VISIBILITY_RUNTIME_LEASE_REQUIRED"},
+    {"id":"studio","name":"8x8 Studio","public_state":"LOCAL_COMPOSER_READY_MODEL_CONNECTOR_REQUIRED_FOR_AI_GENERATION"},
+    {"id":"trading","name":"Trading / Crypto Intelligence","public_state":"LIVE_PUBLIC_MARKET_DATA_ACCOUNT_TRADING_REQUIRES_TENANT_VAULT"},
+    {"id":"chain","name":"Blockchain / 8x8 Network","public_state":"SOURCE_CANDIDATE_MAINNET_GATED"},
+    {"id":"scan","name":"8x8Scan","public_state":"EXPLORER_SHELL_CHAIN_HEIGHT_NOT_LIVE"},
+    {"id":"wallet","name":"Wallet / 8x8 ID","public_state":"REFERENCE_SHELL_SIGNER_GATED"},
+    {"id":"vaults","name":"NFT Vaults","public_state":"POLICY_AND_VISUALIZATION_READY_SETTLEMENT_GATED"},
+    {"id":"proof","name":"Evidence / Receipts / Transparency","public_state":"PUBLIC_TRUTH_MONITOR_READY"},
+    {"id":"connect","name":"Connectors","public_state":"CATALOG_READY_TENANT_GRANTS_REQUIRED"}
+  ],
+  "truth": {
+    "public_product_shell": true,
+    "public_market_data": true,
+    "private_account_data": false,
+    "exchange_write_authority": false,
+    "wallet_private_keys": false,
+    "financial_effect": false,
+    "mint": false,
+    "airdrop": false,
+    "funded_liquidity": false,
+    "mainnet": false
+  }
+}
