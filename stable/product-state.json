@@ -1,13 +1,16 @@
 {
-  "schema": "8x8.stable-product.public-truth.v1",
+  "schema": "8x8.stable-product.public-truth.v1.1",
   "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
   "canonical_root": "fabric://8x8/core",
-  "release_channel": "stable-product-candidate",
+  "release_channel": "stable-product",
+  "product_production_promotion": true,
+  "financial_production_promotion": false,
   "financial_sale_open": false,
-  "production_promotion": false,
   "source_refs": {
+    "public_release_merge": "c779c39d56dbc288b273fd4d23d7efb95015387e",
     "core_genesis_policy_merge": "877ff70737a3d643bbecfe2c44201e2293bc5b8f",
-    "core_stable_candidate": "c3511a4eb997f1215567504d03926695eed393fc",
+    "core_stable_candidate": "9ab79e744d7ad00179be28bd38f6110fc62cdcc2",
+    "tenant_exchange_connector_candidate": "09866a0a3181287f388150f7ff9cda222b087698",
     "native_blockchain_candidate": "311a31bda9e32de52c0dab169e5d89ac7aac9791"
   },
   "native_8x8": {
@@ -26,7 +29,28 @@
     "max_plan_genesis_reserve_each": 1066656,
     "worst_case_residual_each": 7822232,
     "worst_case_88y_ceiling_each_per_year": 88889,
-    "live_issuance": false
+    "roles": {
+      "Tx8": "TRADING_AND_TRANSACTION_ASSET",
+      "Ux8": "UNIVERSAL_REFERENCE_AND_GATEWAY_ASSET_$1_TARGET_NOT_PEG_PROOF",
+      "Fx8": "FUNCTIONAL_ROLE_REQUIRES_EXACT_OWNER_RATIFICATION",
+      "XM8": "EXTERNAL_ECOSYSTEM_FUNCTIONAL_ASSET",
+      "0x8": "EXTERNAL_ECOSYSTEM_AND_STAKING_ELIGIBLE_ASSET",
+      "TM8": "EXTERNAL_ECOSYSTEM_AND_STAKING_ELIGIBLE_ASSET",
+      "Mx8": "MINING_AND_STAKING_PATH_ASSET",
+      "Sx8": "STAKING_REWARD_AND_ROUTING_ASSET"
+    },
+    "live_issuance": false,
+    "live_staking": false,
+    "live_conversion": false,
+    "live_fee_routing": false
+  },
+  "presale_readiness": {
+    "policy_version": "8x8.one-fabric.financial-presale-readiness.v1.2",
+    "state": "FUTURE_GATED_NOT_OPEN",
+    "primary_source_research_bound": true,
+    "research_is_legal_clearance": false,
+    "required_gate_count": 10,
+    "owner_runtime_sale_open_action_separate": true
   },
   "modules": [
     {"id":"world","name":"World / Spatial / 360","public_state":"INTERACTIVE_PUBLIC_VISUALIZATION"},
