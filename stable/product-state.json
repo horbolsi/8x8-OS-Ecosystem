@@ -1,5 +1,5 @@
 {
-  "schema": "8x8.stable-product.public-truth.v1.1",
+  "schema": "8x8.stable-product.public-truth.v1.2",
   "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
   "canonical_root": "fabric://8x8/core",
   "release_channel": "stable-product",
@@ -9,9 +9,41 @@
   "source_refs": {
     "public_release_merge": "c779c39d56dbc288b273fd4d23d7efb95015387e",
     "core_genesis_policy_merge": "877ff70737a3d643bbecfe2c44201e2293bc5b8f",
-    "core_stable_candidate": "9ab79e744d7ad00179be28bd38f6110fc62cdcc2",
-    "tenant_exchange_connector_candidate": "09866a0a3181287f388150f7ff9cda222b087698",
-    "native_blockchain_candidate": "311a31bda9e32de52c0dab169e5d89ac7aac9791"
+    "core_stable_candidate": "0ef7b425caf6612a720c6681b527c3e332689642",
+    "tenant_exchange_connector_candidate": "32da1b3eae0a0f64b3c6810b9fa57f606e12ab43",
+    "native_blockchain_candidate": "7ad19dd044042a986426bed997a21b63397f26e0"
+  },
+  "sovereignty": {
+    "architecture_policy_present": true,
+    "fully_sovereign_runtime_present_proven": false,
+    "fully_decentralized_runtime_present_proven": false,
+    "local_first_state_required": true,
+    "self_hosted_node_path_required": true,
+    "provider_connectors_are_optional_adapters": true,
+    "single_cloud_provider_is_root_of_trust": false,
+    "single_source_host_is_root_of_trust": false,
+    "single_ai_provider_is_root_of_trust": false,
+    "single_exchange_is_root_of_trust": false,
+    "single_payment_provider_is_root_of_trust": false,
+    "single_rpc_is_root_of_truth": false,
+    "tenant_identity_survives_provider_disconnect": true,
+    "tenant_authority_inherits_owner_root": false,
+    "mainnet_threshold_or_multisig_required": true,
+    "minimum_independent_validator_operators_target": 8,
+    "minimum_failure_domains_target": 4,
+    "maximum_single_operator_voting_power_bps_target": 3333,
+    "independent_rpc_endpoints_target": 3,
+    "independent_indexer_endpoints_target": 2,
+    "runtime_proof_pending": [
+      "validator_operator_diversity",
+      "failure_domain_diversity",
+      "independent_rpc_and_indexer_readback",
+      "reproducible_native_binary",
+      "state_recovery_and_state_sync",
+      "published_genesis_and_validator_set_hashes",
+      "threshold_or_multisig_signer",
+      "independent_client_verification"
+    ]
   },
   "native_8x8": {
     "max_supply": 8888888,
@@ -62,11 +94,17 @@
     {"id":"wallet","name":"Wallet / 8x8 ID","public_state":"REFERENCE_SHELL_SIGNER_GATED"},
     {"id":"vaults","name":"NFT Vaults","public_state":"POLICY_AND_VISUALIZATION_READY_SETTLEMENT_GATED"},
     {"id":"proof","name":"Evidence / Receipts / Transparency","public_state":"PUBLIC_TRUTH_MONITOR_READY"},
-    {"id":"connect","name":"Connectors","public_state":"CATALOG_READY_TENANT_GRANTS_REQUIRED"}
+    {"id":"connect","name":"Connectors","public_state":"CATALOG_READY_TENANT_GRANTS_REQUIRED"},
+    {"id":"sovereignty","name":"Sovereignty / Decentralization","public_state":"ARCHITECTURE_POLICY_PRESENT_RUNTIME_DIVERSITY_PROOF_PENDING"}
   ],
   "truth": {
     "public_product_shell": true,
     "public_market_data": true,
+    "sovereign_architecture_policy": true,
+    "fully_sovereign_runtime": false,
+    "fully_decentralized_runtime": false,
+    "self_hosted_path_required": true,
+    "provider_independence_required": true,
     "private_account_data": false,
     "exchange_write_authority": false,
     "wallet_private_keys": false,
