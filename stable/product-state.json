@@ -10,7 +10,7 @@
     "public_release_merge": "c779c39d56dbc288b273fd4d23d7efb95015387e",
     "core_genesis_policy_merge": "877ff70737a3d643bbecfe2c44201e2293bc5b8f",
     "core_stable_candidate": "0ef7b425caf6612a720c6681b527c3e332689642",
-    "tenant_exchange_connector_candidate": "32da1b3eae0a0f64b3c6810b9fa57f606e12ab43",
+    "tenant_exchange_connector_candidate": "01c9b33aee7f0e1e20a98303c9e0101aae5b707a",
     "native_blockchain_candidate": "7ad19dd044042a986426bed997a21b63397f26e0"
   },
   "sovereignty": {
