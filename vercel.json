@@ -3,27 +3,7 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
-    {"source": "/_8x8/release", "destination": "/release-identity.json"},
-    {"source": "/", "destination": "/stable/index.html"},
-    {"source": "/stable", "destination": "/stable/index.html"},
-    {"source": "/stable/", "destination": "/stable/index.html"},
-    {"source": "/world", "destination": "/stable/index.html"},
-    {"source": "/first-blink", "destination": "/stable/index.html"},
-    {"source": "/first-blink/", "destination": "/stable/index.html"},
-    {"source": "/r6", "destination": "/r6/index.html"},
-    {"source": "/r6/", "destination": "/r6/index.html"},
-    {"source": "/ssi", "destination": "/ssi/index.html"},
-    {"source": "/ssi/", "destination": "/ssi/index.html"},
-    {"source": "/genesis", "destination": "/genesis/index.html"},
-    {"source": "/genesis/", "destination": "/genesis/index.html"},
-    {"source": "/r3", "destination": "/r3/index.html"},
-    {"source": "/r3/", "destination": "/r3/index.html"},
-    {"source": "/r4", "destination": "/r4/index.html"},
-    {"source": "/r4/", "destination": "/r4/index.html"},
-    {"source": "/r5", "destination": "/r5/index.html"},
-    {"source": "/r5/", "destination": "/r5/index.html"},
-    {"source": "/art-board", "destination": "/r6/index.html"},
-    {"source": "/((?!.*\\.).*)", "destination": "/stable/index.html"}
+    {"source": "/_8x8/release", "destination": "/release-identity.json"}
   ],
   "headers": [
     {
@@ -31,53 +11,18 @@
       "headers": [
         {"key": "X-Content-Type-Options", "value": "nosniff"},
         {"key": "X-Frame-Options", "value": "DENY"},
-        {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"},
+        {"key": "Referrer-Policy", "value": "no-referrer"},
         {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()"},
         {"key": "Cross-Origin-Opener-Policy", "value": "same-origin"},
         {"key": "Cross-Origin-Resource-Policy", "value": "same-origin"},
-        {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests"},
-        {"key": "X-8X8-Release-Identity", "value": "STABLE-0.4.0-ONE-FABRIC-PRODUCT"},
-        {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-SHELL-NO-PRIVATE-RUNTIME"},
-        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}
+        {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests"},
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+        {"key": "X-8X8-Release-Identity", "value": "FEATURE-001-TELEGRAM-PUBLIC-BETA-V1"},
+        {"key": "X-8X8-Production-Promotion", "value": "true"},
+        {"key": "X-8X8-Backend-Authority", "value": "NONE-STATIC-ONLY"},
+        {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-SHELL-NO-OWNER-RUNTIME"},
+        {"key": "Cache-Control", "value": "no-store, max-age=0"}
       ]
-    },
-    {"source": "/", "headers": [
-      {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Release-Channel", "value": "stable-product"},
-      {"key": "X-8X8-Product-Stable", "value": "true"},
-      {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
-      {"key": "X-8X8-Mainnet-Live", "value": "false"}
-    ]},
-    {"source": "/_8x8/release", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
-    {"source": "/release-identity.json", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
-    {"source": "/r6/(.*)", "headers": [
-      {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
-      {"key": "X-8X8-Rollback-Carrier", "value": "R6-0.3.0"}
-    ]},
-    {"source": "/stable(.*)", "headers": [
-      {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Release-Channel", "value": "stable-product"},
-      {"key": "X-8X8-Product-Stable", "value": "true"},
-      {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
-      {"key": "X-8X8-Mainnet-Live", "value": "false"}
-    ]},
-    {"source": "/api/market", "headers": [
-      {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Trading-Authority", "value": "NONE"}
-    ]},
-    {"source": "/ssi(.*)", "headers": [
-      {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
-      {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Preview-Identity", "value": "SSI-R5.1-VISION-CONVERGENCE"},
-      {"key": "X-8X8-Release-Channel", "value": "preview"},
-      {"key": "X-8X8-Production-Promotion", "value": "false"}
-    ]},
-    {"source": "/genesis(.*)", "headers": [
-      {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
-      {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Preview-Identity", "value": "GENESIS-STABLE-CANDIDATE-V1"},
-      {"key": "X-8X8-Release-Channel", "value": "preview"},
-      {"key": "X-8X8-Production-Promotion", "value": "false"}
-    ]}
+    }
   ]
 }

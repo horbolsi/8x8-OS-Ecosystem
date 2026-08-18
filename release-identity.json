@@ -1,60 +1,39 @@
 {
-  "schema": "8x8.vercel-release-identity.v1",
-  "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
+  "schema": "8x8.feature001.telegram-public-beta.release.v1",
   "canonical_root": "fabric://8x8/core",
-  "release_id": "STABLE-0.4.0-ONE-FABRIC-PRODUCT",
-  "version": "0.4.0",
-  "stage": "PUBLIC_PRODUCT_STABLE_PRIVATE_ATTACH_GATED",
-  "carrier_path": "stable/index.html",
-  "carrier_blob_sha": "c96486ad75043df5d75181dc96638cd73a63dc53",
-  "root_route": "/",
-  "public_production_url": "https://8x8-os-ecosystem.vercel.app",
-  "expected_root_markers": ["One Fabric Stable", "ONE FABRIC.", "REAL SURFACES.", "PRODUCT ONLINE", "FUNDED SALE GATED"],
-  "public_private_boundary": {
-    "public_full_product_shell": true,
-    "public_studio_local_composer": true,
-    "public_market_readback": true,
-    "private_resources_embedded_in_carrier": false,
-    "raw_8086_public_proxy": false,
-    "raw_credentials_in_browser_bundle": false,
-    "tenant_private_mounts_require_auth": true,
-    "device_terminal_wallet_connector_authority_inferred_from_ui": false,
-    "exchange_account_authority_inferred_from_public_market_data": false
+  "feature_id": 1,
+  "feature": "Three-Horizon Fabric Atlas",
+  "release_class": "PUBLIC_TELEGRAM_AND_WEB_STATIC_BETA",
+  "source_repository": "horbolsi/8x8",
+  "source_branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
+  "public_repository": "horbolsi/8x8-OS-Ecosystem",
+  "active_git_blobs": {
+    "index.html": "7bf6b22d1a15d01e5f405ce75ffbc7e0d89f88df",
+    "feature-registry.js": "ce12e5aeb2c362115f7cd1e0ce038f436804ded1",
+    "app.js": "94ef33c0735ae77358166902a5047b213641e224",
+    "styles.css": "5a290c23ba067a514bd5327867659f5645e88460"
   },
-  "financial_truth": {
-    "product_stable": true,
-    "funded_sale_open": false,
-    "payment_enabled": false,
-    "signing_enabled": false,
-    "mainnet_enabled": false,
-    "funded_liquidity": false,
-    "mint_or_airdrop": false
+  "active_bundle_sha256": "5da54951ad5bc48950c460e5997db69106c7e14f29079e02e2c777215546de33",
+  "telegram": {
+    "intended_bot": "app8x8org_bot",
+    "miniapp_url": "https://8x8-os-ecosystem.vercel.app",
+    "menu_binding": "REQUIRES_POST_DEPLOY_BOT_API_READBACK",
+    "telegram_identity_authority": "NONE_IN_STATIC_BETA",
+    "owner_private_authority_exposed": false
   },
-  "rollback_routes": ["/r6", "/r5", "/r4", "/r3"],
-  "rollback_carrier_blob_sha": {
-    "/r6": "9c5f6257f6a511d555a54a7d4fa1ca4a2252d20d",
-    "/r5": "83bed6faef9e416995cf9770626cb7a5912589b5",
-    "/r4": "fecbf7b2a17099d016ed2c461d3eec5b28438894",
-    "/r3": "21f44bb1bf5b61387abe0320b0d32d2542133f1d"
-  },
-  "rollback_expected_markers": {
-    "/r6": ["One Fabric R6", "ONE INTERFACE.", "ALL POWERS."],
-    "/r5": ["ONE FABRIC LIVE · R5", "0.2.0 · PUBLIC RELEASE CANDIDATE"],
-    "/r4": ["Living Omniversal Gate R4", "0.1.0 Stable", "THE 8×8 LIVING FABRIC"],
-    "/r3": ["Living Omniversal Gate R3", "0.0.1 Beta"]
-  },
-  "promotion_law": {
-    "ready_is_deployed": false,
-    "preview_is_production": false,
-    "production_requires_environment": "Production",
-    "production_requires_exact_sha": true,
-    "production_requires_body_readback": true,
-    "production_requires_release_identity_match": true,
-    "production_requires_release_header_match": true,
-    "production_requires_release_endpoint_match": true,
-    "production_requires_physical_root_carrier": true,
-    "production_requires_public_private_boundary": true,
-    "production_requires_rollback_route_readback": true,
-    "whole_system_100_inferred_from_release": false
+  "runtime_claim": "STATIC_PUBLIC_ONLY",
+  "backend_authority": "NONE_STATIC_ONLY",
+  "production_public_web_promoted": true,
+  "production_8888_full_runtime": "NOT_CLAIMED_BY_THIS_STATIC_RELEASE",
+  "increments_002_100": "FUTURE_GATED",
+  "top1": "NOT_ESTABLISHED",
+  "financial_effect": false,
+  "signing": false,
+  "mainnet": false,
+  "mint": false,
+  "payment": false,
+  "rollback": {
+    "method": "revert public main overlay commit or redeploy prior Vercel production deployment",
+    "preserved_previous_main": "d6b3dbc0ba564feef8c7ac5ab6db343f26b0443f"
   }
 }
