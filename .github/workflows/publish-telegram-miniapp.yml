@@ -12,12 +12,14 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 jobs:
   publish-menu:
     runs-on: ubuntu-latest
     steps:
       - name: Bind public Telegram Mini App menu without exposing token
+        id: publish
         env:
           APP_TOKEN: ${{ secrets.APP8X8ORG_BOT_TOKEN }}
           FALLBACK_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -25,21 +27,64 @@ jobs:
           EXPECTED_BOT: app8x8org_bot
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          finish(){
+            printf 'commit_state=%s\n' "$1" >> "$GITHUB_OUTPUT"
+            printf 'description=%s\n' "$2" >> "$GITHUB_OUTPUT"
+            printf 'telegram_state=%s\n' "$3" >> "$GITHUB_OUTPUT"
+            echo "TELEGRAM_MENU_STATE=$3"
+            echo 'RAW_BOT_TOKEN_EXPOSED=false'
+            exit 0
+          }
+
           TOKEN="${APP_TOKEN:-${FALLBACK_TOKEN:-}}"
           if [ -z "$TOKEN" ]; then
-            echo 'TELEGRAM_MENU_STATE=BLOCKED_SECRET_NOT_CONFIGURED_IN_GITHUB_ACTIONS'
-            echo 'No token value was printed or requested.'
-            exit 0
+            finish error 'Bot token secret not configured' 'BLOCKED_SECRET_NOT_CONFIGURED_IN_GITHUB_ACTIONS'
           fi
-          ME="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getMe")"
-          echo "$ME" | jq -e --arg expected "$EXPECTED_BOT" '.ok == true and .result.username == $expected' >/dev/null
+
+          ME="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getMe" 2>/dev/null)" || \
+            finish error 'Telegram getMe failed' 'BLOCKED_TELEGRAM_GETME_FAILED'
+          echo "$ME" | jq -e --arg expected "$EXPECTED_BOT" '.ok == true and .result.username == $expected' >/dev/null 2>&1 || \
+            finish error 'Telegram bot identity mismatch' 'BLOCKED_BOT_IDENTITY_MISMATCH'
           echo "TELEGRAM_BOT_IDENTITY=VERIFIED_${EXPECTED_BOT}"
+
           BODY="$(jq -nc --arg url "$MINIAPP_URL" '{menu_button:{type:"web_app",text:"Open 8x8",web_app:{url:$url}}}')"
-          SET_RESULT="$(curl --fail --silent --show-error -H 'Content-Type: application/json' -d "$BODY" "https://api.telegram.org/bot${TOKEN}/setChatMenuButton")"
-          echo "$SET_RESULT" | jq -e '.ok == true and .result == true' >/dev/null
-          READBACK="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getChatMenuButton")"
-          echo "$READBACK" | jq -e --arg url "$MINIAPP_URL" '.ok == true and .result.type == "web_app" and .result.web_app.url == $url' >/dev/null
-          echo 'TELEGRAM_MENU_STATE=PRESENT_PROVEN_PUBLISHED'
+          SET_RESULT="$(curl --fail --silent --show-error -H 'Content-Type: application/json' -d "$BODY" "https://api.telegram.org/bot${TOKEN}/setChatMenuButton" 2>/dev/null)" || \
+            finish error 'Telegram setChatMenuButton failed' 'BLOCKED_SET_CHAT_MENU_BUTTON_FAILED'
+          echo "$SET_RESULT" | jq -e '.ok == true and .result == true' >/dev/null 2>&1 || \
+            finish error 'Telegram menu mutation rejected' 'BLOCKED_SET_CHAT_MENU_BUTTON_REJECTED'
+
+          READBACK="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getChatMenuButton" 2>/dev/null)" || \
+            finish error 'Telegram getChatMenuButton failed' 'BLOCKED_GET_CHAT_MENU_BUTTON_FAILED'
+          echo "$READBACK" | jq -e --arg url "$MINIAPP_URL" '.ok == true and .result.type == "web_app" and .result.web_app.url == $url' >/dev/null 2>&1 || \
+            finish error 'Telegram menu readback mismatch' 'BLOCKED_MENU_READBACK_MISMATCH'
+
           echo "TELEGRAM_MINIAPP_URL=${MINIAPP_URL}"
-          echo 'RAW_BOT_TOKEN_EXPOSED=false'
+          finish success 'app8x8org_bot menu verified at /telegram' 'PRESENT_PROVEN_PUBLISHED'
+
+      - name: Publish inspectable commit-status receipt
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULT_STATE: ${{ steps.publish.outputs.commit_state }}
+          RESULT_DESCRIPTION: ${{ steps.publish.outputs.description }}
+          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATE="${RESULT_STATE:-error}"
+          DESCRIPTION="${RESULT_DESCRIPTION:-Telegram menu workflow did not emit a receipt}"
+          BODY="$(jq -nc \
+            --arg state "$STATE" \
+            --arg target_url "$MINIAPP_URL" \
+            --arg description "$DESCRIPTION" \
+            '{state:$state,target_url:$target_url,description:$description,context:"Telegram Mini App Menu"}')"
+          curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -H 'Content-Type: application/json' \
+            -d "$BODY" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" >/dev/null
+          echo "TELEGRAM_MENU_COMMIT_STATUS=${STATE}"
+          echo "TELEGRAM_MENU_COMMIT_CONTEXT=Telegram Mini App Menu"
