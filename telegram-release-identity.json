@@ -1,0 +1,32 @@
+{
+  "schema": "8x8.telegram-miniapp-release.v1",
+  "canonical_root": "fabric://8x8/core",
+  "release_id": "FEATURE-001-TELEGRAM-PUBLIC-BETA-V1",
+  "route": "/telegram",
+  "public_url": "https://8x8-os-ecosystem.vercel.app/telegram",
+  "bot": "app8x8org_bot",
+  "release_class": "PUBLIC_STATIC_TELEGRAM_MINI_APP_BETA",
+  "active_git_blobs": {
+    "telegram/index.html": "7bf6b22d1a15d01e5f405ce75ffbc7e0d89f88df",
+    "telegram/feature-registry.js": "ce12e5aeb2c362115f7cd1e0ce038f436804ded1",
+    "telegram/app.js": "94ef33c0735ae77358166902a5047b213641e224",
+    "telegram/styles.css": "5a290c23ba067a514bd5327867659f5645e88460"
+  },
+  "active_bundle_sha256": "5da54951ad5bc48950c460e5997db69106c7e14f29079e02e2c777215546de33",
+  "telegram_identity_authority": "NONE_IN_STATIC_BETA",
+  "public_private_boundary": "PUBLIC_SHELL_NO_OWNER_RUNTIME",
+  "owner_8080_exposed": false,
+  "owner_8087_exposed": false,
+  "raw_credentials_in_browser_bundle": false,
+  "financial_effect": false,
+  "signing": false,
+  "mainnet": false,
+  "mint": false,
+  "payment": false,
+  "feature_001_completion_claim": "NOT_100_PERCENT",
+  "top1": "NOT_ESTABLISHED",
+  "rollback": {
+    "method": "remove /telegram rewrite and menu binding; stable root remains unchanged",
+    "stable_root_commit_before_release": "d6b3dbc0ba564feef8c7ac5ab6db343f26b0443f"
+  }
+}

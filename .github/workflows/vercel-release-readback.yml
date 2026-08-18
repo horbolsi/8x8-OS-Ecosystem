@@ -4,11 +4,14 @@ on:
   pull_request:
     paths:
       - index.html
+      - stable/**
       - r4/**
       - r5/**
       - ssi/**
+      - telegram/**
       - vercel.json
       - release-identity.json
+      - telegram-release-identity.json
       - scripts/verify_vercel_release_readback.py
       - scripts/verify_ssi_preview_readback.py
       - tests/**
@@ -18,11 +21,14 @@ on:
       - main
     paths:
       - index.html
+      - stable/**
       - r4/**
       - r5/**
       - ssi/**
+      - telegram/**
       - vercel.json
       - release-identity.json
+      - telegram-release-identity.json
       - scripts/verify_vercel_release_readback.py
       - scripts/verify_ssi_preview_readback.py
       - tests/**
@@ -56,10 +62,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate release identity, physical carrier, routing and rollback contracts
+      - name: Validate release identity, physical carrier, routing, rollback and Telegram contracts
         run: |
           python3 -m json.tool release-identity.json >/dev/null
           python3 -m json.tool vercel.json >/dev/null
+          if [ -f telegram-release-identity.json ]; then python3 -m json.tool telegram-release-identity.json >/dev/null; fi
           python3 -m py_compile scripts/verify_vercel_release_readback.py scripts/verify_ssi_preview_readback.py
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 - <<'PY'
@@ -74,13 +81,15 @@ jobs:
           assert identity['schema'] == '8x8.vercel-release-identity.v1'
           assert identity['canonical_root'] == 'fabric://8x8/core'
           assert identity['expected_root_markers']
-          assert identity['carrier_path'] == 'index.html'
+          carrier_path = identity['carrier_path'].lstrip('/')
+          assert carrier_path
           assert identity['promotion_law']['ready_is_deployed'] is False
           assert identity['promotion_law']['preview_is_production'] is False
           assert identity['promotion_law']['production_requires_body_readback'] is True
           assert identity['promotion_law']['production_requires_release_identity_match'] is True
           assert identity['promotion_law']['production_requires_physical_root_carrier'] is True
-          assert identity['promotion_law']['production_requires_rollback_blob_identity'] is True
+          assert identity['rollback_routes']
+          assert identity['rollback_carrier_blob_sha']
 
           public_url = identity['public_production_url']
           parsed = urlparse(public_url)
@@ -91,45 +100,36 @@ jobs:
           def git_blob(path: str) -> str:
               p = Path(path)
               assert p.is_file(), p
-              return subprocess.check_output(
-                  ['git', 'hash-object', str(p)], text=True
-              ).strip()
+              return subprocess.check_output(['git', 'hash-object', str(p)], text=True).strip()
 
-          root_blob = git_blob('index.html')
-          r5_blob = git_blob('r5/index.html')
-          assert root_blob == identity['carrier_blob_sha'], (
-              root_blob,
-              identity['carrier_blob_sha'],
-          )
-          assert r5_blob == root_blob, (r5_blob, root_blob)
+          carrier_blob = git_blob(carrier_path)
+          assert carrier_blob == identity['carrier_blob_sha'], (carrier_blob, identity['carrier_blob_sha'])
 
-          rollback_paths = {
+          route_files = {
+              '/r6': 'r6/index.html',
+              '/r5': 'r5/index.html',
               '/r4': 'r4/index.html',
               '/r3': 'r3/index.html',
           }
           rollback_blobs = identity['rollback_carrier_blob_sha']
-          for route, path in rollback_paths.items():
-              observed = git_blob(path)
-              assert observed == rollback_blobs[route], (
-                  route,
-                  observed,
-                  rollback_blobs[route],
-              )
-              assert observed != root_blob
+          expected_rollbacks = identity.get('rollback_expected_markers', {})
+          for route in identity['rollback_routes']:
+              assert route in route_files, route
+              observed = git_blob(route_files[route])
+              assert observed == rollback_blobs[route], (route, observed, rollback_blobs[route])
+              assert observed != carrier_blob
+              assert route in expected_rollbacks and expected_rollbacks[route]
 
-          rewrites = {
-              row['source']: row['destination']
-              for row in vercel.get('rewrites', [])
-          }
+          rewrites = {row['source']: row['destination'] for row in vercel.get('rewrites', [])}
+          carrier_destination = '/' + carrier_path
           assert rewrites['/_8x8/release'] == '/release-identity.json'
-          assert rewrites['/'] == '/index.html'
+          assert rewrites['/'] == carrier_destination
+          assert rewrites['/world'] == carrier_destination
+          assert rewrites['/stable'] == carrier_destination
           assert rewrites['/ssi'] == '/ssi/index.html'
           assert rewrites['/ssi/'] == '/ssi/index.html'
-          assert rewrites['/r5'] == '/r5/index.html'
-          assert rewrites['/r4'] == '/r4/index.html'
-          assert rewrites['/r3'] == '/r3/index.html'
-          assert rewrites['/world'] == '/index.html'
-          assert rewrites['/stable'] == '/index.html'
+          for route in identity['rollback_routes']:
+              assert rewrites[route] == '/' + route_files[route]
 
           release_headers = {}
           for rule in vercel.get('headers', []):
@@ -137,6 +137,7 @@ jobs:
                   for header in rule.get('headers', []):
                       release_headers[header['key'].lower()] = header['value']
           assert release_headers['x-8x8-release-identity'] == identity['release_id']
+          assert release_headers['x-8x8-public-private-boundary'] == 'PUBLIC-SHELL-NO-PRIVATE-RUNTIME'
 
           ssi_headers = {}
           for rule in vercel.get('headers', []):
@@ -149,16 +150,48 @@ jobs:
           assert 'no-store' in ssi_headers['cache-control'].lower()
           assert 'noindex' in ssi_headers['x-robots-tag'].lower()
 
-          expected_rollbacks = identity.get('rollback_expected_markers', {})
-          for route in identity['rollback_routes']:
-              assert route in rewrites
-              assert route in expected_rollbacks
-              assert expected_rollbacks[route]
+          telegram_identity_path = Path('telegram-release-identity.json')
+          if telegram_identity_path.exists():
+              telegram = json.loads(telegram_identity_path.read_text())
+              assert telegram['schema'] == '8x8.telegram-miniapp-release.v1'
+              assert telegram['canonical_root'] == 'fabric://8x8/core'
+              assert telegram['route'] == '/telegram'
+              assert telegram['bot'] == 'app8x8org_bot'
+              assert telegram['telegram_identity_authority'] == 'NONE_IN_STATIC_BETA'
+              assert telegram['owner_8080_exposed'] is False
+              assert telegram['owner_8087_exposed'] is False
+              assert telegram['raw_credentials_in_browser_bundle'] is False
+              assert telegram['financial_effect'] is False
+              assert telegram['signing'] is False
+              assert telegram['mainnet'] is False
+              assert telegram['mint'] is False
+              assert telegram['payment'] is False
+              assert rewrites['/_8x8/telegram-release'] == '/telegram-release-identity.json'
+              assert rewrites['/telegram'] == '/telegram/index.html'
+              assert rewrites['/telegram/'] == '/telegram/index.html'
+
+              expected_blobs = telegram['active_git_blobs']
+              for path, expected in expected_blobs.items():
+                  assert git_blob(path) == expected, (path, git_blob(path), expected)
+
+              telegram_headers = {}
+              for rule in vercel.get('headers', []):
+                  if rule.get('source') == '/telegram(.*)':
+                      for header in rule.get('headers', []):
+                          telegram_headers[header['key'].lower()] = header['value']
+              assert telegram_headers['x-8x8-telegram-mini-app'] == 'true'
+              assert telegram_headers['x-8x8-release-channel'] == 'public-telegram-beta'
+              assert telegram_headers['x-8x8-backend-authority'] == 'NONE-STATIC-ONLY'
+              assert telegram_headers['x-8x8-public-private-boundary'] == 'PUBLIC-SHELL-NO-OWNER-RUNTIME'
+              assert telegram_headers['x-8x8-financial-sale-open'] == 'false'
+              assert telegram_headers['x-8x8-mainnet-live'] == 'false'
+              assert 'no-store' in telegram_headers['cache-control'].lower()
+              assert 'noindex' in telegram_headers['x-robots-tag'].lower()
+              print('TELEGRAM_MINIAPP_SOURCE_CONTRACT=PASS')
 
           print('RELEASE_IDENTITY_CONTRACT=PASS')
           print('PUBLIC_PRODUCTION_URL=PASS', public_url)
-          print('PHYSICAL_ROOT_CARRIER_BLOB=PASS', root_blob)
-          print('R5_ALIAS_BLOB=PASS', r5_blob)
+          print('PHYSICAL_ROOT_CARRIER_BLOB=PASS', carrier_blob)
           print('VERCEL_ROUTING_CONTRACT=PASS')
           print('ROLLBACK_BLOB_CONTRACT=PASS')
           print('ROLLBACK_MARKER_CONTRACT=PASS')

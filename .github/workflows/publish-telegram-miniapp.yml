@@ -1,0 +1,45 @@
+name: Publish 8x8 Telegram Mini App menu
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - telegram/**
+      - telegram-release-identity.json
+      - vercel.json
+      - .github/workflows/publish-telegram-miniapp.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish-menu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bind public Telegram Mini App menu without exposing token
+        env:
+          APP_TOKEN: ${{ secrets.APP8X8ORG_BOT_TOKEN }}
+          FALLBACK_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram
+          EXPECTED_BOT: app8x8org_bot
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="${APP_TOKEN:-${FALLBACK_TOKEN:-}}"
+          if [ -z "$TOKEN" ]; then
+            echo 'TELEGRAM_MENU_STATE=BLOCKED_SECRET_NOT_CONFIGURED_IN_GITHUB_ACTIONS'
+            echo 'No token value was printed or requested.'
+            exit 0
+          fi
+          ME="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getMe")"
+          echo "$ME" | jq -e --arg expected "$EXPECTED_BOT" '.ok == true and .result.username == $expected' >/dev/null
+          echo "TELEGRAM_BOT_IDENTITY=VERIFIED_${EXPECTED_BOT}"
+          BODY="$(jq -nc --arg url "$MINIAPP_URL" '{menu_button:{type:"web_app",text:"Open 8x8",web_app:{url:$url}}}')"
+          SET_RESULT="$(curl --fail --silent --show-error -H 'Content-Type: application/json' -d "$BODY" "https://api.telegram.org/bot${TOKEN}/setChatMenuButton")"
+          echo "$SET_RESULT" | jq -e '.ok == true and .result == true' >/dev/null
+          READBACK="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getChatMenuButton")"
+          echo "$READBACK" | jq -e --arg url "$MINIAPP_URL" '.ok == true and .result.type == "web_app" and .result.web_app.url == $url' >/dev/null
+          echo 'TELEGRAM_MENU_STATE=PRESENT_PROVEN_PUBLISHED'
+          echo "TELEGRAM_MINIAPP_URL=${MINIAPP_URL}"
+          echo 'RAW_BOT_TOKEN_EXPOSED=false'

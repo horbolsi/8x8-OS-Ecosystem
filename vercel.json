@@ -4,6 +4,9 @@
   "trailingSlash": false,
   "rewrites": [
     {"source": "/_8x8/release", "destination": "/release-identity.json"},
+    {"source": "/_8x8/telegram-release", "destination": "/telegram-release-identity.json"},
+    {"source": "/telegram", "destination": "/telegram/index.html"},
+    {"source": "/telegram/", "destination": "/telegram/index.html"},
     {"source": "/", "destination": "/stable/index.html"},
     {"source": "/stable", "destination": "/stable/index.html"},
     {"source": "/stable/", "destination": "/stable/index.html"},
@@ -50,6 +53,19 @@
     ]},
     {"source": "/_8x8/release", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
     {"source": "/release-identity.json", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
+    {"source": "/_8x8/telegram-release", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
+    {"source": "/telegram-release-identity.json", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
+    {"source": "/telegram(.*)", "headers": [
+      {"key": "Cache-Control", "value": "no-store, max-age=0"},
+      {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+      {"key": "X-8X8-Telegram-Mini-App", "value": "true"},
+      {"key": "X-8X8-Release-Channel", "value": "public-telegram-beta"},
+      {"key": "X-8X8-Production-Promotion", "value": "true"},
+      {"key": "X-8X8-Backend-Authority", "value": "NONE-STATIC-ONLY"},
+      {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-SHELL-NO-OWNER-RUNTIME"},
+      {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
+      {"key": "X-8X8-Mainnet-Live", "value": "false"}
+    ]},
     {"source": "/r6/(.*)", "headers": [
       {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
       {"key": "X-8X8-Rollback-Carrier", "value": "R6-0.3.0"}
