@@ -4,11 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - index.html
-      - app.js
-      - feature-registry.js
-      - styles.css
-      - release-identity.json
+      - telegram/**
+      - telegram-release-identity.json
       - vercel.json
       - .github/workflows/publish-telegram-miniapp.yml
   workflow_dispatch:
@@ -20,11 +17,11 @@ jobs:
   publish-menu:
     runs-on: ubuntu-latest
     steps:
-      - name: Bind public app to Telegram menu without exposing token
+      - name: Bind public Telegram Mini App menu without exposing token
         env:
           APP_TOKEN: ${{ secrets.APP8X8ORG_BOT_TOKEN }}
           FALLBACK_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app
+          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram
           EXPECTED_BOT: app8x8org_bot
         shell: bash
         run: |
@@ -35,18 +32,12 @@ jobs:
             echo 'No token value was printed or requested.'
             exit 0
           fi
-
           ME="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getMe")"
           echo "$ME" | jq -e --arg expected "$EXPECTED_BOT" '.ok == true and .result.username == $expected' >/dev/null
           echo "TELEGRAM_BOT_IDENTITY=VERIFIED_${EXPECTED_BOT}"
-
           BODY="$(jq -nc --arg url "$MINIAPP_URL" '{menu_button:{type:"web_app",text:"Open 8x8",web_app:{url:$url}}}')"
-          SET_RESULT="$(curl --fail --silent --show-error \
-            -H 'Content-Type: application/json' \
-            -d "$BODY" \
-            "https://api.telegram.org/bot${TOKEN}/setChatMenuButton")"
+          SET_RESULT="$(curl --fail --silent --show-error -H 'Content-Type: application/json' -d "$BODY" "https://api.telegram.org/bot${TOKEN}/setChatMenuButton")"
           echo "$SET_RESULT" | jq -e '.ok == true and .result == true' >/dev/null
-
           READBACK="$(curl --fail --silent --show-error "https://api.telegram.org/bot${TOKEN}/getChatMenuButton")"
           echo "$READBACK" | jq -e --arg url "$MINIAPP_URL" '.ok == true and .result.type == "web_app" and .result.web_app.url == $url' >/dev/null
           echo 'TELEGRAM_MENU_STATE=PRESENT_PROVEN_PUBLISHED'
