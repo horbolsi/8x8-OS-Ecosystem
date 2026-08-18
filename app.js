@@ -38,7 +38,7 @@ function renderReality() {
     button.tabIndex = active ? 0 : -1;
     button.classList.toggle('is-active', active);
   });
-  $('#reality-copy').textContent = FEATURE_001.realities[state.reality];
+  $('#reality-copy').textContent = FEATURE_001.realities[state.reality].copy;
 }
 
 function renderHorizon() {
@@ -57,6 +57,17 @@ function renderHorizon() {
   $('#selected-public').textContent = h.publicExposure;
   $('#selected-authority').textContent = h.releaseAuthority;
   $('#selected-boundary').textContent = h.boundary;
+
+  const reality = FEATURE_001.realities[state.reality];
+  $('#selected-policy-state').textContent = `POLICY · ${reality.label}`;
+  $('#selected-source-id').textContent = h.sourceId;
+  $('#selected-source-ref').textContent = h.sourceRef;
+  $('#selected-policy-blob').textContent = FEATURE_001.sourcePolicyBlob;
+  $('#selected-truth-class').textContent = `${reality.label} · ${reality.truthState}`;
+  $('#selected-privacy-class').textContent = `${h.privacyClass} · temporal ${reality.privacyClass}`;
+  $('#selected-authority-class').textContent = `${h.authorityState} · temporal ${reality.authorityState}`;
+  $('#selected-runtime-evidence').textContent = h.runtimeEvidence;
+  $('#selected-evidence-time').textContent = FEATURE_001.evidenceObservedAt;
 }
 
 function render() {

@@ -1,45 +1,33 @@
 {
-  "schema": "8x8.one-fabric.feature001.public-canary-release.v1",
+  "schema": "8x8.feature001.public-canary.release.v3",
   "canonical_root": "fabric://8x8/core",
-  "feature_id": "001",
+  "feature_id": 1,
   "feature": "Three-Horizon Fabric Atlas",
-  "release_type": "PUBLIC_FEATURE001_CANARY",
-  "source": {
-    "repository": "horbolsi/8x8",
-    "branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
-    "commit": "5d09e54efa69f399d2a02e5105f10937976d35cb",
-    "files_sha256": {
-      "index.html": "b3498d9febd3a1d268ccc6d1718dd8b00e6c4320bef1b7ee2f61ec6202f64939",
-      "styles.css": "35f81ce7bb68e6fc1cfd270c3f1dad5c9aa3dfb91d99fdca81be80a531371879",
-      "app.js": "1324efe8d5e345893ad2465b25f9602228f129fefc2a0403b1922b337bed26db",
-      "feature-registry.js": "ea9c0c47aa1cebb1a0453f418723a3726cd5ea610e7a5d7dac52df1a82ff9a0f"
-    },
-    "bundle_order": ["index.html", "styles.css", "app.js", "feature-registry.js"],
-    "bundle_sha256": "16c9079389b6957e26c7d94e2fcbfd285462630a7a50a3c4e05d122cbf6a1ab6"
+  "release_class": "PUBLIC_SAFE_STATIC_CANARY_NOT_8888_PRODUCTION",
+  "source_repository": "horbolsi/8x8",
+  "source_branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
+  "source_evidence_head": "afba6776a73c25127c8b4396093be357b5976051",
+  "active_git_blobs": {
+    "index.html": "7bf6b22d1a15d01e5f405ce75ffbc7e0d89f88df",
+    "feature-registry.js": "ce12e5aeb2c362115f7cd1e0ce038f436804ded1",
+    "app.js": "94ef33c0735ae77358166902a5047b213641e224",
+    "styles.css": "b2e4ef472f0876a7728695489ce82081fe3d2594"
   },
-  "authority": {
-    "policy_release_origin": 8080,
-    "actual_8080_runtime_release_receipt": "UNKNOWN_NOT_PROVEN",
-    "owner_authorization": "EXPLICIT_CURRENT_SESSION",
-    "public_backend_authority": "NONE",
-    "production_8888_promoted": false
-  },
-  "scope": {
-    "allowed_features": ["Three-Horizon Fabric Atlas"],
-    "increments_002_100": "FUTURE_GATED",
-    "third_party_network_requests": "FORBIDDEN",
-    "runtime_liveness_claims": "FORBIDDEN_WITHOUT_RECEIPT"
-  },
-  "effects": {
-    "financial": false,
-    "signing": false,
-    "mainnet": false,
-    "mint": false,
-    "payment": false,
-    "wallet_action": false
-  },
+  "active_bundle_sha256": "cb7974d9be3ec31000f5aba07530f7c033fabbb2e6a111a6cec2ef71e77082ea",
+  "evidence_score_at_release_build": 81,
+  "top1": "NOT_ESTABLISHED",
+  "runtime_claim": "NONE",
+  "backend_authority": "NONE_STATIC_ONLY",
+  "production_8888_promoted": false,
+  "actual_8080_runtime_release_receipt": "UNKNOWN_NOT_PROVEN",
+  "increments_002_100": "FUTURE_GATED",
+  "financial_effect": false,
+  "signing": false,
+  "mainnet": false,
+  "mint": false,
+  "payment": false,
   "rollback": {
-    "public_main_parent": "51456f430f658edfe6046a91a86981eb2c095edc",
-    "method": "retire canary deployment/branch; public main remains unchanged"
+    "method": "delete_or_retire_canary_branch/deployment; production main is not modified by this canary",
+    "production_content_parent": "d6b3dbc0ba564feef8c7ac5ab6db343f26b0443f"
   }
 }

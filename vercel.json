@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
   "trailingSlash": false,
+  "rewrites": [
+    {"source": "/_8x8/release", "destination": "/release-identity.json"}
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -12,12 +15,12 @@
         {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()"},
         {"key": "Cross-Origin-Opener-Policy", "value": "same-origin"},
         {"key": "Cross-Origin-Resource-Policy", "value": "same-origin"},
-        {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"},
-        {"key": "Cache-Control", "value": "no-store, max-age=0"},
-        {"key": "X-8X8-Feature", "value": "001"},
-        {"key": "X-8X8-Release-Channel", "value": "feature001-canary"},
+        {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests"},
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+        {"key": "X-8X8-Release-Identity", "value": "FEATURE-001-CANARY-V3"},
         {"key": "X-8X8-Production-Promotion", "value": "false"},
-        {"key": "X-8X8-Financial-Effect", "value": "false"}
+        {"key": "X-8X8-Backend-Authority", "value": "NONE-STATIC-ONLY"},
+        {"key": "Cache-Control", "value": "no-store, max-age=0"}
       ]
     }
   ]
