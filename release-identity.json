@@ -1,60 +1,45 @@
 {
-  "schema": "8x8.vercel-release-identity.v1",
-  "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
+  "schema": "8x8.one-fabric.feature001.public-canary-release.v1",
   "canonical_root": "fabric://8x8/core",
-  "release_id": "STABLE-0.4.0-ONE-FABRIC-PRODUCT",
-  "version": "0.4.0",
-  "stage": "PUBLIC_PRODUCT_STABLE_PRIVATE_ATTACH_GATED",
-  "carrier_path": "stable/index.html",
-  "carrier_blob_sha": "c96486ad75043df5d75181dc96638cd73a63dc53",
-  "root_route": "/",
-  "public_production_url": "https://8x8-os-ecosystem.vercel.app",
-  "expected_root_markers": ["One Fabric Stable", "ONE FABRIC.", "REAL SURFACES.", "PRODUCT ONLINE", "FUNDED SALE GATED"],
-  "public_private_boundary": {
-    "public_full_product_shell": true,
-    "public_studio_local_composer": true,
-    "public_market_readback": true,
-    "private_resources_embedded_in_carrier": false,
-    "raw_8086_public_proxy": false,
-    "raw_credentials_in_browser_bundle": false,
-    "tenant_private_mounts_require_auth": true,
-    "device_terminal_wallet_connector_authority_inferred_from_ui": false,
-    "exchange_account_authority_inferred_from_public_market_data": false
+  "feature_id": "001",
+  "feature": "Three-Horizon Fabric Atlas",
+  "release_type": "PUBLIC_FEATURE001_CANARY",
+  "source": {
+    "repository": "horbolsi/8x8",
+    "branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
+    "commit": "5d09e54efa69f399d2a02e5105f10937976d35cb",
+    "files_sha256": {
+      "index.html": "b3498d9febd3a1d268ccc6d1718dd8b00e6c4320bef1b7ee2f61ec6202f64939",
+      "styles.css": "35f81ce7bb68e6fc1cfd270c3f1dad5c9aa3dfb91d99fdca81be80a531371879",
+      "app.js": "1324efe8d5e345893ad2465b25f9602228f129fefc2a0403b1922b337bed26db",
+      "feature-registry.js": "ea9c0c47aa1cebb1a0453f418723a3726cd5ea610e7a5d7dac52df1a82ff9a0f"
+    },
+    "bundle_order": ["index.html", "styles.css", "app.js", "feature-registry.js"],
+    "bundle_sha256": "16c9079389b6957e26c7d94e2fcbfd285462630a7a50a3c4e05d122cbf6a1ab6"
   },
-  "financial_truth": {
-    "product_stable": true,
-    "funded_sale_open": false,
-    "payment_enabled": false,
-    "signing_enabled": false,
-    "mainnet_enabled": false,
-    "funded_liquidity": false,
-    "mint_or_airdrop": false
+  "authority": {
+    "policy_release_origin": 8080,
+    "actual_8080_runtime_release_receipt": "UNKNOWN_NOT_PROVEN",
+    "owner_authorization": "EXPLICIT_CURRENT_SESSION",
+    "public_backend_authority": "NONE",
+    "production_8888_promoted": false
   },
-  "rollback_routes": ["/r6", "/r5", "/r4", "/r3"],
-  "rollback_carrier_blob_sha": {
-    "/r6": "9c5f6257f6a511d555a54a7d4fa1ca4a2252d20d",
-    "/r5": "83bed6faef9e416995cf9770626cb7a5912589b5",
-    "/r4": "fecbf7b2a17099d016ed2c461d3eec5b28438894",
-    "/r3": "21f44bb1bf5b61387abe0320b0d32d2542133f1d"
+  "scope": {
+    "allowed_features": ["Three-Horizon Fabric Atlas"],
+    "increments_002_100": "FUTURE_GATED",
+    "third_party_network_requests": "FORBIDDEN",
+    "runtime_liveness_claims": "FORBIDDEN_WITHOUT_RECEIPT"
   },
-  "rollback_expected_markers": {
-    "/r6": ["One Fabric R6", "ONE INTERFACE.", "ALL POWERS."],
-    "/r5": ["ONE FABRIC LIVE · R5", "0.2.0 · PUBLIC RELEASE CANDIDATE"],
-    "/r4": ["Living Omniversal Gate R4", "0.1.0 Stable", "THE 8×8 LIVING FABRIC"],
-    "/r3": ["Living Omniversal Gate R3", "0.0.1 Beta"]
+  "effects": {
+    "financial": false,
+    "signing": false,
+    "mainnet": false,
+    "mint": false,
+    "payment": false,
+    "wallet_action": false
   },
-  "promotion_law": {
-    "ready_is_deployed": false,
-    "preview_is_production": false,
-    "production_requires_environment": "Production",
-    "production_requires_exact_sha": true,
-    "production_requires_body_readback": true,
-    "production_requires_release_identity_match": true,
-    "production_requires_release_header_match": true,
-    "production_requires_release_endpoint_match": true,
-    "production_requires_physical_root_carrier": true,
-    "production_requires_public_private_boundary": true,
-    "production_requires_rollback_route_readback": true,
-    "whole_system_100_inferred_from_release": false
+  "rollback": {
+    "public_main_parent": "51456f430f658edfe6046a91a86981eb2c095edc",
+    "method": "retire canary deployment/branch; public main remains unchanged"
   }
 }
