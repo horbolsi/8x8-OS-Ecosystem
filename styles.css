@@ -261,7 +261,7 @@ button:focus-visible, a:focus-visible {
   .edge-label { display: none; }
 }
 
-@media (max-width: 840px) {
+@media (max-width: 900px) {
   .topbar { grid-template-columns: 1fr auto; }
   .root-proof { grid-column: 1 / -1; justify-items: start; padding-top: 8px; border-top: 1px solid var(--line); }
   .truth-bar { grid-template-columns: 1fr; }
@@ -309,8 +309,9 @@ button:focus-visible, a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;
-    animation-duration: .01ms !important;
+    animation-duration: 0s !important;
     animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
 }

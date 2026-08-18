@@ -1,20 +1,17 @@
 {
-  "schema": "8x8.feature001.public-canary.release.v3",
+  "schema": "8x8.feature001.public-canary.release.v4",
   "canonical_root": "fabric://8x8/core",
   "feature_id": 1,
   "feature": "Three-Horizon Fabric Atlas",
   "release_class": "PUBLIC_SAFE_STATIC_CANARY_NOT_8888_PRODUCTION",
   "source_repository": "horbolsi/8x8",
   "source_branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
-  "source_evidence_head": "afba6776a73c25127c8b4396093be357b5976051",
-  "active_git_blobs": {
-    "index.html": "7bf6b22d1a15d01e5f405ce75ffbc7e0d89f88df",
-    "feature-registry.js": "ce12e5aeb2c362115f7cd1e0ce038f436804ded1",
-    "app.js": "94ef33c0735ae77358166902a5047b213641e224",
-    "styles.css": "b2e4ef472f0876a7728695489ce82081fe3d2594"
-  },
-  "active_bundle_sha256": "cb7974d9be3ec31000f5aba07530f7c033fabbb2e6a111a6cec2ef71e77082ea",
-  "evidence_score_at_release_build": 81,
+  "source_evidence_head": "95dc6abe79871af48662752613f6485de4c423e1",
+  "active_git_blobs": {"index.html":"7bf6b22d1a15d01e5f405ce75ffbc7e0d89f88df","feature-registry.js":"ce12e5aeb2c362115f7cd1e0ce038f436804ded1","app.js":"94ef33c0735ae77358166902a5047b213641e224","styles.css":"5a290c23ba067a514bd5327867659f5645e88460"},
+  "active_bundle_sha256": "5da54951ad5bc48950c460e5997db69106c7e14f29079e02e2c777215546de33",
+  "browser_receipt": "browser-acceptance-v4",
+  "wcag22_audit": "48/48 PASS scoped Feature-001 A/AA",
+  "evidence_score_at_release_build": 83,
   "top1": "NOT_ESTABLISHED",
   "runtime_claim": "NONE",
   "backend_authority": "NONE_STATIC_ONLY",
@@ -26,8 +23,5 @@
   "mainnet": false,
   "mint": false,
   "payment": false,
-  "rollback": {
-    "method": "delete_or_retire_canary_branch/deployment; production main is not modified by this canary",
-    "production_content_parent": "d6b3dbc0ba564feef8c7ac5ab6db343f26b0443f"
-  }
+  "rollback": {"method":"dedicated preview branch rollback/restore; production main is not modified by this canary","production_content_parent":"d6b3dbc0ba564feef8c7ac5ab6db343f26b0443f"}
 }
