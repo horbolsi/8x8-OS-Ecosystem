@@ -13,6 +13,12 @@
     "telegram/styles.css": "5a290c23ba067a514bd5327867659f5645e88460"
   },
   "active_bundle_sha256": "5da54951ad5bc48950c460e5997db69106c7e14f29079e02e2c777215546de33",
+  "browser_asset_aliases": {
+    "/styles.css": "/telegram/styles.css",
+    "/app.js": "/telegram/app.js",
+    "/feature-registry.js": "/telegram/feature-registry.js"
+  },
+  "browser_asset_alias_reason": "Preserve the exact accepted Feature 001 bundle while making its relative asset URLs resolve from the canonical no-trailing-slash /telegram Mini App URL.",
   "telegram_identity_authority": "NONE_IN_STATIC_BETA",
   "public_private_boundary": "PUBLIC_SHELL_NO_OWNER_RUNTIME",
   "owner_8080_exposed": false,
@@ -26,7 +32,7 @@
   "feature_001_completion_claim": "NOT_100_PERCENT",
   "top1": "NOT_ESTABLISHED",
   "rollback": {
-    "method": "remove /telegram rewrite and menu binding; stable root remains unchanged",
+    "method": "remove /telegram and browser-asset alias rewrites plus Telegram menu binding; Stable root remains unchanged",
     "stable_root_commit_before_release": "d6b3dbc0ba564feef8c7ac5ab6db343f26b0443f"
   }
 }
