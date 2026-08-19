@@ -1,24 +1,33 @@
 {
-  "schema": "8x8.telegram-miniapp-release.v2",
+  "schema": "8x8.telegram-miniapp-release.v3",
   "canonical_root": "fabric://8x8/core",
-  "release_id": "PUBLIC-8888-TELEGRAM-V17-RUNTIME-RECOVERY-2026-08-19",
+  "release_id": "PUBLIC-8888-TELEGRAM-GATE2-V23-BLUEGREEN-2026-08-19",
   "route": "/telegram",
   "public_url": "https://8x8-os-ecosystem.vercel.app/telegram",
   "bot": "@app8x8hub_bot",
-  "release_class": "PUBLIC_TELEGRAM_MINI_APP_CARRIER_TO_FRESH_V17_RUNTIME_RECOVERY",
+  "release_class": "PUBLIC_TELEGRAM_MINI_APP_CARRIER_TO_VERIFIED_GATE2_V23_B_LANE",
   "target": {
-    "url": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/",
+    "url": "https://8x8-user-8888-35vam1mda-8x8-team-url.vercel.app/",
     "source_repo": "horbolsi/8x8",
     "source_branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
-    "source_head": "1fa3610d5be518e051e130c8f27ac7cc6a862258",
-    "physical_evidence": "PRESENT_PROVEN_PUBLIC_8888_FULL_FUNCTIONAL_PASS_AND_GENESIS_WORLD_V17",
+    "source_head": "47f5c625c1936ea5a958a8c0148fa9f35068c2d0",
+    "deployment_source_head": "613ab9955f60fdc1329ef9e6314f81f1f33aeb26",
+    "physical_evidence": "PRESENT_PROVEN_PUBLIC_8888_GATE2_V23_POSTDEPLOY",
+    "runtime_lane": "B",
+    "runtime_login": "eightx8_v17_runtime_login_b",
     "runtime_database_login": "PASS",
     "owner_login": "PASS",
-    "owner_access": "ADMIN_UNMETERED"
+    "owner_access": "ADMIN_UNMETERED",
+    "gate2_scroll_independent": "PASS",
+    "gate2_fixed_world_action": "PASS",
+    "world": "PASS",
+    "presence": "PASS",
+    "portal": "PASS",
+    "session_revocation": "PASS"
   },
-  "reason": "Fresh V17 recovery deployment rotated the dedicated least-privilege runtime credential and passed the full authenticated owner matrix. The recovery wrapper's final /identity probe was a checker bug because this release uses /auth; it did not invalidate the successful deployment or authentication receipts.",
-  "v22_status": "ROLLED_BACK_FROM_PUBLIC_CARRIER_PENDING_TELEGRAM_ANDROID_FIX",
-  "recovery_checker_status": "SOURCE_BUG_IDENTITY_PATH_EXPECTED_AUTH",
+  "reason": "Gate2 V23 was deployed on the inactive blue/green B runtime lane and then passed a corrected verifier-only full authenticated matrix. The prior V2 verifier failure was obsolete because it required the superseded overflow-y:auto scroll workaround. Telegram carrier promotion occurs only after the B-lane postdeploy PASS.",
+  "previous_public_runtime_lane": "A",
+  "previous_target": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/",
   "telegram_bot_api_mutation": false,
   "public_private_boundary": "PUBLIC_8888_ONLY_OWNER_8080_NOT_PROJECTED",
   "owner_8080_exposed": false,
@@ -32,8 +41,8 @@
   "funded_liquidity": false,
   "top1": "NOT_ESTABLISHED",
   "rollback": {
-    "method": "retarget /telegram only; stable root and private horizons remain unchanged",
-    "prior_stale_target": "https://8x8-user-8888-fp8qbsacg-8x8-team-url.vercel.app/",
-    "current_target": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/"
+    "method": "retarget /telegram back to prior A-lane target only; no database password rotation required",
+    "prior_target": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/",
+    "current_target": "https://8x8-user-8888-35vam1mda-8x8-team-url.vercel.app/"
   }
 }
