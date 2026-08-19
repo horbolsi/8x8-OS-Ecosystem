@@ -1,19 +1,24 @@
 {
   "schema": "8x8.telegram-miniapp-release.v2",
   "canonical_root": "fabric://8x8/core",
-  "release_id": "PUBLIC-8888-TELEGRAM-ROLLBACK-V17-2026-08-19",
+  "release_id": "PUBLIC-8888-TELEGRAM-V17-RUNTIME-RECOVERY-2026-08-19",
   "route": "/telegram",
   "public_url": "https://8x8-os-ecosystem.vercel.app/telegram",
   "bot": "@app8x8hub_bot",
-  "release_class": "PUBLIC_TELEGRAM_MINI_APP_CARRIER_ROLLBACK_TO_LAST_PHYSICALLY_USABLE_V17",
+  "release_class": "PUBLIC_TELEGRAM_MINI_APP_CARRIER_TO_FRESH_V17_RUNTIME_RECOVERY",
   "target": {
-    "url": "https://8x8-user-8888-fp8qbsacg-8x8-team-url.vercel.app/",
+    "url": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/",
     "source_repo": "horbolsi/8x8",
     "source_branch": "interface/sovereign-vnext-cleanroom-v0-20260818",
-    "physical_evidence": "PRESENT_PROVEN_PUBLIC_8888_GENESIS_WORLD_V17_AND_OWNER_FUNCTIONAL_MATRIX"
+    "source_head": "1fa3610d5be518e051e130c8f27ac7cc6a862258",
+    "physical_evidence": "PRESENT_PROVEN_PUBLIC_8888_FULL_FUNCTIONAL_PASS_AND_GENESIS_WORLD_V17",
+    "runtime_database_login": "PASS",
+    "owner_login": "PASS",
+    "owner_access": "ADMIN_UNMETERED"
   },
-  "reason": "Owner physical Telegram test reported V22 hotfix made all pages non-scrollable/non-functional. Service restored to the last version the owner physically demonstrated could reach World and Portal while V23 is developed separately.",
+  "reason": "Fresh V17 recovery deployment rotated the dedicated least-privilege runtime credential and passed the full authenticated owner matrix. The recovery wrapper's final /identity probe was a checker bug because this release uses /auth; it did not invalidate the successful deployment or authentication receipts.",
   "v22_status": "ROLLED_BACK_FROM_PUBLIC_CARRIER_PENDING_TELEGRAM_ANDROID_FIX",
+  "recovery_checker_status": "SOURCE_BUG_IDENTITY_PATH_EXPECTED_AUTH",
   "telegram_bot_api_mutation": false,
   "public_private_boundary": "PUBLIC_8888_ONLY_OWNER_8080_NOT_PROJECTED",
   "owner_8080_exposed": false,
@@ -28,7 +33,7 @@
   "top1": "NOT_ESTABLISHED",
   "rollback": {
     "method": "retarget /telegram only; stable root and private horizons remain unchanged",
-    "from_target": "https://8x8-user-8888-pdqrtvydu-8x8-team-url.vercel.app/",
-    "to_target": "https://8x8-user-8888-fp8qbsacg-8x8-team-url.vercel.app/"
+    "prior_stale_target": "https://8x8-user-8888-fp8qbsacg-8x8-team-url.vercel.app/",
+    "current_target": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/"
   }
 }
