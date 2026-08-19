@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050712">
+  <meta name="color-scheme" content="dark">
+  <title>©️8x8 · Genesis World V17 Carrier Preview</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f4f6fb;background:#050712}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,#1c2850 0,#0a0e1e 35%,#050712 68%);color:#f4f6fb}
+    main{width:min(980px,100%);margin:0 auto;padding:28px 18px 56px}.eyebrow{font-size:.73rem;letter-spacing:.14em;text-transform:uppercase;color:#9dadcf}.hero{padding:28px;border:1px solid #273251;border-radius:24px;background:rgba(10,15,32,.86);box-shadow:0 24px 80px rgba(0,0,0,.32)}
+    h1{font-size:clamp(2rem,7vw,4.4rem);line-height:.94;margin:.35rem 0 1rem}h2{margin:.2rem 0 1rem}p{line-height:1.65;color:#c1c9dd}.root{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#8fe7ff}.state{display:inline-flex;gap:.55rem;align-items:center;padding:.48rem .75rem;border-radius:999px;border:1px solid #304064;color:#dce5ff;background:#0d152b;font-size:.8rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#f1b84b;box-shadow:0 0 14px currentColor}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:16px}.card{grid-column:span 6;border:1px solid #273251;border-radius:18px;background:rgba(9,14,29,.86);padding:18px}.card.full{grid-column:1/-1}.plans{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.plan{padding:12px 8px;border-radius:14px;border:1px solid #28334f;background:#0a1022;text-align:center}.plan b{display:block;font-size:1.05rem}.plan span{display:block;color:#93a2c5;font-size:.77rem;margin-top:4px}
+    button{appearance:none;border:1px solid #40598c;border-radius:12px;background:#13244b;color:#fff;font-weight:700;padding:.8rem 1rem;cursor:pointer}.receipt{margin-top:12px;padding:14px;border-radius:14px;background:#060a14;border:1px solid #1f2a43;overflow:auto;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word;color:#b9c8e8}.ok{color:#67e2a6}.blocked{color:#ff9a8f}.notice{font-size:.84rem;color:#9eabc7}.truth{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.truth span{border:1px solid #273251;border-radius:999px;padding:.38rem .62rem;font-size:.73rem;color:#aebbd6;background:#091020}
+    @media(max-width:720px){.card{grid-column:1/-1}.plans{grid-template-columns:repeat(2,1fr)}.hero{padding:22px}main{padding-inline:12px}}
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">©️8x8 by FlashTM8 ⚡️🌎🤖 · One Fabric carrier preview</div>
+    <h1>Genesis World<br>V17</h1>
+    <p>This is a bounded browser + Telegram WebView preview of the new 8888 Genesis carrier. It proves the carrier can reach the canonical production ledger before any existing <code>/telegram</code> route is replaced.</p>
+    <div class="state"><span class="dot" id="dot"></span><span id="carrierState">CHECKING CARRIER…</span></div>
+    <div class="truth">
+      <span>fabric://8x8/core</span><span>READ-ONLY PROBE</span><span>NO CUSTOMER ROWS</span><span>NO MINT</span><span>NO SIGNING</span><span>NO MAINNET</span>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="card">
+      <div class="eyebrow">Genesis subscription reference</div>
+      <h2>$8.88 / month</h2>
+      <p class="notice">A verified final settlement may create one database reservation. Reservation is not an on-chain NFT, token delivery, funded liquidity, or guaranteed market value.</p>
+    </article>
+    <article class="card">
+      <div class="eyebrow">Qualified subscriber bundle</div>
+      <h2>1 Vault · 1 locked 8x8</h2>
+      <p class="notice">0 spendable native 8x8 from the subscription. Functional-token units of each of Tx8 · Ux8 · Fx8 · XM8 · 0x8 · TM8 · Mx8 · Sx8 equal selected paid months.</p>
+    </article>
+    <article class="card full">
+      <div class="eyebrow">Plan matrix</div>
+      <div class="plans">
+        <div class="plan"><b>1M</b><span>$8.88 · 1 each</span></div>
+        <div class="plan"><b>3M</b><span>$26.64 · 3 each</span></div>
+        <div class="plan"><b>6M</b><span>$53.28 · 6 each</span></div>
+        <div class="plan"><b>9M</b><span>$79.92 · 9 each</span></div>
+        <div class="plan"><b>12M</b><span>$106.56 · 12 each</span></div>
+      </div>
+    </article>
+    <article class="card full">
+      <div class="eyebrow">Production-ledger carrier probe</div>
+      <h2>Read-only verification</h2>
+      <p class="notice">This endpoint returns table/privilege/count metadata only. It cannot create, update, delete, mint, airdrop, sign, or move value.</p>
+      <button id="refresh" type="button">Run fresh probe</button>
+      <div id="receipt" class="receipt">waiting…</div>
+    </article>
+  </section>
+</main>
+<script>
+const stateEl=document.querySelector('#carrierState');const dot=document.querySelector('#dot');const receipt=document.querySelector('#receipt');
+async function probe(){stateEl.textContent='CHECKING CARRIER…';dot.style.background='#f1b84b';receipt.textContent='requesting /api/eightx8-genesis-health …';try{const r=await fetch('/api/eightx8-genesis-health',{cache:'no-store'});const d=await r.json();receipt.textContent=JSON.stringify(d,null,2);if(r.ok&&d.state==='PRESENT_PROVEN_GENESIS_LEDGER_CARRIER_REACHABLE'){stateEl.textContent='PRESENT_PROVEN · LEDGER REACHABLE';stateEl.className='ok';dot.style.background='#67e2a6'}else{stateEl.textContent=d.state||('HTTP '+r.status);stateEl.className='blocked';dot.style.background='#ff9a8f'}}catch(e){stateEl.textContent='BLOCKED · CARRIER FETCH FAILED';stateEl.className='blocked';dot.style.background='#ff9a8f';receipt.textContent=String(e)}}
+document.querySelector('#refresh').addEventListener('click',probe);probe();
+</script>
+</body>
+</html>
