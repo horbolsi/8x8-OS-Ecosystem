@@ -3,9 +3,22 @@ import pg from 'pg';
 const { Pool } = pg;
 const CANONICAL_ROOT = 'fabric://8x8/core';
 const CANONICAL_SOURCE_HEAD = 'ef81863843315605aae458297b7d60367545d3e5';
-const pool = process.env.DATABASE_URL
+const DATABASE_ENV_CANDIDATES = [
+  'DATABASE_URL',
+  'POSTGRES_URL',
+  'POSTGRES_PRISMA_URL',
+  'POSTGRES_URL_NON_POOLING',
+  'NEON_DATABASE_URL',
+];
+
+const databaseEnvName = DATABASE_ENV_CANDIDATES.find((name) => {
+  const value = process.env[name];
+  return typeof value === 'string' && /^(postgres|postgresql):\/\//i.test(value);
+}) || null;
+const databaseUrl = databaseEnvName ? process.env[databaseEnvName] : null;
+const pool = databaseUrl
   ? new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: databaseUrl,
       max: 1,
       idleTimeoutMillis: 5000,
       connectionTimeoutMillis: 5000,
@@ -29,9 +42,12 @@ export default async function handler(req, res) {
   }
   if (!pool) {
     return res.status(503).json({
-      state: 'BLOCKED_DATABASE_URL_NOT_CONFIGURED',
+      state: 'BLOCKED_DATABASE_BINDING_NOT_CONFIGURED',
       canonical_root: CANONICAL_ROOT,
       canonical_source_head: CANONICAL_SOURCE_HEAD,
+      approved_database_env_candidates_checked: DATABASE_ENV_CANDIDATES,
+      configured_candidate_count: 0,
+      credential_value_returned: false,
       write_authority: false,
     });
   }
@@ -69,6 +85,8 @@ export default async function handler(req, res) {
       canonical_root: CANONICAL_ROOT,
       canonical_source_head: CANONICAL_SOURCE_HEAD,
       adapter: '8x8-OS-Ecosystem/Vercel read-only carrier probe',
+      database_binding_name: databaseEnvName,
+      credential_value_returned: false,
       database_name: row.database_name ?? null,
       connected_role: row.connected_role ?? null,
       genesis_table: row.genesis_table ?? null,
@@ -92,6 +110,8 @@ export default async function handler(req, res) {
       state: 'BLOCKED_GENESIS_LEDGER_CARRIER_QUERY_FAILED',
       canonical_root: CANONICAL_ROOT,
       canonical_source_head: CANONICAL_SOURCE_HEAD,
+      database_binding_name: databaseEnvName,
+      credential_value_returned: false,
       write_authority: false,
       detail: String(error?.code || error?.name || 'QUERY_FAILED'),
     });
