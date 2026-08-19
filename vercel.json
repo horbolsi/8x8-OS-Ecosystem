@@ -3,8 +3,8 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "redirects": [
-    {"source": "/telegram", "destination": "https://8x8-user-8888-r2nh9km3c-8x8-team-url.vercel.app/", "permanent": false},
-    {"source": "/telegram/", "destination": "https://8x8-user-8888-r2nh9km3c-8x8-team-url.vercel.app/", "permanent": false}
+    {"source": "/telegram", "destination": "https://8x8-user-8888-pdqrtvydu-8x8-team-url.vercel.app/", "permanent": false},
+    {"source": "/telegram/", "destination": "https://8x8-user-8888-pdqrtvydu-8x8-team-url.vercel.app/", "permanent": false}
   ],
   "rewrites": [
     {"source": "/_8x8/release", "destination": "/release-identity.json"},
@@ -66,10 +66,10 @@
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
       {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
       {"key": "X-8X8-Telegram-Mini-App", "value": "true"},
-      {"key": "X-8X8-Release-Channel", "value": "public-telegram-beta"},
+      {"key": "X-8X8-Release-Channel", "value": "public-telegram-v22"},
       {"key": "X-8X8-Production-Promotion", "value": "true"},
-      {"key": "X-8X8-Backend-Authority", "value": "NONE-STATIC-ONLY"},
-      {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-SHELL-NO-OWNER-RUNTIME"},
+      {"key": "X-8X8-Backend-Authority", "value": "REDIRECT-TO-V22-DYNAMIC-8888"},
+      {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-8888-ONLY-OWNER-8080-NOT-PROJECTED"},
       {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
