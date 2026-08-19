@@ -3,8 +3,8 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "redirects": [
-    {"source": "/telegram", "destination": "https://8x8-user-8888-fp8qbsacg-8x8-team-url.vercel.app/", "permanent": false},
-    {"source": "/telegram/", "destination": "https://8x8-user-8888-fp8qbsacg-8x8-team-url.vercel.app/", "permanent": false}
+    {"source": "/telegram", "destination": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/", "permanent": false},
+    {"source": "/telegram/", "destination": "https://8x8-user-8888-rg7a1utjk-8x8-team-url.vercel.app/", "permanent": false}
   ],
   "rewrites": [
     {"source": "/_8x8/release", "destination": "/release-identity.json"},
