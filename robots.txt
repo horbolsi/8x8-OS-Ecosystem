@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /ssi
+Disallow: /r3
+Disallow: /r4
+Disallow: /r5
+Disallow: /r6
+Disallow: /genesis
+Sitemap: https://8x8-os-ecosystem.vercel.app/sitemap.xml
