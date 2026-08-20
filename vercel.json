@@ -9,19 +9,19 @@
     {"source": "/one-fabric/", "destination": "/one-fabric/index.html"},
     {"source": "/payment/success", "destination": "/payment/success/index.html"},
     {"source": "/payment/success/", "destination": "/payment/success/index.html"},
-    {"source": "/telegram", "destination": "/telegram/index.html"},
-    {"source": "/telegram/", "destination": "/telegram/index.html"},
+    {"source": "/telegram", "destination": "/one-fabric/index.html"},
+    {"source": "/telegram/", "destination": "/one-fabric/index.html"},
     {"source": "/join", "destination": "/join/index.html"},
     {"source": "/join/", "destination": "/join/index.html"},
     {"source": "/styles.css", "destination": "/telegram/styles.css"},
     {"source": "/app.js", "destination": "/telegram/app.js"},
     {"source": "/feature-registry.js", "destination": "/telegram/feature-registry.js"},
-    {"source": "/", "destination": "/stable/index.html"},
+    {"source": "/", "destination": "/one-fabric/index.html"},
     {"source": "/stable", "destination": "/stable/index.html"},
     {"source": "/stable/", "destination": "/stable/index.html"},
-    {"source": "/world", "destination": "/stable/index.html"},
-    {"source": "/first-blink", "destination": "/stable/index.html"},
-    {"source": "/first-blink/", "destination": "/stable/index.html"},
+    {"source": "/world", "destination": "/one-fabric/index.html"},
+    {"source": "/first-blink", "destination": "/one-fabric/index.html"},
+    {"source": "/first-blink/", "destination": "/one-fabric/index.html"},
     {"source": "/r6", "destination": "/r6/index.html"},
     {"source": "/r6/", "destination": "/r6/index.html"},
     {"source": "/ssi", "destination": "/ssi/index.html"},
@@ -35,7 +35,7 @@
     {"source": "/r5", "destination": "/r5/index.html"},
     {"source": "/r5/", "destination": "/r5/index.html"},
     {"source": "/art-board", "destination": "/r6/index.html"},
-    {"source": "/((?!.*\\.).*)", "destination": "/stable/index.html"}
+    {"source": "/((?!.*\\.).*)", "destination": "/one-fabric/index.html"}
   ],
   "headers": [
     {
@@ -48,31 +48,33 @@
         {"key": "Cross-Origin-Opener-Policy", "value": "same-origin"},
         {"key": "Cross-Origin-Resource-Policy", "value": "same-origin"},
         {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests"},
-        {"key": "X-8X8-Release-Identity", "value": "STABLE-0.4.0-ONE-FABRIC-PRODUCT"},
-        {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-SHELL-NO-PRIVATE-RUNTIME"},
+        {"key": "X-8X8-Release-Identity", "value": "STABLE-0.5.0-ONE-FABRIC-FULL-INTERFACE"},
+        {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-PRODUCT-NO-OWNER-RUNTIME"},
         {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"}
       ]
     },
     {"source": "/", "headers": [
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Release-Channel", "value": "stable-product"},
+      {"key": "X-8X8-Release-Channel", "value": "stable-one-fabric"},
       {"key": "X-8X8-Product-Stable", "value": "true"},
       {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
+      {"key": "X-8X8-Payment-Blocker", "value": "STRIPE-CHARGES-DISABLED-AND-SERVER-SECRET-MISSING"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
     {"source": "/one-fabric(.*)", "headers": [
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
-      {"key": "X-8X8-Preview-Identity", "value": "ONE-FABRIC-FULL-INTERFACE-PAYMENTS-V1"},
-      {"key": "X-8X8-Release-Channel", "value": "preview"},
-      {"key": "X-8X8-Production-Promotion", "value": "false"},
-      {"key": "X-8X8-Financial-Sale-Open", "value": "RUNTIME_GATED"},
+      {"key": "X-8X8-Release-Identity", "value": "ONE-FABRIC-FULL-INTERFACE-PAYMENTS-V1"},
+      {"key": "X-8X8-Release-Channel", "value": "stable-one-fabric"},
+      {"key": "X-8X8-Production-Promotion", "value": "true"},
+      {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
+      {"key": "X-8X8-Payment-Blocker", "value": "STRIPE-CHARGES-DISABLED-AND-SERVER-SECRET-MISSING"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
     {"source": "/payment(.*)", "headers": [
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
       {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
       {"key": "X-8X8-Payment-Surface", "value": "STRIPE-HOSTED-CHECKOUT-RUNTIME-GATED"},
+      {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
     {"source": "/_8x8/release", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
@@ -83,11 +85,12 @@
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
       {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
       {"key": "X-8X8-Telegram-Mini-App", "value": "true"},
-      {"key": "X-8X8-Release-Channel", "value": "public-telegram-beta"},
+      {"key": "X-8X8-Release-Channel", "value": "stable-one-fabric-telegram"},
       {"key": "X-8X8-Production-Promotion", "value": "true"},
-      {"key": "X-8X8-Backend-Authority", "value": "NONE-STATIC-ONLY"},
-      {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-SHELL-NO-OWNER-RUNTIME"},
+      {"key": "X-8X8-Backend-Authority", "value": "PUBLIC-SERVERLESS-PAYMENT-HEALTH-NO-OWNER-RUNTIME"},
+      {"key": "X-8X8-Public-Private-Boundary", "value": "PUBLIC-PRODUCT-NO-OWNER-RUNTIME"},
       {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
+      {"key": "X-8X8-Payment-Blocker", "value": "STRIPE-CHARGES-DISABLED-AND-SERVER-SECRET-MISSING"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
     {"source": "/r6/(.*)", "headers": [
@@ -96,8 +99,8 @@
     ]},
     {"source": "/stable(.*)", "headers": [
       {"key": "Cache-Control", "value": "no-store, max-age=0"},
-      {"key": "X-8X8-Release-Channel", "value": "stable-product"},
-      {"key": "X-8X8-Product-Stable", "value": "true"},
+      {"key": "X-8X8-Release-Channel", "value": "rollback-stable-0.4.0"},
+      {"key": "X-8X8-Product-Stable", "value": "past-preserved"},
       {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
