@@ -7,6 +7,8 @@
     {"source": "/_8x8/telegram-release", "destination": "/telegram-release-identity.json"},
     {"source": "/telegram", "destination": "/telegram/index.html"},
     {"source": "/telegram/", "destination": "/telegram/index.html"},
+    {"source": "/join", "destination": "/join/index.html"},
+    {"source": "/join/", "destination": "/join/index.html"},
     {"source": "/styles.css", "destination": "/telegram/styles.css"},
     {"source": "/app.js", "destination": "/telegram/app.js"},
     {"source": "/feature-registry.js", "destination": "/telegram/feature-registry.js"},
