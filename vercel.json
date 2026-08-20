@@ -5,6 +5,10 @@
   "rewrites": [
     {"source": "/_8x8/release", "destination": "/release-identity.json"},
     {"source": "/_8x8/telegram-release", "destination": "/telegram-release-identity.json"},
+    {"source": "/one-fabric", "destination": "/one-fabric/index.html"},
+    {"source": "/one-fabric/", "destination": "/one-fabric/index.html"},
+    {"source": "/payment/success", "destination": "/payment/success/index.html"},
+    {"source": "/payment/success/", "destination": "/payment/success/index.html"},
     {"source": "/telegram", "destination": "/telegram/index.html"},
     {"source": "/telegram/", "destination": "/telegram/index.html"},
     {"source": "/join", "destination": "/join/index.html"},
@@ -54,6 +58,21 @@
       {"key": "X-8X8-Release-Channel", "value": "stable-product"},
       {"key": "X-8X8-Product-Stable", "value": "true"},
       {"key": "X-8X8-Financial-Sale-Open", "value": "false"},
+      {"key": "X-8X8-Mainnet-Live", "value": "false"}
+    ]},
+    {"source": "/one-fabric(.*)", "headers": [
+      {"key": "Cache-Control", "value": "no-store, max-age=0"},
+      {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+      {"key": "X-8X8-Preview-Identity", "value": "ONE-FABRIC-FULL-INTERFACE-PAYMENTS-V1"},
+      {"key": "X-8X8-Release-Channel", "value": "preview"},
+      {"key": "X-8X8-Production-Promotion", "value": "false"},
+      {"key": "X-8X8-Financial-Sale-Open", "value": "RUNTIME_GATED"},
+      {"key": "X-8X8-Mainnet-Live", "value": "false"}
+    ]},
+    {"source": "/payment(.*)", "headers": [
+      {"key": "Cache-Control", "value": "no-store, max-age=0"},
+      {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+      {"key": "X-8X8-Payment-Surface", "value": "STRIPE-HOSTED-CHECKOUT-RUNTIME-GATED"},
       {"key": "X-8X8-Mainnet-Live", "value": "false"}
     ]},
     {"source": "/_8x8/release", "headers": [{"key": "Cache-Control", "value": "no-store, max-age=0"}]},
