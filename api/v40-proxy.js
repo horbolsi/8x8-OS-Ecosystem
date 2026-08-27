@@ -10,6 +10,7 @@ const ALLOW = new Set([
   'POST /api/v1/vault/import-v32',
   'GET /api/v1/vault/status-v32',
   'POST /api/v1/vault/setup-plan-v32',
+  'POST /api/v1/vault/verify-connectors-v43',
 ]);
 
 export default async function handler(req,res){
