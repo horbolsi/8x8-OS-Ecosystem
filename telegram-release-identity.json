@@ -6,6 +6,11 @@
   "public_url": "https://8x8-os-ecosystem.vercel.app/telegram",
   "bot": "@app8x8hub_bot",
   "release_class": "PUBLIC_TELEGRAM_STATIC_FALLBACK_WHILE_PROTECTED_V31_REPROVISIONS",
+  "refresh_request": {
+    "requested_at": "2026-08-27T02:07:00-04:00",
+    "canonical_private_source_head": "b383504c9bb406e1362fcb9da59febb1b5754c86",
+    "intent": "REFRESH_PUBLIC_BROWSER_AND_TELEGRAM_CARRIER_WITHOUT_PROMOTING_UNVERIFIED_PRIVATE_RUNTIME"
+  },
   "target": {
     "source_repo": "horbolsi/8x8-OS-Ecosystem",
     "source_branch": "main",
