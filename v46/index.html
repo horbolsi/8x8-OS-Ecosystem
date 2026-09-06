@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020818">
+<title>©️8x8 by FlashTM8 ⚡️🌎🤖 · V46 Full Fabric</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#020818;color:#fff;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+body{background:radial-gradient(circle at 50% 40%,#071737 0,#020818 45%,#000 100%)}
+#app{position:absolute;inset:0;border:0;width:100%;height:100%;background:#020818;opacity:0;transition:opacity .5s ease}#app.ready{opacity:1}
+#gate{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#020818;transition:opacity .65s ease;touch-action:manipulation}#gate.gone{opacity:0;pointer-events:none}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,215,0,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,215,0,.045) 1px,transparent 1px);background-size:43px 43px}
+.half{position:absolute;top:0;width:50%;height:100%;transition:transform 1.15s cubic-bezier(.77,0,.18,1);background:linear-gradient(90deg,#000b,#04102a 100%)}.half.left{left:0;border-right:1px solid rgba(255,215,0,.55)}.half.right{right:0;border-left:1px solid rgba(255,215,0,.55);background:linear-gradient(270deg,#000b,#04102a 100%)}#gate.open .left{transform:translateX(-100%)}#gate.open .right{transform:translateX(100%)}
+.seam{position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);background:linear-gradient(transparent,#ffd700aa 15%,#ffd700 50%,#ffd700aa 85%,transparent);box-shadow:0 0 18px #ffd70055}.crossH{position:absolute;left:0;right:0;top:18%;height:1px;background:linear-gradient(90deg,transparent,#ffd70066,transparent)}
+.center{position:absolute;inset:0;display:grid;place-items:center;z-index:3;pointer-events:none}.logoBox{text-align:center;transform:translateY(-2vh)}.logo{font-size:clamp(58px,14vw,118px);line-height:.9;font-weight:950;letter-spacing:-.06em;color:#ff2d2d;text-shadow:0 0 14px #ff2222,0 0 42px #ff222277}.sub{margin-top:14px;font-size:clamp(8px,1.4vw,13px);letter-spacing:.48em;color:#d8bd4c;font-weight:700}
+.crypto{margin:18px auto 0;width:min(470px,82vw);display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.crypto span{border:1px solid #7a6d2b66;background:#050b18aa;color:#b7d7ff;padding:6px 8px;border-radius:999px;font:8px ui-monospace,monospace;letter-spacing:.08em}
+.status{position:absolute;bottom:82px;left:50%;transform:translateX(-50%);z-index:5;width:min(340px,80vw);text-align:center}.state{font:9px ui-monospace,SFMono-Regular,Menlo,monospace;color:#8e8060;letter-spacing:.22em;margin-bottom:8px}.bar{height:1px;background:#6b571c66;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#c28a00,#ffe252);box-shadow:0 0 9px #ffd700;transition:width .12s linear}.enter{margin-top:18px;min-width:210px;min-height:54px;border:1px solid #ffe353;background:linear-gradient(180deg,#f4c91a,#dba800);color:#121000;font-weight:900;letter-spacing:.08em;border-radius:9px;box-shadow:0 0 24px #ffd70077;cursor:pointer}.enter:active{transform:scale(.98)}.skip{margin-top:9px;border:0;background:transparent;color:#665f4e;font:8px ui-monospace,monospace;letter-spacing:.2em;cursor:pointer;padding:10px}.err{position:absolute;left:14px;right:14px;bottom:10px;text-align:center;color:#ffb5b5;font:9px ui-monospace,monospace;display:none}
+@media(prefers-reduced-motion:reduce){.half,#gate,#app{transition:none}.fill{transition:none}}
+</style>
+</head>
+<body>
+<iframe id="app" src="/r6/" title="8x8 One Fabric Full Product Shell"></iframe>
+<div id="gate" aria-label="8x8 cinematic entrance">
+<div class="half left"><div class="grid"></div></div><div class="half right"><div class="grid"></div></div><div class="seam"></div><div class="crossH"></div>
+<div class="center"><div class="logoBox"><div class="logo">8×8</div><div class="sub">SOVEREIGN INTELLIGENCE PLATFORM</div><div class="crypto"><span>fabric://8x8/core</span><span>8x8 ID</span><span>VAULT</span><span>8x8SCAN</span><span>AGENT FABRIC</span></div></div></div>
+<div class="status"><div id="state" class="state">INITIALIZING ONE FABRIC...</div><div class="bar"><div id="fill" class="fill"></div></div><button id="enter" class="enter" type="button">ENTER FULL 8×8 OS →</button><br><button id="skip" class="skip" type="button">SKIP INTRO →</button></div>
+<div id="err" class="err">Full interface is taking longer than expected. ENTER remains available.</div>
+</div>
+<script>
+(()=>{const gate=document.getElementById('gate'),app=document.getElementById('app'),enter=document.getElementById('enter'),skip=document.getElementById('skip'),fill=document.getElementById('fill'),state=document.getElementById('state'),err=document.getElementById('err');let opened=false,p=0,appLoaded=false;const states=['INITIALIZING ONE FABRIC...','HYDRATING PRODUCT SURFACES...','PREPARING IDENTITY / WORLD...','READY'];function openGate(){if(opened)return;opened=true;state.textContent='OPENING...';fill.style.width='100%';gate.classList.add('open');setTimeout(()=>{app.classList.add('ready');gate.classList.add('gone');setTimeout(()=>gate.remove(),700)},900)}enter.addEventListener('click',openGate,{passive:true});skip.addEventListener('click',openGate,{passive:true});gate.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openGate()}});app.addEventListener('load',()=>{appLoaded=true;state.textContent='READY';fill.style.width='100%'});const timer=setInterval(()=>{if(opened){clearInterval(timer);return}p=Math.min(96,p+7+Math.random()*11);fill.style.width=p+'%';state.textContent=states[Math.min(2,Math.floor(p/34))]},180);setTimeout(()=>{if(!opened&&!appLoaded)err.style.display='block'},4500);setTimeout(()=>{if(!opened)openGate()},8000);try{const tg=window.Telegram&&window.Telegram.WebApp;if(tg){tg.ready();tg.expand();state.textContent='TELEGRAM READY · ONE FABRIC';}}catch(e){}})();
+</script>
+</body>
+</html>
