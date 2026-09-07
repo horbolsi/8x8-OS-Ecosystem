@@ -2,6 +2,10 @@
 
 > **Important:** this repository is a preserved public full-stack implementation/donor from an earlier 8x8 generation. Its historical **22 integrated feature modules are not the current total capability denominator and this repository is not the canonical current 8x8 user interface.**
 
+## Current competition project: CinemaProof
+
+CinemaProof — Production Twin is a standalone Agentic Cinema 2026 build hosted in this pre-existing public repository. Project-specific runtime instructions, exact commit provenance, public endpoints, and verification boundaries are documented in [CINEMAPROOF.md](./CINEMAPROOF.md).
+
 For current public product truth, use:
 
 - **Canonical public User Edition:** https://github.com/8x8org/8x8-user-edition
