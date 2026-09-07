@@ -1,0 +1,53 @@
+{
+  "schema": "8x8.crypto_native_settlement.v1",
+  "canonical_root": "fabric://8x8/core",
+  "state": {
+    "architecture": "PRESENT_PROVEN_SOURCE_ONLY",
+    "payment_acceptance": "FUTURE_GATED",
+    "settlement": "FUTURE_GATED",
+    "minting": "FUTURE_GATED"
+  },
+  "principles": [
+    "non_custodial",
+    "direct_wallet_to_wallet",
+    "no_raw_private_keys",
+    "no_seed_phrases",
+    "no_card_processor_dependency",
+    "on_chain_receipt_required",
+    "8x8_id_entitlement_after_verified_settlement",
+    "tenant_isolation",
+    "deny_by_default"
+  ],
+  "membership": {
+    "reference_usd": "8.88",
+    "tax_policy_percent": "4.44",
+    "ordinary_companion_p2p_transfer_tax_percent": "0"
+  },
+  "supported_payment_networks": {
+    "BTC": {"enabled": false, "receiving_address": null, "confirmations_required": null},
+    "ETH": {"enabled": false, "receiving_address": null, "confirmations_required": null},
+    "BNB": {"enabled": false, "receiving_address": null, "confirmations_required": null},
+    "SOL": {"enabled": false, "receiving_address": null, "confirmations_required": null},
+    "TON": {"enabled": false, "receiving_address": null, "confirmations_required": null},
+    "PI": {"enabled": false, "receiving_address": null, "confirmations_required": null}
+  },
+  "flow": [
+    "AUTHENTICATED_8X8_ID",
+    "QUOTE_CREATED",
+    "PUBLIC_PAYMENT_REQUEST",
+    "CHAIN_TX_OBSERVED",
+    "CONFIRMATION_THRESHOLD_MET",
+    "SETTLEMENT_VERIFIED",
+    "ENTITLEMENT_GRANTED",
+    "NFT_VAULT_RESERVATION_BOUND"
+  ],
+  "safety": {
+    "sale_open": false,
+    "wallet_signing": false,
+    "custody": false,
+    "mainnet_write_from_server": false,
+    "token_mint": false,
+    "automatic_funds_movement": false,
+    "billing_provider_dependency": false
+  }
+}
