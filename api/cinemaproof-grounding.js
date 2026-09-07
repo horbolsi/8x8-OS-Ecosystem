@@ -26,7 +26,11 @@ function compact(result){
 }
 export default async function handler(req,res){
   res.setHeader("Cache-Control","no-store");
-  if(req.method==="GET") return res.status(200).json({service:"cinemaproof-parallel",provider:"Parallel Search MCP",endpoint:"https://search.parallel.ai/mcp",auth:"anonymous-free-tier",status:"configured"});
+  if(req.method==="GET" && req.query?.probe!=="1") return res.status(200).json({service:"cinemaproof-parallel",provider:"Parallel Search MCP",endpoint:"https://search.parallel.ai/mcp",auth:"anonymous-free-tier",status:"configured"});
+  if(req.method==="GET" && req.query?.probe==="1"){
+    req.body={objective:"Find current official filmmaking safety guidance relevant to a small production crew. Prefer authoritative sources.",search_queries:["film production safety guidance","filmmaking crew safety guidance"]};
+    req.method="POST";
+  }
   if(req.method!=="POST") return res.status(405).json({error:"method_not_allowed"});
   const brief=(req.body?.brief||"").toString().slice(0,6000);
   const objective=(req.body?.objective||`Ground a film-production decision with current, verifiable public sources. Identify location, weather, regulatory, technical, equipment, safety-context, or factual research that materially affects this production brief: ${brief}`).toString().slice(0,4000);
