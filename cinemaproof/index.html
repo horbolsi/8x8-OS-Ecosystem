@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>CinemaProof Agent</title>
+<style>
+:root{--bg:#05070d;--panel:#0c1220cc;--line:#273552;--text:#edf4ff;--muted:#8ea0bb;--accent:#7ee7ff;--ok:#62f5a8;--warn:#ffd166;--bad:#ff6b7a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#10213d 0,#060913 35%,#03050a 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.shell{max-width:1400px;margin:auto;padding:24px}.top{display:flex;gap:16px;justify-content:space-between;align-items:flex-start}.brand h1{font-size:clamp(32px,6vw,76px);margin:0;letter-spacing:-.055em;line-height:.9}.brand p{max-width:760px;color:var(--muted);font-size:16px}.badge{border:1px solid #335174;background:#0a1526;padding:8px 12px;border-radius:999px;color:var(--accent);font-size:12px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:18px}.panel{border:1px solid var(--line);background:linear-gradient(180deg,#0c1424cc,#070c16dd);border-radius:22px;padding:18px;box-shadow:0 25px 80px #0008;backdrop-filter:blur(16px)}
+textarea{width:100%;min-height:210px;background:#050914;border:1px solid #233653;border-radius:16px;color:white;padding:16px;font:inherit;resize:vertical}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#8ef0ff,#7e8cff);color:#07101a}.ghost{background:#0b1220;color:#cdd8ea;border:1px solid #293b59}
+.status{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:#08101c;border:1px solid #1c2c45;border-radius:14px;padding:12px}.metric b{display:block;font-size:22px}.metric small{color:var(--muted)}
+.steps{display:grid;gap:10px;margin-top:14px}.step{padding:13px;border:1px solid #1d2b42;border-radius:14px;background:#08101a;display:flex;justify-content:space-between;gap:12px}.step span{color:var(--muted);font-size:13px}
+.output{white-space:pre-wrap;min-height:360px;max-height:650px;overflow:auto;background:#050913;border:1px solid #1e2b42;padding:16px;border-radius:16px;line-height:1.5}.foot{margin-top:16px;color:#6f819f;font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.top{flex-direction:column}.status{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="top"><div class="brand"><h1>CinemaProof Agent</h1><p>Prove the production before the production pays for mistakes. A scene-graph copilot for continuity, risk, shot planning, scheduling and production handoff.</p></div><div class="badge">Agentic Cinema 2026 · Competition Build</div></div>
+<div class="grid">
+<section class="panel">
+<h2>Director Brief</h2>
+<textarea id="brief">A six-minute sci-fi short: one actor wakes inside a damaged orbital greenhouse. We have one shooting day, two practical locations, minimal VFX budget, no stunt coordinator, and continuity must stay exact as oxygen levels fall scene by scene.</textarea>
+<div class="actions"><button id="run">Run Production Proof</button><button class="ghost" id="demo">Load Demo</button></div>
+<div class="steps" id="steps">
+<div class="step"><b>01 Scene Graph</b><span>dependencies + continuity</span></div>
+<div class="step"><b>02 Risk Engine</b><span>safety + budget + schedule</span></div>
+<div class="step"><b>03 Shot Strategy</b><span>coverage + visual intent</span></div>
+<div class="step"><b>04 Schedule Optimizer</b><span>crew + location + setup</span></div>
+<div class="step"><b>05 Proof Packet</b><span>evidence-backed final plan</span></div>
+</div>
+</section>
+<section class="panel">
+<div class="status">
+<div class="metric"><b id="mode">READY</b><small>runtime</small></div>
+<div class="metric"><b id="risk">—</b><small>critical risks</small></div>
+<div class="metric"><b id="conf">—</b><small>confidence</small></div>
+</div>
+<h2>Production Proof</h2>
+<div class="output" id="out">Run the agent to generate a production-proof packet. Live Gemini is only claimed when the server reports live-gemini.</div>
+</section>
+</div>
+<div class="foot">©️8x8 by FlashTM8 ⚡️🌎🤖 · CinemaProof Agent is a standalone competition-window build. Demo mode is clearly labeled when live Gemini credentials are unavailable.</div>
+</div>
+<script>
+const out=document.getElementById('out'), mode=document.getElementById('mode'), risk=document.getElementById('risk'), conf=document.getElementById('conf');
+async function run(forceDemo=false){
+ mode.textContent='RUNNING'; out.textContent='Building scene graph…';
+ try{
+  const r=await fetch('/api/cinemaproof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({brief:document.getElementById('brief').value,forceDemo})});
+  const j=await r.json(); mode.textContent=j.mode==='live-gemini'?'LIVE GEMINI':'DEMO MODE'; risk.textContent=j.criticalRisks??'—'; conf.textContent=j.confidence??'—'; out.textContent=j.output||JSON.stringify(j,null,2);
+ }catch(e){mode.textContent='ERROR';out.textContent='Runtime error: '+e.message}
+}
+document.getElementById('run').onclick=()=>run(false);document.getElementById('demo').onclick=()=>run(true);
+</script>
+</body></html>
