@@ -23,7 +23,7 @@ jobs:
         env:
           APP_TOKEN: ${{ secrets.APP8X8ORG_BOT_TOKEN }}
           FALLBACK_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram
+          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram/cinemaproof
           EXPECTED_BOT: app8x8org_bot
         shell: bash
         run: |
@@ -48,7 +48,7 @@ jobs:
             finish error 'Telegram bot identity mismatch' 'BLOCKED_BOT_IDENTITY_MISMATCH'
           echo "TELEGRAM_BOT_IDENTITY=VERIFIED_${EXPECTED_BOT}"
 
-          BODY="$(jq -nc --arg url "$MINIAPP_URL" '{menu_button:{type:"web_app",text:"Open 8x8",web_app:{url:$url}}}')"
+          BODY="$(jq -nc --arg url "$MINIAPP_URL" '{menu_button:{type:"web_app",text:"Open CinemaProof",web_app:{url:$url}}}')"
           SET_RESULT="$(curl --fail --silent --show-error -H 'Content-Type: application/json' -d "$BODY" "https://api.telegram.org/bot${TOKEN}/setChatMenuButton" 2>/dev/null)" || \
             finish error 'Telegram setChatMenuButton failed' 'BLOCKED_SET_CHAT_MENU_BUTTON_FAILED'
           echo "$SET_RESULT" | jq -e '.ok == true and .result == true' >/dev/null 2>&1 || \
@@ -60,7 +60,7 @@ jobs:
             finish error 'Telegram menu readback mismatch' 'BLOCKED_MENU_READBACK_MISMATCH'
 
           echo "TELEGRAM_MINIAPP_URL=${MINIAPP_URL}"
-          finish success 'app8x8org_bot menu verified at /telegram' 'PRESENT_PROVEN_PUBLISHED'
+          finish success 'app8x8org_bot menu verified at /telegram/cinemaproof' 'PRESENT_PROVEN_PUBLISHED'
 
       - name: Publish inspectable commit-status receipt
         if: always()
@@ -69,7 +69,7 @@ jobs:
           RESULT_STATE: ${{ steps.publish.outputs.commit_state }}
           RESULT_DESCRIPTION: ${{ steps.publish.outputs.description }}
           RESULT_TELEGRAM_STATE: ${{ steps.publish.outputs.telegram_state }}
-          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram
+          MINIAPP_URL: https://8x8-os-ecosystem.vercel.app/telegram/cinemaproof
         shell: bash
         run: |
           set -euo pipefail
