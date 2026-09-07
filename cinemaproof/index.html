@@ -13,24 +13,23 @@ textarea{width:100%;min-height:150px;background:#050914;border:1px solid #233653
 </style></head>
 <body><div class="shell">
 <div class="top"><div class="brand"><h1>CinemaProof Agent</h1><p><b>Production Digital Twin + Counterfactual Director.</b> Compile the brief into a scene graph, continuity constraints, risk topology, shot plan and schedule. Then change a decision and see downstream consequences before the crew pays for them.</p></div><div class="badge">Agentic Cinema 2026 · Standalone Competition Build</div></div>
-<div class="ribbon"><div class="metric"><b id="mode">READY</b><small>runtime truth</small></div><div class="metric"><b id="sceneCount">4</b><small>scene-state nodes</small></div><div class="metric"><b id="riskCount">—</b><small>production risks</small></div><div class="metric"><b id="confidence">—</b><small>agent confidence</small></div></div>
+<div class="ribbon"><div class="metric"><b id="mode">READY</b><small>Gemini runtime truth</small></div><div class="metric"><b id="parallel">READY</b><small>Parallel grounding</small></div><div class="metric"><b id="riskCount">—</b><small>production risks</small></div><div class="metric"><b id="confidence">—</b><small>agent confidence</small></div></div>
 <div class="grid">
 <section class="panel"><h2>01 · Production Compiler</h2>
 <textarea id="brief">A six-minute sci-fi short: one actor wakes inside a damaged orbital greenhouse. We have one shooting day, two practical locations, minimal VFX budget, no stunt coordinator, and continuity must stay exact as oxygen levels fall scene by scene.</textarea>
 <div class="controls"><select id="override"><option value="none">No director override</option><option value="remove-exterior">Override: remove exterior location</option><option value="actor-late">Override: lead actor arrives late</option><option value="no-vfx">Override: eliminate VFX budget</option></select><button id="run">Compile Production Proof</button></div>
-<div class="actions"><button class="ghost" id="demo">Force Demo Mode</button></div>
+<div class="actions"><button class="ghost" id="ground">Ground Live Evidence</button><button class="ghost" id="demo">Force Demo Mode</button></div>
 <div class="truth">Truth boundary: LIVE GEMINI is displayed only when the server returns <code>mode=live-gemini</code>. Otherwise this is explicitly DEMO MODE.</div>
-<h2 style="margin-top:18px">Scene-State Graph</h2><div id="graph" class="graph"></div>
+<h2 style="margin-top:18px">Live Evidence Graph</h2><div id="groundOut" class="output">Parallel grounding has not run yet.</div><h2 style="margin-top:18px">Scene-State Graph</h2><div id="graph" class="graph"></div>
 <h2 style="margin-top:18px">Risk Topology</h2><div id="risks" class="risks"></div></section>
 <section class="panel"><h2>02 · Counterfactual Proof Packet</h2><div id="overrideOut" class="output">Choose a director override and compile. CinemaProof will show which downstream production decisions become invalid.</div>
 <h2 style="margin-top:16px">Shot + Schedule Plan</h2><div id="plan" class="output"></div></section>
-</div><div class="foot">©️8x8 by FlashTM8 ⚡️🌎🤖 · CinemaProof Agent is a standalone competition-window experiment under the One-Fabric research lineage, not a claim that the pre-existing 8x8 estate was built during this hackathon.</div>
+</div><div class="foot">©️8x8 by FlashTM8 ⚡️🌎🤖 · CinemaProof Agent is a standalone competition-window build that can feed verified capabilities back into 8x8 Studio. The pre-existing 8x8 estate is not represented as hackathon-created.</div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
 function render(j){
  $("mode").textContent=j.mode==="live-gemini"?"LIVE GEMINI":"DEMO MODE";
- $("sceneCount").textContent=(j.sceneGraph||[]).length;
  $("riskCount").textContent=(j.risks||[]).length;
  $("confidence").textContent=typeof j.confidence==="number"?Math.round(j.confidence*100)+"%":(j.confidence||"—");
  $("graph").innerHTML=(j.sceneGraph||[]).map(n=>'<div class="node"><b>'+n.id+' · '+n.label+'</b><small>'+n.state+'</small></div>').join("");
@@ -39,10 +38,30 @@ function render(j){
  $("overrideOut").textContent='OVERRIDE: '+ov.mode+'\n\n'+(ov.downstream||[]).map((x,i)=>(i+1)+'. '+x).join('\n')+'\n\nPROOF\n'+(j.proof||[]).map(x=>'• '+x).join('\n');
  $("plan").textContent='SHOT PLAN\n'+(j.shotPlan||[]).map(x=>'• '+x).join('\n')+'\n\nSCHEDULE\n'+(j.schedule||[]).map(x=>'• '+x).join('\n')+'\n\nCONTINUITY\n'+(j.continuity||[]).map(x=>'• '+x).join('\n');
 }
+let lastGrounding={mode:"not-run",sources:[]};
+function renderGrounding(j){
+  lastGrounding=j||{mode:"error",sources:[]};
+  $("parallel").textContent=j?.mode==="live-parallel-search-mcp"?"LIVE PARALLEL":"ERROR";
+  const src=j?.sources||[];
+  $("groundOut").textContent=(j?.mode||"unknown")+"\n\n"+src.map((s,i)=>(i+1)+". "+(s.title||"Source")+"\n"+(s.url||"")+"\n"+((s.excerpts||[])[0]||"")).join("\n\n");
+}
+async function ground(){
+  $("parallel").textContent="SEARCHING";
+  const r=await fetch('/api/cinemaproof-grounding',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
+    brief:$("brief").value,
+    objective:"Find current, authoritative public evidence that could change safety, location, scheduling, technical, weather or production decisions for this film brief.",
+    search_queries:["film production safety guidance","location production requirements","film technical production guidance"]
+  })});
+  const j=await r.json(); renderGrounding(j); return j;
+}
 async function run(forceDemo=false){
  $("mode").textContent="RUNNING";
- try{const r=await fetch('/api/cinemaproof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({brief:$("brief").value,overrideMode:$("override").value,forceDemo})});render(await r.json())}
- catch(e){$("mode").textContent="ERROR";$("overrideOut").textContent=e.message}
+ try{
+   if(!forceDemo && lastGrounding.mode!=="live-parallel-search-mcp") await ground();
+   const r=await fetch('/api/cinemaproof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({brief:$("brief").value,overrideMode:$("override").value,forceDemo,grounding:lastGrounding})});
+   render(await r.json())
+ } catch(e){$("mode").textContent="ERROR";$("overrideOut").textContent=e.message}
 }
+$("ground").onclick=()=>ground().catch(e=>{$("parallel").textContent="ERROR";$("groundOut").textContent=e.message});
 $("run").onclick=()=>run(false);$("demo").onclick=()=>run(true);run(true);
 </script></body></html>
