@@ -32,6 +32,38 @@ test("source IDs repeat across URL variants and use a 96-bit digest", () => {
   assert.match(stableId("src", first), /^src-[0-9a-f]{24}$/);
 });
 
+test("URL-less sources prefer upstream IDs and otherwise fingerprint evidence", () => {
+  const evidence = compact(
+    result([
+      { id: "provider-a", title: "Same title", excerpts: ["first"] },
+      { id: "provider-b", title: "Same title", excerpts: ["first"] },
+      { title: "Same title", publication_date: "2026-09-01", excerpts: ["alpha"] },
+      { title: "Same title", publication_date: "2026-09-02", excerpts: ["beta"] },
+    ]),
+    retrievedAt,
+  );
+  assert.equal(new Set(evidence.sources.map((source) => source.sourceId)).size, 4);
+});
+
+test("compact rejects non-array result containers without throwing", () => {
+  const malformed = {
+    result: {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify({
+            results: { unexpected: true },
+            search: { results: { also: "not-an-array" } },
+          }),
+        },
+      ],
+    },
+  };
+  const evidence = compact(malformed, retrievedAt);
+  assert.equal(evidence.sourceCount, 0);
+  assert.equal(evidence.usabilityState, "NO_USABLE_EVIDENCE");
+});
+
 test("authority classes are explicit", () => {
   assert.equal(authority("https://agency.gov/rule").class, "GOVERNMENT");
   assert.equal(authority("https://school.edu/paper").class, "ACADEMIC");
