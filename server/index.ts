@@ -500,7 +500,7 @@ app.get("/api/hub/events", async (_req, res) => {
 app.post("/api/hub/subscribe", async (_req, res) => {
   res.status(503).json({
     state: "PAYMENT_AND_ENTITLEMENT_GATED",
-    error: "Subscription activation is unavailable until payment, finality, idempotency, refund, and durable entitlement receipts are verified.",
+    error: "Subscription activation is unavailable until destination provenance, amount, fee disclosure, replay/idempotency, confirmation/finality, durable entitlement, failure recovery, refund/cancellation, security review, and rollback receipts are verified.",
     success: false,
     paymentEffect: false,
     entitlementCreated: false,
