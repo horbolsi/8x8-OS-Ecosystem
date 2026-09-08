@@ -23,15 +23,38 @@ const KNOWLEDGE_BASE: Record<string, string> = {
   default: "I can explain the 8×8 source policy and clearly separate source, simulation, runtime, and verified execution. Economic and blockchain effects remain disabled unless a fresh scoped receipt proves otherwise.",
 };
 
+function hasToken(text: string, token: string): boolean {
+  const escaped = token.replace(/[.*+?^$\{\}()|[\]\\]/g, '\\function smartFallback(prompt: string): string {');
+  return new RegExp('(^|[^a-z0-9])' + escaped + '([^a-z0-9]|$)', 'i').test(text);
+}
+
+function normalizeUserMessages(value: unknown): Array<{ role: 'user' | 'assistant'; content: string }> | null {
+  if (!Array.isArray(value) || value.length === 0 || value.length > 32) return null;
+  const out: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+  for (const item of value) {
+    if (!item || (item.role !== 'user' && item.role !== 'assistant') || typeof item.content !== 'string') return null;
+    const content = item.content.trim();
+    if (!content || content.length > 6000) return null;
+    out.push({ role: item.role, content });
+  }
+  return out.some(item => item.role === 'user') ? out : null;
+}
+
+function safeProviderReply(value: unknown): string | null {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const reply = value.trim().slice(0, 8000);
+  const sensitive = /\b(trade|trading|payment|wallet|sign|signed|signing|mainnet|mint|minted|minting|stake|staking|yield|apy|balance|transaction|confirmed|price|fee|tax|token|nft)\b/i;
+  return sensitive.test(reply) ? null : reply;
+}
 function smartFallback(prompt: string): string {
   const lower = prompt.toLowerCase();
   for (const [key, answer] of Object.entries(KNOWLEDGE_BASE)) {
-    if (key !== 'default' && lower.includes(key)) return answer;
+    if (key !== 'default' && hasToken(lower, key)) return answer;
   }
   if (lower.includes('fee') || lower.includes('tax') || lower.includes('commission') || lower.includes('4.44')) return KNOWLEDGE_BASE.policy;
   if (lower.includes('token') || lower.includes('8x8') || lower.includes('tm8') || lower.includes('0x8')) return "Token designs are source-policy references only. Maximum supply is 8,888,888; ordinary non-sale/P2P companion-token transfers are 0%; no mint, distribution, staking, trading, or chain deployment is verified.";
   if (lower.includes('buy') || lower.includes('sell') || lower.includes('price') || lower.includes('market')) return KNOWLEDGE_BASE.trade;
-  if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) return "Greetings. I can help with source-policy and read-only ecosystem questions while keeping runtime and value-effect claims explicit.";
+  if (hasToken(lower, 'hello') || hasToken(lower, 'hi') || hasToken(lower, 'hey')) return "Greetings. I can help with source-policy and read-only ecosystem questions while keeping runtime and value-effect claims explicit.";
   if (lower.includes('help') || lower.includes('what can')) return "I can explain source policy, NFT Vault provenance requirements, watch-only wallet boundaries, chain-observer states, and paper/simulation concepts. I will not present them as deployed financial execution.";
   if (lower.includes('seraphim') || lower.includes('guardian')) return "Seraphim is a preserved guardian concept. Current identity, heartbeat, lease, security actions, and productive artifacts require fresh verification.";
   return KNOWLEDGE_BASE.default;
@@ -361,12 +384,11 @@ async function tryProviders(order: string[], messages: any[], model?: string, ol
 }
 
 export async function aiHandler(req: Request, res: Response) {
-  const { messages, model, provider, ollamaUrl } = req.body;
-  const lastMsg = messages?.[messages.length - 1]?.content || '';
-  const normalizedMessages = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...((messages || []).map((m: any) => ({ role: m.role, content: m.content }))),
-  ];
+  const { model, provider, ollamaUrl } = req.body || {};
+  const messages = normalizeUserMessages(req.body?.messages);
+  if (!messages) return res.status(400).json({ error: 'invalid_messages', allowedRoles: ['user', 'assistant'] });
+  const lastMsg = messages[messages.length - 1].content;
+  const normalizedMessages = [{ role: 'system', content: SYSTEM_PROMPT }, ...messages];
 
   const requestedProvider = typeof provider === 'string' ? provider : undefined;
   // Priority: Local > Free Unlimited > Paid
@@ -390,7 +412,8 @@ export async function aiHandler(req: Request, res: Response) {
 
   const providerResult = await tryProviders(order, normalizedMessages, model, ollamaUrl);
   if (providerResult) {
-    return res.json({ reply: providerResult.reply, source: providerResult.source });
+    const safeReply = safeProviderReply(providerResult.reply);
+    if (safeReply) return res.json({ reply: safeReply, source: providerResult.source });
   }
 
   const fallbackReply = smartFallback(lastMsg);
