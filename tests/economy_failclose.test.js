@@ -57,6 +57,27 @@ test("economy routes fail closed and preserve current policy", async t => {
   assert.equal(wallet.body.walletSigning, false);
   assert.equal(wallet.body.mainnet, false);
 
+  const readiness = await request("/api/payment-readiness");
+  assert.equal(readiness.response.status, 200);
+  assert.equal(readiness.body.state, "BLOCKED_GATES_INCOMPLETE");
+  assert.equal(readiness.body.paymentAcceptance, false);
+  assert.equal(readiness.body.entitlementCreation, false);
+  assert.deepEqual(readiness.body.gates, {
+    destinationProvenance: false,
+    amountBound: false,
+    feeDisclosure: false,
+    replayIdempotency: false,
+    confirmationFinality: false,
+    entitlementDurability: false,
+    failureRecovery: false,
+    refundCancellation: false,
+    securityReview: false,
+    rollback: false,
+  });
+  assert.equal(readiness.body.effects.paymentEffect, false);
+  assert.equal(readiness.body.effects.walletSigning, false);
+  assert.equal(readiness.body.effects.mainnet, false);
+
   const effectRoutes = [
     "/api/staking",
     "/api/nfts/mint",
