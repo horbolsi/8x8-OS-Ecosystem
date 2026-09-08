@@ -50,10 +50,24 @@ app.post("/api/hub/auth/telegram", (_req, res) => {
 
 // AI
 app.post("/api/ai/chat", (req, res) => {
-  const lastMsg = req.body?.messages?.slice(-1)[0]?.content || "";
+  const messages = req.body?.messages;
+  if (!Array.isArray(messages) || messages.length === 0 || messages.length > 32) {
+    return res.status(400).json({ error: "invalid_messages", allowedRoles: ["user", "assistant"] });
+  }
+  const normalized = [];
+  for (const item of messages) {
+    if (!item || (item.role !== "user" && item.role !== "assistant") || typeof item.content !== "string") {
+      return res.status(400).json({ error: "invalid_messages", allowedRoles: ["user", "assistant"] });
+    }
+    const content = item.content.trim();
+    if (!content || content.length > 6000) return res.status(400).json({ error: "invalid_messages" });
+    normalized.push({ role: item.role, content });
+  }
+  if (!normalized.some(item => item.role === "user")) return res.status(400).json({ error: "user_message_required" });
+  const lastMsg = normalized[normalized.length - 1].content;
   const policy = "Current source policy: maximum supply 8,888,888; 4.44% only for explicitly defined events; ordinary non-sale/P2P companion-token transfers 0%. Former 4.88% and legacy chain semantics are PAST_PRESERVED.";
   res.json({
-    reply: lastMsg ? `Pioneer AI received: "${lastMsg.substring(0, 80)}". ${policy}` : policy,
+    reply: `Pioneer AI received: "${lastMsg.substring(0, 80)}". ${policy}`,
     source: "SOURCE_POLICY_REFERENCE_ONLY",
     effects: EFFECTS,
   });
