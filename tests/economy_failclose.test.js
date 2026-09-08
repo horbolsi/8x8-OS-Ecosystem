@@ -43,7 +43,7 @@ test("economy routes fail closed and preserve current policy", async t => {
 
   const tokenomics = await request("/api/tokenomics");
   assert.equal(tokenomics.response.status, 200);
-  assert.equal(tokenomics.body.maxSupply, 8888888);
+  assert.equal(tokenomics.body.maxSupplyPolicy, 8888888);
   assert.equal(tokenomics.body.policyPercent, 4.44);
   assert.equal(tokenomics.body.ordinaryCompanionTokenP2PTransferTaxPercent, 0);
   assert.equal(tokenomics.body.supersededPolicyPercent, 4.88);
