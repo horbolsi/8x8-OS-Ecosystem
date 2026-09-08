@@ -43,13 +43,13 @@ function authority(url){
   return {class:"COMMERCIAL_OR_OTHER",rationale:"No institutional domain signal; manual review required"};
 }
 
-async function postMcp(body,session){
+async function postMcp(body,session,{fetchImpl=fetch,timeoutMs=UPSTREAM_TIMEOUT_MS}={}){
   const headers={"content-type":"application/json","accept":"application/json, text/event-stream"};
   if(session) headers["mcp-session-id"]=session;
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),UPSTREAM_TIMEOUT_MS);
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
   try{
-    const r=await fetch("https://search.parallel.ai/mcp",{method:"POST",headers,body:JSON.stringify(body),signal:controller.signal});
+    const r=await fetchImpl("https://search.parallel.ai/mcp",{method:"POST",headers,body:JSON.stringify(body),signal:controller.signal});
     const text=await r.text();
     return {ok:r.ok,status:r.status,session:r.headers.get("mcp-session-id")||session,json:parseMcp(text)};
   }finally{clearTimeout(timer)}
@@ -85,7 +85,7 @@ function compact(result,retrievedAt){
   };
 }
 
-export {canonicalizeUrl,stableId,authority,compact};
+export {canonicalizeUrl,stableId,authority,compact,postMcp};
 
 export default async function handler(req,res){
   res.setHeader("Cache-Control","no-store");
