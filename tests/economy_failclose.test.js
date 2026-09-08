@@ -59,24 +59,31 @@ test("economy routes fail closed and preserve current policy", async t => {
 
   const readiness = await request("/api/payment-readiness");
   assert.equal(readiness.response.status, 200);
-  assert.equal(readiness.body.state, "BLOCKED_GATES_INCOMPLETE");
-  assert.equal(readiness.body.paymentAcceptance, false);
-  assert.equal(readiness.body.entitlementCreation, false);
-  assert.deepEqual(readiness.body.gates, {
-    destinationProvenance: false,
-    amountBound: false,
-    feeDisclosure: false,
-    replayIdempotency: false,
-    confirmationFinality: false,
-    entitlementDurability: false,
-    failureRecovery: false,
-    refundCancellation: false,
-    securityReview: false,
-    rollback: false,
+  assert.deepEqual(readiness.body, {
+    state: "BLOCKED_GATES_INCOMPLETE",
+    paymentAcceptance: false,
+    entitlementCreation: false,
+    gates: {
+      destinationProvenance: false,
+      amountBound: false,
+      feeDisclosure: false,
+      replayIdempotency: false,
+      confirmationFinality: false,
+      entitlementDurability: false,
+      failureRecovery: false,
+      refundCancellation: false,
+      securityReview: false,
+      rollback: false,
+    },
+    effects: {
+      liveTrade: false,
+      paymentEffect: false,
+      walletSigning: false,
+      mainnet: false,
+      tokenMint: false,
+      stakingEffect: false,
+    },
   });
-  assert.equal(readiness.body.effects.paymentEffect, false);
-  assert.equal(readiness.body.effects.walletSigning, false);
-  assert.equal(readiness.body.effects.mainnet, false);
 
   const effectRoutes = [
     "/api/staking",
