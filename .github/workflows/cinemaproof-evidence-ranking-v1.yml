@@ -1,0 +1,32 @@
+name: CinemaProof Evidence Ranking V1
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - api/cinemaproof-grounding.js
+      - cinemaproof/index.html
+      - tests/cinemaproof-grounding.test.mjs
+      - .github/workflows/cinemaproof-evidence-ranking-v1.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinemaproof-evidence-ranking-v1-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check source syntax
+        run: node --check api/cinemaproof-grounding.js
+      - name: Run deterministic evidence contract fixtures
+        run: node --test tests/cinemaproof-grounding.test.mjs
