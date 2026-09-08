@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   authority,
   canonicalizeUrl,
@@ -139,4 +140,12 @@ test("postMcp preserves non-timeout upstream HTTP failure", async () => {
   assert.equal(response.ok, false);
   assert.equal(response.status, 503);
   assert.deepEqual(response.json, { error: "unavailable" });
+});
+
+test("CinemaProof client separates live transport from usable evidence", () => {
+  const client = readFileSync(new URL("../cinemaproof/index.html", import.meta.url), "utf8");
+  assert.match(client, /const isLiveTransport=/);
+  assert.match(client, /const hasUsableLiveEvidence=/);
+  assert.match(client, /!isLiveTransport\(lastGrounding\)/);
+  assert.match(client, /hasUsableLiveEvidence\(j\)\?"LIVE PARALLEL"/);
 });
