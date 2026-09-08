@@ -46,6 +46,15 @@ test("URL-less sources prefer upstream IDs and otherwise fingerprint evidence", 
   assert.equal(new Set(evidence.sources.map((source) => source.sourceId)).size, 4);
 });
 
+test("compact rejects malformed MCP content containers without throwing", () => {
+  for (const content of [{ unexpected: true }, "not-an-array"]) {
+    const evidence = compact({ result: { content } }, retrievedAt);
+    assert.equal(evidence.sourceCount, 0);
+    assert.equal(evidence.freshnessState, "UNAVAILABLE");
+    assert.equal(evidence.usabilityState, "NO_USABLE_EVIDENCE");
+  }
+});
+
 test("compact rejects non-array result containers without throwing", () => {
   const malformed = {
     result: {
