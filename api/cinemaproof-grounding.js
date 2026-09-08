@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 const MAX_AGE_SECONDS=3600;
 const UPSTREAM_TIMEOUT_MS=12000;
 
@@ -10,11 +12,27 @@ function parseMcp(text){
   return {raw:t.slice(0,12000)};
 }
 
-function stableId(prefix,value){
-  let h=2166136261;
-  for(const c of String(value||"")){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}
-  return `${prefix}-${(h>>>0).toString(16).padStart(8,"0")}`;
+function canonicalizeUrl(value){
+  try{
+    const url=new URL(String(value||""));
+    url.hash="";
+    for(const key of [...url.searchParams.keys()]){
+      if(/^utm_/i.test(key)||["gclid","fbclid","mc_cid","mc_eid"].includes(key.toLowerCase())) url.searchParams.delete(key);
+    }
+    const sorted=[...url.searchParams.entries()].sort(([ak,av],[bk,bv])=>ak.localeCompare(bk)||av.localeCompare(bv));
+    url.search="";
+    for(const [key,val] of sorted) url.searchParams.append(key,val);
+    if(url.pathname!=="/") url.pathname=url.pathname.replace(/\/+$/,"");
+    return url.toString();
+  }catch{return null}
 }
+
+function stableId(prefix,value){
+  const digest=createHash("sha256").update(String(value||"")).digest("hex").slice(0,24);
+  return `${prefix}-${digest}`;
+}
+
+const AUTHORITY_WEIGHT={GOVERNMENT:4,ACADEMIC:3,ESTABLISHED_MEDIA:2,COMMERCIAL_OR_OTHER:1,UNKNOWN:0};
 
 function authority(url){
   let host="";
@@ -44,9 +62,11 @@ function compact(result,retrievedAt){
   const rows=(parsed?.results||parsed?.search?.results||[]).slice(0,8);
   const sources=rows.map(x=>{
     const url=x.url||null;
-    const rank=authority(url);
-    return {sourceId:stableId("src",url||x.title),title:x.title||null,url,publicationDate:x.published_at||x.publication_date||null,authorityClass:rank.class,authorityRationale:rank.rationale,excerpts:(x.excerpts||[]).slice(0,3)};
-  });
+    const canonicalUrl=canonicalizeUrl(url);
+    const rank=authority(canonicalUrl||url);
+    const identity=canonicalUrl||String(x.title||"").trim().toLowerCase();
+    return {sourceId:stableId("src",identity),title:x.title||null,url,canonicalUrl,publicationDate:x.published_at||x.publication_date||null,authorityClass:rank.class,authorityRationale:rank.rationale,excerpts:(x.excerpts||[]).slice(0,3)};
+  }).sort((a,b)=>(AUTHORITY_WEIGHT[b.authorityClass]-AUTHORITY_WEIGHT[a.authorityClass])||a.sourceId.localeCompare(b.sourceId));
   const dated=sources.filter(x=>x.publicationDate).length;
   return {
     sourceCount:sources.length,
@@ -56,6 +76,7 @@ function compact(result,retrievedAt){
     freshnessState:sources.length?"FRESH_RETRIEVAL":"UNAVAILABLE",
     usabilityState:!sources.length?"NO_USABLE_EVIDENCE":dated===sources.length?"USABLE_DATED_EVIDENCE":"PARTIAL_UNDATED_EVIDENCE",
     authorityRanking:"GOVERNMENT_ACADEMIC_ESTABLISHED_MEDIA_THEN_OTHER",
+    authorityRankingApplied:true,
     claimEdges:[],
     citationCoverage:0,
     contradictionState:"NOT_EVALUATED",
@@ -63,6 +84,8 @@ function compact(result,retrievedAt){
     rawText:parsed?null:texts.slice(0,16000)
   };
 }
+
+export {canonicalizeUrl,stableId,authority,compact};
 
 export default async function handler(req,res){
   res.setHeader("Cache-Control","no-store");
