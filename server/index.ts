@@ -131,19 +131,19 @@ app.post("/api/hub/auth/verify", async (req, res) => {
   }
 });
 
-// ── AI Chat (with real provider fallback) ──
+// ── AI Chat (policy-aware provider fallback) ──
 app.post("/api/ai/chat", async (req, res) => {
   try {
     const { messages } = req.body;
     const lastMsg = messages?.[messages.length - 1]?.content || "";
-    // Try Ollama first, then fallback to knowledge base
+    const policyContext = "Truth boundaries: SOURCE_PRESENT is not RUNTIME_ACTIVE or VERIFIED. LIVE_TRADE=false, PAYMENT_EFFECT=false, WALLET_SIGNING=false, MAINNET=false. Current source policy: maximum supply 8,888,888; 4.44% only for explicitly defined events; ordinary non-sale/P2P companion-token transfers 0%. Former 4.88% and legacy Pi/ETH semantics are PAST_PRESERVED.";
     let reply = null;
     try {
       const ollamaUrl = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
       const resp = await fetch(`${ollamaUrl}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "tinyllama", messages: [{ role: "system", content: "You are Pioneer AI for 8x8 OS. Be concise (2-3 sentences)." }, ...(messages || [])], stream: false, options: { num_predict: 200 } }),
+        body: JSON.stringify({ model: "tinyllama", messages: [{ role: "system", content: `You are Pioneer AI for 8x8 OS. Be concise and policy-aware. ${policyContext}` }, ...(messages || [])], stream: false, options: { num_predict: 200 } }),
         signal: AbortSignal.timeout(15000),
       });
       if (resp.ok) {
@@ -153,85 +153,103 @@ app.post("/api/ai/chat", async (req, res) => {
     } catch { /* Ollama not available */ }
 
     if (!reply) {
-      // Knowledge base fallback
       const lower = lastMsg.toLowerCase();
-      if (lower.includes("nft")) reply = "8x8 NFT Vaults support up to 8,888,888 NFTs. Each vault locks 0.001 ETH. Mint, burn (earn 8x8 tokens), and stake NFTs.";
-      else if (lower.includes("staking")) reply = "8x8 staking supports PoW, PoS, and PoSt. APY ranges from 8-18% depending on pool and lock period.";
-      else if (lower.includes("trade")) reply = "8x8 Trade Engine: Swap (4.88% fee, 1% with 8Pass), 3-Min Dash (3x-16x leverage), Order Book, Perpetuals.";
-      else if (lower.includes("governance")) reply = "0x8 token holders vote on ecosystem parameters using quadratic voting weighted by holdings.";
-      else reply = `Pioneer AI received: "${lastMsg.substring(0, 80)}". I can help with NFTs, staking, trading, governance, and all 8x8 features.`;
+      if (lower.includes("nft")) reply = "NFT Vault references are SOURCE_ONLY / NOT_AUDITED / NOT_DEPLOYED / FUTURE_GATED. No mint, burn, stake, ownership, or chain provenance is verified.";
+      else if (lower.includes("staking")) reply = "Staking and mining are FUTURE_GATED. No APY, reward, or productive staking runtime is verified.";
+      else if (lower.includes("trade")) reply = "LIVE_TRADE=false. MARKET_DATA is not STRATEGY_SIGNAL, PAPER_POSITION, LIVE_ORDER, or VERIFIED_EXECUTION.";
+      else if (lower.includes("fee") || lower.includes("tax") || lower.includes("policy")) reply = "Current source policy: 4.44% applies only to explicitly defined events; ordinary non-sale/P2P companion-token transfers are 0%. Former 4.88% is superseded.";
+      else if (lower.includes("wallet")) reply = "Wallet surfaces are watch-only or source-only. WALLET_SIGNING=false; balances and chain authority remain unavailable without a fresh receipt.";
+      else reply = `Pioneer AI received: "${lastMsg.substring(0, 80)}". I can explain source policy while separating source, simulation, runtime, and verified execution.`;
     }
 
-    res.json({ reply, source: reply ? "ai" : "fallback" });
-  } catch (err: any) {
+    res.json({ reply, source: reply ? "ai" : "fallback", effects: { liveTrade: false, payment: false, walletSigning: false, mainnet: false } });
+  } catch {
     res.status(500).json({ error: "AI service error" });
   }
 });
 
 // ── Staking ──
 app.get("/api/staking", async (_req, res) => {
-  try {
-    const pools = await dbQuery("SELECT * FROM hub_settings WHERE key = 'staking_apy'");
-    const defaultApy = pools.rows[0]?.value?.default || 12;
-    res.json({
-      pools: [
-        { id: "default", name: "Default Pool", apy: defaultApy, minStake: 0.001, totalStaked: 0, participants: 0 },
-        { id: "premium", name: "Premium Pool", apy: defaultApy * 1.5, minStake: 0.01, totalStaked: 0, participants: 0 },
-      ],
-    });
-  } catch { res.json({ pools: [] }); }
+  res.json({
+    state: "FUTURE_GATED",
+    availability: "UNAVAILABLE",
+    pools: [],
+    apy: null,
+    stakingEffect: false,
+    source: "SOURCE_POLICY_REFERENCE_ONLY",
+  });
 });
 
-app.post("/api/staking", async (req, res) => {
-  const token = req.headers["x-hub-token"] as string;
-  if (!token) return res.status(401).json({ error: "Auth required" });
-  const userResult = await dbQuery("SELECT id FROM hub_users WHERE session_token = $1", [token]);
-  if (!userResult.rows[0]) return res.status(401).json({ error: "Invalid token" });
-  const { amount, pool_id } = req.body;
-  const txHash = "0x" + crypto.randomBytes(32).toString("hex");
-  await dbQuery(
-    "INSERT INTO hub_staking (user_id, amount, pool_id, tx_hash) VALUES ($1, $2, $3, $4)",
-    [userResult.rows[0].id, amount || 0, pool_id || "default", txHash]
-  );
-  res.json({ success: true, txHash, amount, pool: pool_id || "default" });
+app.post("/api/staking", async (_req, res) => {
+  res.status(503).json({
+    state: "FUTURE_GATED",
+    error: "Staking is unavailable; no stake, reward, or transaction was created.",
+    stakingEffect: false,
+    txHash: null,
+  });
 });
 
 // ── NFT ──
-app.get("/api/nfts", async (req, res) => {
+app.get("/api/nfts", async (_req, res) => {
   try {
     const nfts = await dbQuery("SELECT * FROM hub_nfts ORDER BY created_at DESC LIMIT 50");
-    res.json({ nfts: nfts.rows, count: nfts.rows.length, max: 8888888 });
-  } catch { res.json({ nfts: [], count: 0, max: 8888888 }); }
+    res.json({
+      nfts: nfts.rows,
+      count: nfts.rows.length,
+      maxSupplyPolicy: 8888888,
+      state: "SOURCE_ONLY_NOT_AUDITED_NOT_DEPLOYED",
+      minting: false,
+      chainProvenanceVerified: false,
+    });
+  } catch {
+    res.json({ nfts: [], count: 0, maxSupplyPolicy: 8888888, state: "UNAVAILABLE", minting: false, chainProvenanceVerified: false });
+  }
 });
 
-app.post("/api/nfts/mint", async (req, res) => {
-  const token = req.headers["x-hub-token"] as string;
-  if (!token) return res.status(401).json({ error: "Auth required" });
-  const userResult = await dbQuery("SELECT id FROM hub_users WHERE session_token = $1", [token]);
-  if (!userResult.rows[0]) return res.status(401).json({ error: "Invalid token" });
-  const countResult = await dbQuery("SELECT COUNT(*) as cnt FROM hub_nfts");
-  const count = parseInt(countResult.rows[0]?.cnt || "0");
-  if (count >= 8888888) return res.status(400).json({ error: "Max supply reached" });
-  const rarityRoll = Math.random();
-  const rarity = rarityRoll < 0.05 ? "Legendary" : rarityRoll < 0.25 ? "Rare" : "Common";
-  const powerMap: Record<string, number> = { Legendary: 25, Rare: 15, Common: 5 };
-  const tokenId = `TM8-${Date.now()}-${Math.floor(Math.random() * 9999)}`;
-  await dbQuery(
-    "INSERT INTO hub_nfts (token_id, name, rarity, power, owner_address, user_id) VALUES ($1, $2, $3, $4, $5, $6)",
-    [tokenId, req.body.name || `Vault #${count + 1}`, rarity, powerMap[rarity], req.body.ownerAddress || "0x0", userResult.rows[0].id]
-  );
-  res.json({ tokenId, name: req.body.name || `Vault #${count + 1}`, rarity, power: powerMap[rarity] });
+app.post("/api/nfts/mint", async (_req, res) => {
+  res.status(503).json({
+    state: "FUTURE_GATED",
+    error: "NFT minting is unavailable; no token, ownership record, or chain transaction was created.",
+    mintingEffect: false,
+    tokenId: null,
+    txHash: null,
+  });
 });
 
 // ── Wallet ──
 app.get("/api/wallet/status", async (req, res) => {
   const token = req.headers["x-hub-token"] as string;
-  if (!token) return res.json({ connected: false, address: null, balance: 0 });
+  if (!token) return res.json({
+    connected: false,
+    availability: "UNKNOWN",
+    address: null,
+    balance: null,
+    watchOnly: true,
+    walletSigning: false,
+    mainnet: false,
+  });
   const userResult = await dbQuery("SELECT id FROM hub_users WHERE session_token = $1", [token]);
-  if (!userResult.rows[0]) return res.json({ connected: false, address: null, balance: 0 });
+  if (!userResult.rows[0]) return res.json({
+    connected: false,
+    availability: "UNKNOWN",
+    address: null,
+    balance: null,
+    watchOnly: true,
+    walletSigning: false,
+    mainnet: false,
+  });
   const portfolio = await dbQuery("SELECT symbol, amount, current_price, value_usd FROM hub_portfolio WHERE user_id = $1", [userResult.rows[0].id]);
-  const totalValue = portfolio.rows.reduce((sum: number, r: any) => sum + parseFloat(r.value_usd || 0), 0);
-  res.json({ connected: true, address: null, balance: totalValue, portfolio: portfolio.rows });
+  res.json({
+    connected: false,
+    availability: portfolio.rows.length ? "INTERNAL_ACCOUNTING_ONLY" : "UNKNOWN",
+    address: null,
+    balance: null,
+    portfolio: portfolio.rows,
+    portfolioSource: "INTERNAL_PORTFOLIO_TABLE_NOT_CHAIN_BALANCE",
+    watchOnly: true,
+    walletSigning: false,
+    mainnet: false,
+  });
 });
 
 // ── Governance ──
@@ -257,27 +275,34 @@ app.post("/api/governance", async (req, res) => {
 
 // ── Tokenomics ──
 app.get("/api/tokenomics", async (_req, res) => {
-  const settings = await dbQuery("SELECT key, value FROM hub_settings WHERE key IN ('staking_apy', 'referral_bonus')");
-  const s: any = {};
-  settings.rows.forEach((r: any) => { s[r.key] = r.value; });
   res.json({
-    totalSupply: 888888888,
-    circulatingSupply: 88888888,
-    burnRate: 0.08,
-    stakingAPY: s.staking_apy?.default || 12,
-    referralBonus: s.referral_bonus?.percent || 10,
-    holders: 8888,
+    state: "SOURCE_POLICY_REFERENCE_ONLY",
+    maxSupplyPolicy: 8888888,
+    policyPercent: 4.44,
+    policyAppliesOnlyToExplicitlyDefinedEvents: true,
+    ordinaryCompanionTokenP2PTransferTaxPercent: 0,
+    supersededPolicyPercent: 4.88,
+    supersededPolicyState: "PAST_PRESERVED",
+    circulatingSupply: null,
+    holders: null,
+    burnRate: null,
+    stakingAPY: null,
+    deployed: false,
+    audited: false,
+    mainnet: false,
   });
 });
 
 // ── Platforms ──
 app.get("/api/platforms/status", async (_req, res) => {
   res.json({
-    trading: { status: "online", pairs: 22, exchange: "BitGet" },
-    staking: { status: "online", pools: 2 },
-    nft: { status: "online", totalMinted: 0 },
-    governance: { status: "online", proposals: 0 },
-    wallet: { status: "online", provider: "BitGet" },
+    trading: { status: "UNAVAILABLE", state: "SOURCE_ONLY", liveTrade: false },
+    staking: { status: "UNAVAILABLE", state: "FUTURE_GATED", stakingEffect: false },
+    nft: { status: "UNAVAILABLE", state: "SOURCE_ONLY_NOT_AUDITED_NOT_DEPLOYED", minting: false },
+    governance: { status: "SOURCE_ONLY", liveVoting: false },
+    wallet: { status: "UNKNOWN", watchOnly: true, walletSigning: false },
+    paymentEffect: false,
+    mainnet: false,
   });
 });
 
@@ -335,13 +360,25 @@ app.get("/api/system/stats", async (_req, res) => {
 app.get("/api/blockchain/transactions", async (_req, res) => {
   try {
     const txs = await dbQuery("SELECT * FROM hub_blockchain_transactions ORDER BY created_at DESC LIMIT 50");
-    res.json({ transactions: txs.rows });
-  } catch { res.json({ transactions: [] }); }
+    res.json({
+      transactions: txs.rows,
+      state: "READ_ONLY_STORED_RECORDS",
+      chainExecutionVerified: false,
+      mainnet: false,
+    });
+  } catch {
+    res.json({ transactions: [], state: "UNAVAILABLE", chainExecutionVerified: false, mainnet: false });
+  }
 });
 
-app.post("/api/blockchain/transactions", async (req, res) => {
-  const txHash = "0x" + crypto.randomBytes(32).toString("hex");
-  res.json({ txHash, status: "confirmed", ...req.body });
+app.post("/api/blockchain/transactions", async (_req, res) => {
+  res.status(503).json({
+    state: "FUTURE_GATED",
+    error: "Blockchain writes are unavailable; no transaction was signed, broadcast, or confirmed.",
+    txHash: null,
+    walletSigning: false,
+    mainnet: false,
+  });
 });
 
 // ── Social ──
@@ -379,27 +416,27 @@ app.post("/api/admin/verify", authLimiter, (req, res) => {
   res.status(403).json({ error: "Invalid admin secret" });
 });
 
-// ── Trade (bridge to BitGet) ──
-app.post("/api/trade", async (req, res) => {
-  const token = req.headers["x-hub-token"] as string;
-  if (!token) return res.status(401).json({ error: "Auth required" });
-  const userResult = await dbQuery("SELECT id FROM hub_users WHERE session_token = $1", [token]);
-  if (!userResult.rows[0]) return res.status(401).json({ error: "Invalid token" });
-  const { symbol, side, amount } = req.body;
-  const txHash = "0x" + crypto.randomBytes(32).toString("hex");
-  // Log activity
-  await dbQuery(
-    "INSERT INTO hub_activity_feed (user_id, activity_type, title, description) VALUES ($1, 'trade', $2, $3)",
-    [userResult.rows[0].id, `${side} ${amount} ${symbol}`, `Trade executed via hub`]
-  );
-  res.json({ success: true, txHash, symbol, side, amount, status: "confirmed" });
+// ── Trade ──
+app.post("/api/trade", async (_req, res) => {
+  res.status(503).json({
+    state: "FUTURE_GATED",
+    error: "Live trading is unavailable; no order, fill, position, or transaction was created.",
+    success: false,
+    txHash: null,
+    liveTrade: false,
+    verifiedExecution: false,
+  });
 });
 
 // ── Game ──
-app.post("/api/game", async (req, res) => {
-  const won = Math.random() > 0.5;
-  const score = Math.floor(Math.random() * 100);
-  res.json({ success: true, won, score, reward: won ? 0.001 : 0 });
+app.post("/api/game", async (_req, res) => {
+  res.json({
+    state: "SIMULATION_ONLY",
+    success: true,
+    reward: 0,
+    rewardEffect: false,
+    entitlementCreated: false,
+  });
 });
 
 // ── Referral ──
@@ -435,21 +472,14 @@ app.get("/api/hub/events", async (_req, res) => {
 });
 
 // ── Subscribe ──
-app.post("/api/hub/subscribe", async (req, res) => {
-  const token = req.headers["x-hub-token"] as string;
-  if (!token) return res.status(401).json({ error: "Auth required" });
-  const userResult = await dbQuery("SELECT id FROM hub_users WHERE session_token = $1", [token]);
-  if (!userResult.rows[0]) return res.status(401).json({ error: "Invalid token" });
-  const { plan_id } = req.body;
-  const planResult = await dbQuery("SELECT * FROM hub_plans WHERE id = $1", [plan_id]);
-  const plan = planResult.rows[0];
-  const durationDays = plan?.duration_days || 30;
-  await dbQuery(
-    "INSERT INTO hub_subscriptions (user_id, plan_id, status, expires_at) VALUES ($1, $2, 'active', NOW() + MAKE_INTERVAL(days => $3))",
-    [userResult.rows[0].id, plan_id, durationDays]
-  );
-  await dbQuery("UPDATE hub_users SET subscription_tier = $1 WHERE id = $2", [plan_id, userResult.rows[0].id]);
-  res.json({ success: true, plan_id, status: "active", expires_in_days: durationDays });
+app.post("/api/hub/subscribe", async (_req, res) => {
+  res.status(503).json({
+    state: "PAYMENT_AND_ENTITLEMENT_GATED",
+    error: "Subscription activation is unavailable until payment, finality, idempotency, refund, and durable entitlement receipts are verified.",
+    success: false,
+    paymentEffect: false,
+    entitlementCreated: false,
+  });
 });
 
 // ── Session Heartbeat ──
