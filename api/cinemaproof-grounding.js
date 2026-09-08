@@ -59,12 +59,14 @@ function compact(result,retrievedAt){
   const content=result?.result?.content||[];
   const texts=content.filter(x=>x?.type==="text").map(x=>x.text).join("\n");
   let parsed=null; try{parsed=JSON.parse(texts)}catch{}
-  const rows=(parsed?.results||parsed?.search?.results||[]).slice(0,8);
+  const candidateRows=Array.isArray(parsed?.results)?parsed.results:Array.isArray(parsed?.search?.results)?parsed.search.results:[];
+  const rows=candidateRows.slice(0,8);
   const sources=rows.map(x=>{
     const url=x.url||null;
     const canonicalUrl=canonicalizeUrl(url);
     const rank=authority(canonicalUrl||url);
-    const identity=canonicalUrl||String(x.title||"").trim().toLowerCase();
+    const fallbackFingerprint=JSON.stringify({title:String(x.title||"").trim().toLowerCase(),publicationDate:x.published_at||x.publication_date||null,excerpts:Array.isArray(x.excerpts)?x.excerpts.slice(0,3):[],snippet:x.snippet||null});
+    const identity=canonicalUrl||(x.id!=null?`upstream:${String(x.id)}`:`fallback:${fallbackFingerprint}`);
     return {sourceId:stableId("src",identity),title:x.title||null,url,canonicalUrl,publicationDate:x.published_at||x.publication_date||null,authorityClass:rank.class,authorityRationale:rank.rationale,excerpts:(x.excerpts||[]).slice(0,3)};
   }).sort((a,b)=>(AUTHORITY_WEIGHT[b.authorityClass]-AUTHORITY_WEIGHT[a.authorityClass])||a.sourceId.localeCompare(b.sourceId));
   const dated=sources.filter(x=>x.publicationDate).length;
