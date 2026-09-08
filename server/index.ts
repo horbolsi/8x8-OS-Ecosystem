@@ -132,37 +132,62 @@ app.post("/api/hub/auth/verify", async (req, res) => {
 });
 
 // ── AI Chat (policy-aware provider fallback) ──
+function normalizeAiMessages(value: unknown): Array<{ role: "user" | "assistant"; content: string }> | null {
+  if (!Array.isArray(value) || value.length === 0 || value.length > 32) return null;
+  const out: Array<{ role: "user" | "assistant"; content: string }> = [];
+  for (const item of value) {
+    if (!item || (item.role !== "user" && item.role !== "assistant") || typeof item.content !== "string") return null;
+    const content = item.content.trim();
+    if (!content || content.length > 6000) return null;
+    out.push({ role: item.role, content });
+  }
+  return out.some(item => item.role === "user") ? out : null;
+}
+
+function aiToken(text: string, token: string) {
+  const escaped = token.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
+  return new RegExp("(^|[^a-z0-9])" + escaped + "([^a-z0-9]|$)", "i").test(text);
+}
+
+function safeAiProviderReply(value: unknown): string | null {
+  if (typeof value !== "string" || !value.trim()) return null;
+  const reply = value.trim().slice(0, 8000);
+  const sensitive = /\b(trade|trading|payment|wallet|sign|signed|signing|mainnet|mint|minted|minting|stake|staking|yield|apy|balance|transaction|confirmed|price|fee|tax|token|nft)\b/i;
+  return sensitive.test(reply) ? null : reply;
+}
+
 app.post("/api/ai/chat", async (req, res) => {
   try {
-    const { messages } = req.body;
-    const lastMsg = messages?.[messages.length - 1]?.content || "";
+    const messages = normalizeAiMessages(req.body?.messages);
+    if (!messages) return res.status(400).json({ error: "invalid_messages", allowedRoles: ["user", "assistant"] });
+    const lastMsg = messages[messages.length - 1].content;
     const policyContext = "Truth boundaries: SOURCE_PRESENT is not RUNTIME_ACTIVE or VERIFIED. LIVE_TRADE=false, PAYMENT_EFFECT=false, WALLET_SIGNING=false, MAINNET=false. Current source policy: maximum supply 8,888,888; 4.44% only for explicitly defined events; ordinary non-sale/P2P companion-token transfers 0%. Former 4.88% and legacy Pi/ETH semantics are PAST_PRESERVED.";
-    let reply = null;
+    let reply: string | null = null;
     try {
       const ollamaUrl = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
       const resp = await fetch(`${ollamaUrl}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "tinyllama", messages: [{ role: "system", content: `You are Pioneer AI for 8x8 OS. Be concise and policy-aware. ${policyContext}` }, ...(messages || [])], stream: false, options: { num_predict: 200 } }),
+        body: JSON.stringify({ model: "tinyllama", messages: [{ role: "system", content: `You are Pioneer AI for 8x8 OS. Be concise and policy-aware. ${policyContext}` }, ...messages], stream: false, options: { num_predict: 200 } }),
         signal: AbortSignal.timeout(15000),
       });
       if (resp.ok) {
         const data = await resp.json();
-        reply = data.message?.content || data.response;
+        reply = safeAiProviderReply(data.message?.content || data.response);
       }
     } catch { /* Ollama not available */ }
 
     if (!reply) {
       const lower = lastMsg.toLowerCase();
-      if (lower.includes("nft")) reply = "NFT Vault references are SOURCE_ONLY / NOT_AUDITED / NOT_DEPLOYED / FUTURE_GATED. No mint, burn, stake, ownership, or chain provenance is verified.";
-      else if (lower.includes("staking")) reply = "Staking and mining are FUTURE_GATED. No APY, reward, or productive staking runtime is verified.";
-      else if (lower.includes("trade")) reply = "LIVE_TRADE=false. MARKET_DATA is not STRATEGY_SIGNAL, PAPER_POSITION, LIVE_ORDER, or VERIFIED_EXECUTION.";
-      else if (lower.includes("fee") || lower.includes("tax") || lower.includes("policy")) reply = "Current source policy: 4.44% applies only to explicitly defined events; ordinary non-sale/P2P companion-token transfers are 0%. Former 4.88% is superseded.";
-      else if (lower.includes("wallet")) reply = "Wallet surfaces are watch-only or source-only. WALLET_SIGNING=false; balances and chain authority remain unavailable without a fresh receipt.";
+      if (aiToken(lower, "nft")) reply = "NFT Vault references are SOURCE_ONLY / NOT_AUDITED / NOT_DEPLOYED / FUTURE_GATED. No mint, burn, stake, ownership, or chain provenance is verified.";
+      else if (aiToken(lower, "staking")) reply = "Staking and mining are FUTURE_GATED. No APY, reward, or productive staking runtime is verified.";
+      else if (aiToken(lower, "trade")) reply = "LIVE_TRADE=false. MARKET_DATA is not STRATEGY_SIGNAL, PAPER_POSITION, LIVE_ORDER, or VERIFIED_EXECUTION.";
+      else if (aiToken(lower, "fee") || aiToken(lower, "tax") || aiToken(lower, "policy")) reply = "Current source policy: 4.44% applies only to explicitly defined events; ordinary non-sale/P2P companion-token transfers are 0%. Former 4.88% is superseded.";
+      else if (aiToken(lower, "wallet")) reply = "Wallet surfaces are watch-only or source-only. WALLET_SIGNING=false; balances and chain authority remain unavailable without a fresh receipt.";
       else reply = `Pioneer AI received: "${lastMsg.substring(0, 80)}". I can explain source policy while separating source, simulation, runtime, and verified execution.`;
     }
 
-    res.json({ reply, source: reply ? "ai" : "fallback", effects: { liveTrade: false, payment: false, walletSigning: false, mainnet: false } });
+    res.json({ reply, source: "policy-validated", effects: { liveTrade: false, payment: false, walletSigning: false, mainnet: false } });
   } catch {
     res.status(500).json({ error: "AI service error" });
   }
