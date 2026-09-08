@@ -15,7 +15,7 @@ const KNOWLEDGE_BASE: Record<string, string> = {
   wallet: "Wallet surfaces are watch-only or source-only unless separately verified. WALLET_SIGNING=false and no send, receive, seed, private-key, balance, or chain authority is implied.",
   governance: "Governance is a source-policy concept. No live vote, treasury action, or token-weighted authority is established by this interface.",
   referral: "Referral and reward claims require an explicit entitlement ledger and durable receipt. None is proven by this knowledge base.",
-  store: "Store, subscription, and payment capabilities are FUTURE_GATED until destination, amount, fee, idempotency, confirmation, refund, entitlement, and rollback receipts are present.",
+  store: "Store, subscription, and payment capabilities are FUTURE_GATED until destination provenance, amount, fee disclosure, replay/idempotency, confirmation/finality, durable entitlement, failure recovery, refund/cancellation, security review, and rollback receipts are present.",
   radio: "Radio and media surfaces are independent of economic or blockchain execution.",
   "8pass": "8Pass is a source-level membership concept. It does not prove a paid subscription, trading-fee discount, token entitlement, or payment completion.",
   pi: "Legacy Pi-chain and Pi-price semantics are PAST_PRESERVED donors, not current policy or deployed-chain proof.",
