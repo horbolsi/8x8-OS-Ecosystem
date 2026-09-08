@@ -97,7 +97,7 @@ test("economy routes fail closed and preserve current policy", async t => {
   assert.match(policyReply.body.reply, /P2P/);
   assert.match(policyReply.body.reply, /4\.88/);
   assert.equal(policyReply.body.effects.liveTrade, false);
-  assert.equal(policyReply.body.effects.payment, false);
+  assert.equal(policyReply.body.effects.paymentEffect, false);
   assert.equal(policyReply.body.effects.walletSigning, false);
   assert.equal(policyReply.body.effects.mainnet, false);
 });
