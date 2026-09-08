@@ -16,6 +16,18 @@ const EFFECTS = Object.freeze({
   tokenMint: false,
   stakingEffect: false,
 });
+const PAYMENT_ACCEPTANCE_GATES = Object.freeze({
+  destinationProvenance: false,
+  amountBound: false,
+  feeDisclosure: false,
+  replayIdempotency: false,
+  confirmationFinality: false,
+  entitlementDurability: false,
+  failureRecovery: false,
+  refundCancellation: false,
+  securityReview: false,
+  rollback: false,
+});
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -83,6 +95,18 @@ app.post("/api/staking", (_req, res) => gated(
   "Staking is unavailable; no stake, reward, entitlement, or transaction was created.",
   { txHash: null }
 ));
+
+// Payment readiness is query-only and fails closed until every acceptance gate is proven.
+app.get("/api/payment-readiness", (_req, res) => {
+  const ready = Object.values(PAYMENT_ACCEPTANCE_GATES).every(Boolean);
+  res.json({
+    state: ready ? "PRESENT_PROVEN" : "BLOCKED_GATES_INCOMPLETE",
+    paymentAcceptance: ready,
+    entitlementCreation: false,
+    gates: PAYMENT_ACCEPTANCE_GATES,
+    effects: EFFECTS,
+  });
+});
 
 // Plans: catalog data is not payment acceptance or entitlement.
 app.get("/api/hub/plans", (_req, res) => {
