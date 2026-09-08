@@ -236,7 +236,7 @@ app.get("/api/hub/events", (_req, res) => res.json({ events: [] }));
 app.post("/api/hub/subscribe", (_req, res) => gated(
   res,
   "PAYMENT_AND_ENTITLEMENT_GATED",
-  "Subscription activation is unavailable until destination, fee, idempotency, finality, refund, recovery, durable entitlement, security, and rollback receipts are verified.",
+  "Subscription activation is unavailable until destination provenance, amount, fee disclosure, replay/idempotency, confirmation/finality, durable entitlement, failure recovery, refund/cancellation, security review, and rollback receipts are verified.",
   { entitlementCreated: false }
 ));
 
