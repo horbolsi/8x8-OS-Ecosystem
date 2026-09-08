@@ -5,6 +5,7 @@ import {
   canonicalizeUrl,
   compact,
   stableId,
+  postMcp,
 } from "../api/cinemaproof-grounding.js";
 
 const retrievedAt = "2026-09-08T16:20:00.000Z";
@@ -78,4 +79,32 @@ test("compact distinguishes empty, undated, and dated evidence", () => {
     retrievedAt,
   );
   assert.equal(dated.usabilityState, "USABLE_DATED_EVIDENCE");
+});
+
+test("postMcp exposes bounded timeout as AbortError", async () => {
+  const fetchImpl = (_url, { signal }) =>
+    new Promise((_resolve, reject) => {
+      signal.addEventListener("abort", () => {
+        const error = new Error("aborted");
+        error.name = "AbortError";
+        reject(error);
+      });
+    });
+  await assert.rejects(
+    postMcp({}, null, { fetchImpl, timeoutMs: 5 }),
+    (error) => error.name === "AbortError",
+  );
+});
+
+test("postMcp preserves non-timeout upstream HTTP failure", async () => {
+  const fetchImpl = async () => ({
+    ok: false,
+    status: 503,
+    headers: { get: () => null },
+    text: async () => JSON.stringify({ error: "unavailable" }),
+  });
+  const response = await postMcp({}, null, { fetchImpl, timeoutMs: 50 });
+  assert.equal(response.ok, false);
+  assert.equal(response.status, 503);
+  assert.deepEqual(response.json, { error: "unavailable" });
 });
