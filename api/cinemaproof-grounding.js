@@ -56,7 +56,7 @@ async function postMcp(body,session,{fetchImpl=fetch,timeoutMs=UPSTREAM_TIMEOUT_
 }
 
 function compact(result,retrievedAt){
-  const content=result?.result?.content||[];
+  const content=Array.isArray(result?.result?.content)?result.result.content:[];
   const texts=content.filter(x=>x?.type==="text").map(x=>x.text).join("\n");
   let parsed=null; try{parsed=JSON.parse(texts)}catch{}
   const candidateRows=Array.isArray(parsed?.results)?parsed.results:Array.isArray(parsed?.search?.results)?parsed.search.results:[];
