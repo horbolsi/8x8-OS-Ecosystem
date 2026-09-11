@@ -1,0 +1,43 @@
+{
+  "schema": "8x8.genesis.prelaunch.reservation-surface.v1",
+  "canonical_root": "fabric://8x8/core",
+  "brand": "©️8x8 by FlashTM8 ⚡️🌎🤖",
+  "release": "GENESIS-PRELAUNCH-20260910",
+  "truth": {
+    "public_marketing_surface": "PRESENT_PROVEN_SOURCE",
+    "non_binding_interest_intake": "PRESENT_PROVEN_SOURCE",
+    "account_registration": "UNKNOWN_UNTIL_PROTECTED_RUNTIME_READBACK",
+    "durable_genesis_reservation_ledger": "BLOCKED_DATABASE_BINDING_NOT_CONFIGURED_ON_CURRENT_PRODUCTION",
+    "crypto_payment_acceptance": "FUTURE_GATED",
+    "sale_open": false,
+    "wallet_signing": false,
+    "mainnet": false,
+    "token_mint": false,
+    "nft_mint": false,
+    "live_trade": false,
+    "funded_liquidity": false
+  },
+  "genesis": {
+    "eligible_paid_user_target": 88888,
+    "monthly_subscription_reference_usd": "8.88",
+    "available_plan_months": [1,3,6,9,12],
+    "planned_qualified_bundle": {
+      "nft_vault_units": 1,
+      "locked_native_8x8_per_vault": 1,
+      "functional_tokens": ["Tx8","Ux8","Fx8","XM8","0x8","TM8","Mx8","Sx8"],
+      "functional_token_units_each_per_paid_month": 1,
+      "distribution_trigger": "AFTER_88888_QUALIFIED_PAID_NON_DUPLICATE_SUBSCRIBERS_AND_ALL_DISTRIBUTION_GATES"
+    }
+  },
+  "gates": {
+    "1": "DISCOVER_AND_NON_BINDING_GENESIS_INTEREST",
+    "2": "IDENTITY_ACCOUNT_PATH_TRUTH_GATED",
+    "3": "FULL_PUBLIC_SAFE_8X8_WORLD_DEMO"
+  },
+  "fee_policy": {
+    "explicit_8x8_buy_sell_percent_when_applicable": "4.44",
+    "ordinary_non_sale_p2p_transfer_percent": "0",
+    "legacy_4_88": "PAST_PRESERVED"
+  },
+  "promotion_rule": "Never convert interest intent into paid Genesis reservation or expose a receiving address until the exact presale-readiness, legal/compliance, settlement, signer, entitlement and owner-runtime promotion gates are PRESENT_PROVEN."
+}
