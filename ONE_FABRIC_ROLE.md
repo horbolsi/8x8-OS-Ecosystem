@@ -3,7 +3,7 @@
 **Project:** ©️8x8 by FlashTM8 ⚡️🌎🤖  
 **Canonical logical root:** `fabric://8x8/core`  
 **Repository:** `horbolsi/8x8-OS-Ecosystem`  
-**Primary lifecycle classification:** `DEPLOYMENT`  
+**Primary lifecycle classification:** `DORMANT DONOR / HISTORICAL DEPLOYMENT CARRIER`  
 **Contract version:** `ONE_FABRIC_REPOSITORY_ROLE_V1`  
 **Recorded:** `2026-09-11 UTC`
 
@@ -87,3 +87,7 @@ Every adoption from this repository into another must record source repository, 
 ## Current verification boundary
 
 This role contract classifies intent and authority. It does **not** prove that this repository is cloned on the S22, synchronized into Ubuntu PRoot, deployed publicly, authenticated, healthy, or productive. A fresh read-only device and deployment census is required for those claims.
+
+## Legacy-code containment
+
+The full-stack routes, owner/admin middleware, payment, tokenomics, staking, mining, vesting, referral, wallet, and related modules in this repository are **PAST_PRESERVED donor implementations**. Their presence is not authorization to deploy them or proof that the represented value-bearing functions are live. Current public deployment must originate from the separately approved User Edition release train, and any adopted module must pass security, policy, tenant-isolation, and current economic-state review.
