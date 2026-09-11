@@ -19,8 +19,13 @@
   "airdrop": false,
   "funded_liquidity": false,
   "live_trade": false,
+  "browser_asset_aliases": {
+    "/styles.css": "/telegram/styles.css",
+    "/app.js": "/telegram/app.js",
+    "/feature-registry.js": "/telegram/feature-registry.js"
+  },
   "active_git_blobs": {
-    "telegram/index.html": "116736150c495fa46c468f4bf1218dfacbd6ff94",
+    "telegram/index.html": "df6ac660c175f9c9b4b5bf4005065c4107bb5f4b",
     "presale/index.html": "b0be6b73c5ba558329faf08267e17ee8e033692d"
   },
   "truth": {
