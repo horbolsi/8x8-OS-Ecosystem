@@ -1,29 +1,26 @@
 import { Request, Response } from 'express';
 
-const SYSTEM_PROMPT = `You are Pioneer AI, the intelligent guardian of the 8×8 Ecosystem — a cyberpunk blockchain hub. You are powered by TinyLlama and help users with:
-- 8×8 Hub features (NFT vaults, staking, trading, governance, referrals, store)
-- Token info: 8x8 (Pi Network), TM8 (AI token), 0x8 (governance token)
-- DeFi concepts, crypto trading strategies
-- Technical analysis (RSI, MACD, SMA, EMA, VWAP)
-- Pi Network ecosystem
-- Seraphim Guardian security features
-Be concise, helpful, and use cyberpunk terminology. Always reference 8×8 Ecosystem specifics when relevant.`;
+const SYSTEM_PROMPT = `You are Pioneer AI, a policy-aware, read-only guide to the 8×8 Ecosystem.
+Truth boundaries:
+- SOURCE_PRESENT is not RUNTIME_ACTIVE, PRODUCTIVE, AUDITED, DEPLOYED, or VERIFIED.
+- MARKET_DATA is not STRATEGY_SIGNAL, PAPER_POSITION, LIVE_ORDER, or VERIFIED_EXECUTION.
+- LIVE_TRADE=false, PAYMENT_EFFECT=false, WALLET_SIGNING=false, MAINNET=false.
+Current canonical source policy: maximum supply 8,888,888; 4.44% applies only where an explicitly defined economic event says so; ordinary non-sale/P2P companion-token transfers are 0%. The former 4.88% policy and legacy Pi semantics are PAST_PRESERVED, not current.
+Never claim live minting, burning, staking, trading, wallet transfer, mainnet execution, yield, price, balances, or confirmation without a fresh runtime receipt. Keep answers concise and label unknown or future-gated capabilities explicitly.`;
 
 const KNOWLEDGE_BASE: Record<string, string> = {
-  nft: "8×8 NFT Vaults support up to 8,888,888 NFTs. Each vault permanently locks 0.001 π. You can mint, burn (earn 8x8 tokens), and stake NFTs. Burn mechanics reduce supply and reward holders.",
-  staking: "The 8×8 staking system supports PoW (Proof of Work), PoS (Proof of Stake), and PoSt (Proof of Storage). Allocation sliders must total 100%. Storage packages: 8GB, 88GB, 888GB. Current APY ~8-18% depending on pool.",
-  trade: "The 8×8 Trade Engine offers: Swap (4.88% fee, 1% with 8Pass), 3-Min Dash (leveraged 3x/5x/8x/16x positions closing in 3 minutes), Order Book, and Perpetual Positions. Fee breakdown: Liquidity 1%, Staking 0.6%, Mining 0.6%, Rewards 1%, Dev 0.8%, LSMR 0.8%, Burn 0.08%.",
-  wallet: "The 8×8 Wallet supports MetaMask, OKX Wallet, and Pi Wallet. Manage 8x8, TM8, 0x8, and π tokens. Send/receive with QR codes, view transaction history, and connect multiple chains.",
-  governance: "0x8 token holders vote on ecosystem parameters: burn rate, supply limits, LSMR allocation, fee structure. Proposals use quadratic voting weighted by 0x8 holdings.",
-  referral: "3-tier referral system: Tier 1 (direct) = full reward, Tier 2 = 0.8× reward, Tier 3 = 0.6× reward. Track your network in the referral tree visualization.",
-  store: "8×8 Global Store has 88 locations across 14 countries, 8 categories: NFTs, Passes, Access, Tokens, Food, Travel, Digital. 8Pass holders get priority access and 1% trading fee.",
-  radio: "5 radio stations: 8×8 Radio Alpha (ecosystem news), Pioneer FM (AI-curated music), Crypto Waves (market analysis), Pi Community (Pi Network), DeFi Beats (electronic). Background playback across all pages.",
-  "8pass": "8Pass is the VIP membership. Benefits: 1% trading fee (vs 4.88% standard), priority store access, exclusive NFT drops, governance voting multiplier.",
-  pi: "Pi Network is the foundational blockchain. 8x8 tokens are built on Pi. 1 π ≈ $1.14 USD. Pi wallet connects directly in the 8×8 Hub.",
-  rsi: "RSI (Relative Strength Index) is a momentum oscillator. RSI < 30 = oversold (potential buy signal). RSI > 70 = overbought (potential sell signal). RSI 50 = neutral momentum.",
-  macd: "MACD (Moving Average Convergence Divergence) = EMA(12) - EMA(26). Positive MACD = bullish. Negative MACD = bearish. Signal line crossovers indicate entry/exit points.",
-  vwap: "VWAP (Volume Weighted Average Price) = Σ(Price×Volume) / Σ(Volume). Price above VWAP = bullish. Price below VWAP = bearish. Used by institutions as a benchmark.",
-  default: "I'm Pioneer AI, guardian of the 8×8 Ecosystem. I can help you with NFT vaults, staking, trading, governance, referrals, the store, Pi Network, crypto analysis, and all hub features. What would you like to know?",
+  nft: "NFT Vault reference designs are SOURCE_ONLY / NOT_AUDITED / NOT_DEPLOYED / FUTURE_GATED unless a fresh receipt proves otherwise. Source presence is not minting, burning, staking, ownership, or chain provenance.",
+  staking: "Staking and mining are FUTURE_GATED. No APY, reward, PoW, PoS, PoSt, or productive staking runtime is verified here.",
+  trade: "Trading is disabled: LIVE_TRADE=false. Market data is not a strategy signal; a signal is not a paper position; a paper position is not a live order or verified execution. No leverage, perpetual, swap, order, or withdrawal authority is granted.",
+  wallet: "Wallet surfaces are watch-only or source-only unless separately verified. WALLET_SIGNING=false and no send, receive, seed, private-key, balance, or chain authority is implied.",
+  governance: "Governance is a source-policy concept. No live vote, treasury action, or token-weighted authority is established by this interface.",
+  referral: "Referral and reward claims require an explicit entitlement ledger and durable receipt. None is proven by this knowledge base.",
+  store: "Store, subscription, and payment capabilities are FUTURE_GATED until destination, amount, fee, idempotency, confirmation, refund, entitlement, and rollback receipts are present.",
+  radio: "Radio and media surfaces are independent of economic or blockchain execution.",
+  "8pass": "8Pass is a source-level membership concept. It does not prove a paid subscription, trading-fee discount, token entitlement, or payment completion.",
+  pi: "Legacy Pi-chain and Pi-price semantics are PAST_PRESERVED donors, not current policy or deployed-chain proof.",
+  policy: "Current source policy: maximum supply 8,888,888; 4.44% only for explicitly defined events; ordinary non-sale/P2P companion-token transfers 0%. The former 4.88% reference is superseded.",
+  default: "I can explain the 8×8 source policy and clearly separate source, simulation, runtime, and verified execution. Economic and blockchain effects remain disabled unless a fresh scoped receipt proves otherwise.",
 };
 
 function smartFallback(prompt: string): string {
@@ -31,12 +28,12 @@ function smartFallback(prompt: string): string {
   for (const [key, answer] of Object.entries(KNOWLEDGE_BASE)) {
     if (key !== 'default' && lower.includes(key)) return answer;
   }
-  if (lower.includes('fee') || lower.includes('commission')) return KNOWLEDGE_BASE.trade;
-  if (lower.includes('token') || lower.includes('8x8') || lower.includes('tm8') || lower.includes('0x8')) return "Token info — 8x8: Pi Network ecosystem token. TM8: AI utility token (used for AI features, staking rewards). 0x8: Governance token (vote on ecosystem parameters). All three can be staked, traded, and used in the 8×8 Hub.";
-  if (lower.includes('buy') || lower.includes('sell') || lower.includes('price') || lower.includes('market')) return "For live trading: Use the Trade page for Swap, 3-Min Dash, or Perpetuals. For BTC real-time analysis with multi-exchange WebSocket data, technical indicators (RSI, MACD, VWAP), and BUY/SELL signals, visit the BTC Realtime page.";
-  if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) return "Greetings, Pioneer! I am Pioneer AI. Ask me anything about the 8×8 Ecosystem: NFTs, staking, trading, governance, or crypto analysis. I'm powered by TinyLlama and trained on 8×8 knowledge.";
-  if (lower.includes('help') || lower.includes('what can')) return "I can help you with: NFT Vaults (mint/burn/stake up to 8,888,888 NFTs), Staking (PoW/PoS/PoSt pools), Trading (Swap, 3-Min Dash, Order Book), Governance (0x8 voting), Referrals (3-tier rewards), Store (88 global locations), and Technical Analysis (RSI, MACD, VWAP). What do you need?";
-  if (lower.includes('seraphim') || lower.includes('guardian')) return "Seraphim is the Guardian AI of the 8×8 Ecosystem. She monitors security, verifies identities, seals NFT vaults, and works alongside Pioneer AI to protect Pioneer assets.";
+  if (lower.includes('fee') || lower.includes('tax') || lower.includes('commission') || lower.includes('4.44')) return KNOWLEDGE_BASE.policy;
+  if (lower.includes('token') || lower.includes('8x8') || lower.includes('tm8') || lower.includes('0x8')) return "Token designs are source-policy references only. Maximum supply is 8,888,888; ordinary non-sale/P2P companion-token transfers are 0%; no mint, distribution, staking, trading, or chain deployment is verified.";
+  if (lower.includes('buy') || lower.includes('sell') || lower.includes('price') || lower.includes('market')) return KNOWLEDGE_BASE.trade;
+  if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) return "Greetings. I can help with source-policy and read-only ecosystem questions while keeping runtime and value-effect claims explicit.";
+  if (lower.includes('help') || lower.includes('what can')) return "I can explain source policy, NFT Vault provenance requirements, watch-only wallet boundaries, chain-observer states, and paper/simulation concepts. I will not present them as deployed financial execution.";
+  if (lower.includes('seraphim') || lower.includes('guardian')) return "Seraphim is a preserved guardian concept. Current identity, heartbeat, lease, security actions, and productive artifacts require fresh verification.";
   return KNOWLEDGE_BASE.default;
 }
 

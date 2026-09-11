@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "node server/index.js"
+    "dev": "node server/index.js",
+    "test": "node --test tests/economy_failclose.test.js"
   },
   "dependencies": {
     "express": "^5.0.1",

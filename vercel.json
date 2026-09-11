@@ -3,249 +3,87 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/_8x8/release",
-      "destination": "/release-identity.json"
-    },
-    {
-      "source": "/_8x8/telegram-release",
-      "destination": "/release-identity.json"
-    },
-    {
-      "source": "/",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/one-fabric",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/one-fabric/",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/telegram",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/telegram/",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/discord",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/discord/",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/android",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/android/",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/ios",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/ios/",
-      "destination": "/v40/index.html"
-    },
-    {
-      "source": "/api/v40/status",
-      "destination": "/api/v40-status"
-    },
-    {
-      "source": "/stable",
-      "destination": "/stable/index.html"
-    },
-    {
-      "source": "/stable/",
-      "destination": "/stable/index.html"
-    },
-    {
-      "source": "/r6",
-      "destination": "/r6/index.html"
-    },
-    {
-      "source": "/r6/",
-      "destination": "/r6/index.html"
-    },
-    {
-      "source": "/r5",
-      "destination": "/r5/index.html"
-    },
-    {
-      "source": "/r5/",
-      "destination": "/r5/index.html"
-    },
-    {
-      "source": "/r4",
-      "destination": "/r4/index.html"
-    },
-    {
-      "source": "/r4/",
-      "destination": "/r4/index.html"
-    },
-    {
-      "source": "/r3",
-      "destination": "/r3/index.html"
-    },
-    {
-      "source": "/r3/",
-      "destination": "/r3/index.html"
-    },
-    {
-      "source": "/cinemaproof",
-      "destination": "/cinemaproof/index.html"
-    },
-    {
-      "source": "/cinemaproof/",
-      "destination": "/cinemaproof/index.html"
-    },
-    {
-      "source": "/telegram/cinemaproof",
-      "destination": "/cinemaproof/index.html"
-    },
-    {
-      "source": "/telegram/cinemaproof/",
-      "destination": "/cinemaproof/index.html"
-    },
-    {
-      "source": "/((?!api/|v40/|.*\\.).*)",
-      "destination": "/v40/index.html"
-    }
+    {"source":"/_8x8/release","destination":"/release-identity.json"},
+    {"source":"/_8x8/telegram-release","destination":"/telegram-release-identity.json"},
+    {"source":"/styles.css","destination":"/telegram/styles.css"},
+    {"source":"/app.js","destination":"/telegram/app.js"},
+    {"source":"/feature-registry.js","destination":"/telegram/feature-registry.js"},
+    {"source":"/","destination":"/index.html"},
+    {"source":"/world","destination":"/index.html"},
+    {"source":"/world/","destination":"/index.html"},
+    {"source":"/stable","destination":"/index.html"},
+    {"source":"/stable/","destination":"/index.html"},
+    {"source":"/genesis","destination":"/presale/index.html"},
+    {"source":"/genesis/","destination":"/presale/index.html"},
+    {"source":"/join","destination":"/join/index.html"},
+    {"source":"/join/","destination":"/join/index.html"},
+    {"source":"/telegram","destination":"/telegram/index.html"},
+    {"source":"/telegram/","destination":"/telegram/index.html"},
+    {"source":"/ssi","destination":"/ssi/index.html"},
+    {"source":"/ssi/","destination":"/ssi/index.html"},
+    {"source":"/one-fabric","destination":"/v40/index.html"},
+    {"source":"/one-fabric/","destination":"/v40/index.html"},
+    {"source":"/discord","destination":"/v40/index.html"},
+    {"source":"/discord/","destination":"/v40/index.html"},
+    {"source":"/android","destination":"/v40/index.html"},
+    {"source":"/android/","destination":"/v40/index.html"},
+    {"source":"/ios","destination":"/v40/index.html"},
+    {"source":"/ios/","destination":"/v40/index.html"},
+    {"source":"/api/v40/status","destination":"/api/v40-status"},
+    {"source":"/r6","destination":"/r6/index.html"},
+    {"source":"/r6/","destination":"/r6/index.html"},
+    {"source":"/r5","destination":"/r5/index.html"},
+    {"source":"/r5/","destination":"/r5/index.html"},
+    {"source":"/r4","destination":"/r4/index.html"},
+    {"source":"/r4/","destination":"/r4/index.html"},
+    {"source":"/r3","destination":"/r3/index.html"},
+    {"source":"/r3/","destination":"/r3/index.html"},
+    {"source":"/cinemaproof","destination":"/cinemaproof/index.html"},
+    {"source":"/cinemaproof/","destination":"/cinemaproof/index.html"},
+    {"source":"/telegram/cinemaproof","destination":"/cinemaproof/index.html"},
+    {"source":"/telegram/cinemaproof/","destination":"/cinemaproof/index.html"},
+    {"source":"/((?!api/|v40/|presale/|launch/|join/|ssi/|telegram/|r6/|r5/|r4/|r3/|cinemaproof/|.*\\.).*)","destination":"/index.html"}
   ],
   "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "payment=(), usb=(), serial=(), bluetooth=()"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
-        },
-        {
-          "key": "X-8X8-Release-Identity",
-          "value": "V40-AUTHENTIC-ONE-SURFACE-20260827"
-        },
-        {
-          "key": "X-8X8-Canonical-Root",
-          "value": "fabric://8x8/core"
-        },
-        {
-          "key": "X-8X8-Source-Head",
-          "value": "6210a35cdbdbc08b5f0b9511e08c3c465ae94314"
-        },
-        {
-          "key": "X-8X8-Public-Private-Boundary",
-          "value": "PUBLIC-TENANT-CARRIER-NO-OWNER-PRIVATE-CORE"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/telegram(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Carrier",
-          "value": "TELEGRAM"
-        },
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
-        }
-      ]
-    },
-    {
-      "source": "/discord(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Carrier",
-          "value": "DISCORD"
-        }
-      ]
-    },
-    {
-      "source": "/android(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Carrier",
-          "value": "ANDROID"
-        }
-      ]
-    },
-    {
-      "source": "/ios(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Carrier",
-          "value": "IOS"
-        }
-      ]
-    },
-    {
-      "source": "/stable(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Product-Stable",
-          "value": "PAST_PRESERVED"
-        }
-      ]
-    },
-    {
-      "source": "/r6(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Rollback-Carrier",
-          "value": "R6"
-        }
-      ]
-    },
-    {
-      "source": "/r5(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Rollback-Carrier",
-          "value": "R5"
-        }
-      ]
-    },
-    {
-      "source": "/r4(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Rollback-Carrier",
-          "value": "R4"
-        }
-      ]
-    },
-    {
-      "source": "/r3(.*)",
-      "headers": [
-        {
-          "key": "X-8X8-Rollback-Carrier",
-          "value": "R3"
-        }
-      ]
-    }
+    {"source":"/(.*)","headers":[
+      {"key":"X-Content-Type-Options","value":"nosniff"},
+      {"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"},
+      {"key":"Permissions-Policy","value":"camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()"},
+      {"key":"Content-Security-Policy","value":"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self' about:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'"},
+      {"key":"X-8X8-Release-Identity","value":"GENESIS-PRELAUNCH-20260910-PREVIEW"},
+      {"key":"X-8X8-Canonical-Root","value":"fabric://8x8/core"},
+      {"key":"X-8X8-Public-Private-Boundary","value":"PUBLIC-SHELL-NO-PRIVATE-RUNTIME"},
+      {"key":"X-8X8-Launch-Mode","value":"PRELAUNCH-NON-BINDING-NO-CRYPTO-COLLECTION"},
+      {"key":"Cache-Control","value":"no-store, max-age=0"}
+    ]},
+    {"source":"/presale(.*)","headers":[
+      {"key":"X-8X8-Genesis-State","value":"INTEREST-INTENT-OPEN-SALE-FUTURE-GATED"},
+      {"key":"X-Robots-Tag","value":"noindex, nofollow"}
+    ]},
+    {"source":"/telegram(.*)","headers":[
+      {"key":"X-8X8-Carrier","value":"TELEGRAM"},
+      {"key":"X-8X8-Telegram-Mini-App","value":"true"},
+      {"key":"X-8X8-Release-Channel","value":"public-telegram-beta"},
+      {"key":"X-8X8-Backend-Authority","value":"NONE-STATIC-ONLY"},
+      {"key":"X-8X8-Public-Private-Boundary","value":"PUBLIC-SHELL-NO-OWNER-RUNTIME"},
+      {"key":"X-8X8-Financial-Sale-Open","value":"false"},
+      {"key":"X-8X8-Mainnet-Live","value":"false"},
+      {"key":"Cache-Control","value":"no-store, max-age=0"},
+      {"key":"X-Robots-Tag","value":"noindex, nofollow"}
+    ]},
+    {"source":"/ssi(.*)","headers":[
+      {"key":"X-8X8-Preview-Identity","value":"SSI-R5.1-VISION-CONVERGENCE"},
+      {"key":"X-8X8-Release-Channel","value":"preview"},
+      {"key":"X-8X8-Production-Promotion","value":"false"},
+      {"key":"Cache-Control","value":"no-store, max-age=0"},
+      {"key":"X-Robots-Tag","value":"noindex, nofollow"}
+    ]},
+    {"source":"/discord(.*)","headers":[{"key":"X-8X8-Carrier","value":"DISCORD"}]},
+    {"source":"/android(.*)","headers":[{"key":"X-8X8-Carrier","value":"ANDROID"}]},
+    {"source":"/ios(.*)","headers":[{"key":"X-8X8-Carrier","value":"IOS"}]},
+    {"source":"/r6(.*)","headers":[{"key":"X-8X8-Rollback-Carrier","value":"R6"}]},
+    {"source":"/r5(.*)","headers":[{"key":"X-8X8-Rollback-Carrier","value":"R5"}]},
+    {"source":"/r4(.*)","headers":[{"key":"X-8X8-Rollback-Carrier","value":"R4"}]},
+    {"source":"/r3(.*)","headers":[{"key":"X-8X8-Rollback-Carrier","value":"R3"}]}
   ]
 }
