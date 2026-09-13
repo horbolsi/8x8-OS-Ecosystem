@@ -1,44 +1,44 @@
 {
-  "schema": "8x8.telegram-miniapp-release.v4",
+  "schema": "8x8.telegram-miniapp-release.v5",
   "canonical_root": "fabric://8x8/core",
-  "release_id": "PUBLIC-8888-TELEGRAM-SAFE-STATIC-FALLBACK-2026-08-20",
+  "release_id": "GATE1-CONVERGENCE-20260913",
   "route": "/telegram",
   "public_url": "https://8x8-os-ecosystem.vercel.app/telegram",
   "bot": "@app8x8hub_bot",
-  "release_class": "PUBLIC_TELEGRAM_STATIC_FALLBACK_WHILE_PROTECTED_V31_REPROVISIONS",
-  "refresh_request": {
-    "requested_at": "2026-08-27T02:07:00-04:00",
-    "canonical_private_source_head": "b383504c9bb406e1362fcb9da59febb1b5754c86",
-    "intent": "REFRESH_PUBLIC_BROWSER_AND_TELEGRAM_CARRIER_WITHOUT_PROMOTING_UNVERIFIED_PRIVATE_RUNTIME"
+  "release_class": "PUBLIC_ONE_FABRIC_GATE1_SHARED_CARRIER",
+  "source": {
+    "repository": "horbolsi/8x8-OS-Ecosystem",
+    "branch": "main",
+    "gate1_source_commit": "f742ecd9f91fa651c7e395048c84cd0d735f12cb",
+    "entrypoint": "/v40/index.html"
   },
-  "target": {
-    "source_repo": "horbolsi/8x8-OS-Ecosystem",
-    "source_branch": "main",
-    "local_rewrite": "/telegram/index.html",
-    "backend_authority": "NONE_STATIC_ONLY",
-    "protected_runtime_project": "8x8-user-8888",
-    "protected_runtime_current_state": "NOT_VISIBLE_IN_CONNECTED_VERCEL_API_REPROVISION_REQUIRED",
-    "protected_v31_entrypoint": "scripts/run_s22_public_8888_v31_finish_nonfinancial.sh"
+  "carrier_policy": {
+    "browser": "SAME_GATE1_RELEASE",
+    "telegram": "SAME_GATE1_RELEASE",
+    "discord": "SAME_GATE1_RELEASE",
+    "android": "SAME_GATE1_RELEASE",
+    "ios": "SAME_GATE1_RELEASE"
   },
-  "reason": "The previously promoted Gate2 V23 immutable target is historical physical evidence but is no longer resolvable through the connected Vercel project/deployment API. The carrier therefore serves its local tenant-safe static Telegram surface rather than redirecting followers to a dead protected deployment. Retarget only after a fresh protected V31 physical receipt.",
-  "previous_target": "https://8x8-user-8888-35vam1mda-8x8-team-url.vercel.app/",
-  "previous_target_class": "PAST_PRESERVED_PHYSICAL_EVIDENCE_NOT_CURRENT_REACHABILITY_AUTHORITY",
-  "telegram_bot_api_mutation": false,
+  "current_business_surface": {
+    "software_and_digital_services_first": true,
+    "nft_vault": "PREVIEW_FUTURE_GATED_NON_TRANSACTIONAL",
+    "fake_revenue_or_profit_claims": false,
+    "stripe_token_nft_exchange_trading_sales": false
+  },
   "public_private_boundary": "PUBLIC_SHELL_NO_OWNER_RUNTIME",
   "owner_8080_exposed": false,
   "raw_credentials_in_browser_bundle": false,
   "financial_effect": false,
   "payment": false,
-  "signing": false,
+  "wallet_signing": false,
   "mainnet": false,
   "mint": false,
   "airdrop": false,
   "funded_liquidity": false,
-  "social_publish": false,
+  "live_trade": false,
   "top1": "NOT_ESTABLISHED",
-  "promotion_rule": "FRESH_V31_PROTECTED_RUNTIME_RECEIPT_REQUIRED_BEFORE_RETARGET",
   "rollback": {
-    "method": "restore prior vercel.json and release-identity commit only if the prior target becomes freshly reachable and reverified",
-    "current_target": "/telegram/index.html"
+    "method": "restore prior v40 and vercel routing commits",
+    "previous_release": "V40-AUTHENTIC-ONE-SURFACE-20260827"
   }
 }
